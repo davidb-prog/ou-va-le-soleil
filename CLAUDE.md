@@ -115,4 +115,5 @@ Pages à chaque push sur `main`. Le tout premier run échouera tant que Pages n'
   équinoxe…) va dans la note aux parents ou le README.
 - Un artifact Claude (page unique auto-contenue, générée par le script scratchpad
   `build-artifact.mjs`) sert aux tests en famille — republier **au même URL** à chaque
-  itération.
+  itération : <https://claude.ai/code/artifact/deace3b5-dee4-4f0f-b91a-e8ab885af7ae>
+  (depuis une autre session : passer cette URL au paramètre `url` de l'outil Artifact).
