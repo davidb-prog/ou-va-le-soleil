@@ -131,17 +131,18 @@ export class SpaceView {
     ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(cx, cy, R + 1, -80 * DEG, 80 * DEG); ctx.stroke();
 
-    // ---- « jour » / « nuit », écrits sur le disque
-    label(ctx, '☀️ jour', cx + R * 0.52, cy + R * 0.66,
+    // ---- « jour » / « nuit », écrits en bas du disque (à l'écart des étiquettes
+    // des marqueurs, qui vivent à mi-rayon)
+    label(ctx, '☀️ jour', cx + R * 0.42, cy + R * 0.82,
       { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(255, 236, 190, 0.95)', clampW: w, clampH: H });
-    label(ctx, '🌙 nuit', cx - R * 0.52, cy + R * 0.66,
+    label(ctx, '🌙 nuit', cx - R * 0.42, cy + R * 0.82,
       { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(200, 212, 240, 0.95)', clampW: w, clampH: H });
 
     // ---- chez toi (β = 0) et les enfants de l'autre côté (β = π)
     const kHome = -A;
     this.houseMarker(ctx, cx + R * 0.86 * Math.cos(kHome), cy + R * 0.86 * Math.sin(kHome),
       Math.max(9, R * 0.15), Math.cos(kHome) < 0);
-    label(ctx, 'chez toi', cx + R * 0.55 * Math.cos(kHome), cy + R * 0.55 * Math.sin(kHome),
+    label(ctx, 'chez toi', cx + R * 0.5 * Math.cos(kHome), cy + R * 0.5 * Math.sin(kHome),
       { align: 'center', size: Math.max(10, M * 0.03), color: '#ffb3cd', clampW: w, clampH: H });
 
     const kFar = kHome + Math.PI;
@@ -155,9 +156,9 @@ export class SpaceView {
     ctx.lineWidth = 1.8;
     ctx.beginPath(); ctx.arc(fx, fy, Math.max(4.5, R * 0.055), 0, TAU); ctx.stroke();
     const fsz = Math.max(9, M * 0.026);
-    label(ctx, 'les enfants', cx + R * 0.55 * Math.cos(kFar), cy + R * 0.55 * Math.sin(kFar) - fsz * 0.62,
+    label(ctx, 'les enfants', cx + R * 0.5 * Math.cos(kFar), cy + R * 0.5 * Math.sin(kFar) - fsz * 0.62,
       { align: 'center', size: fsz, color: '#8fe0cb', clampW: w, clampH: H });
-    label(ctx, 'de l’autre côté', cx + R * 0.55 * Math.cos(kFar), cy + R * 0.55 * Math.sin(kFar) + fsz * 0.62,
+    label(ctx, 'de l’autre côté', cx + R * 0.5 * Math.cos(kFar), cy + R * 0.5 * Math.sin(kFar) + fsz * 0.62,
       { align: 'center', size: fsz, color: '#8fe0cb', clampW: w, clampH: H });
 
     // ---- la flèche du sens de rotation (vers l'est), au-dessus du disque

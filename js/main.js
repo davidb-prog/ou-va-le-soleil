@@ -3,7 +3,7 @@
 // vues sont TOUJOURS synchronisées sur la même heure sim.h — c'est le cœur
 // du site : le même moment, deux regards.
 
-import { TAU, wrap24, formatHM, periodWord, skyPhase, houseFacesSun,
+import { TAU, wrap24, formatHM, periodWord, skyPhase, earthAngle,
          SPIN_HOURS_PER_SEC, SCENARIOS } from './model.js';
 import { GardenView } from './garden.js';
 import { SpaceView } from './space.js';
@@ -108,7 +108,7 @@ function wireTimeDrag(canvas, hoursPerPixel) {
 
 wireTimeDrag($('garden-view'), () => {
   // toute la largeur du ciel = la journée entière (on suit le soleil du doigt)
-  const w = Math.max(60, $('garden-view').clientWidth - 52);
+  const w = Math.max(60, $('garden-view').clientWidth - 84);
   return 12 / w;
 });
 wireTimeDrag($('space-view'), () => {
@@ -238,13 +238,22 @@ const GARDEN_STATUS = {
   dusk: '🌇 Le soleil se couche, à l’ouest — le ciel devient orange',
 };
 
+// Le statut de la vue espace : côté jour, côté nuit — et, pendant ~20 minutes
+// autour de 6 h et 18 h, le moment star : la maison est PILE sur la limite.
+function spaceStatus(h) {
+  const c = Math.cos(earthAngle(h));
+  if (c > 0.045) return '🏠 Ta maison est du côté lumière : il fait jour chez toi';
+  if (c < -0.045) return '🏠 Ta maison tourne le dos au Soleil : il fait nuit chez toi';
+  return Math.sin(earthAngle(h)) > 0
+    ? '🏠 Ta maison passe la limite jour/nuit : le soleil se couche chez toi'
+    : '🏠 Ta maison arrive sur la limite jour/nuit : le soleil se lève chez toi !';
+}
+
 function updateTexts() {
   setText('time', $('home-time'), formatHM(sim.h).text);
   setText('period', $('home-period'), periodWord(sim.h));
   setText('garden', $('garden-status'), GARDEN_STATUS[skyPhase(sim.h)]);
-  setText('space', $('space-status'), houseFacesSun(sim.h)
-    ? '🏠 Ta maison est du côté lumière : il fait jour chez toi'
-    : '🏠 Ta maison tourne le dos au Soleil : il fait nuit chez toi');
+  setText('space', $('space-status'), spaceStatus(sim.h));
   if (!sliderHeld) slider.value = sim.h;
 }
 

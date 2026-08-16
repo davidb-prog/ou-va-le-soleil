@@ -20,11 +20,12 @@ export class GardenView {
   constructor(canvas) { this.canvas = canvas; }
 
   // Position du soleil (ou de la lune) à l'écran pour une heure donnée.
+  // Marge de 42 px : au lever et au coucher, le disque reste entier à l'écran.
   spot(hh, w, horizon) {
     const az = sunAzimuth01(hh);
     const alt = sunAltitude(hh);
     return {
-      x: 26 + az * (w - 52),
+      x: 42 + az * (w - 84),
       y: horizon - Math.max(-0.2, alt) * (horizon - 30),
     };
   }
@@ -142,7 +143,8 @@ export class GardenView {
       ctx.fill();
     };
 
-    const houseX = w * 0.17, houseW = 96 * s, houseH = 74 * s;
+    // la maison un peu décalée : le soleil levant a la place de se montrer à l'est
+    const houseX = w * 0.2, houseW = 96 * s, houseH = 74 * s;
     const treeX = w * 0.64, treeH = 92 * s;
     const childX = w * 0.44, childH = 40 * s;
     const childHere = h >= 7 && h < 20.5; // au dodo la nuit !
