@@ -67,8 +67,17 @@
     </div>
 
     <div class="panel explain-panel">
-      <h2>🌞 Le Soleil ne va nulle part !</h2>
-      <div class="explain-text">
+      <div class="explain-head">
+        <h2>🌞 Le Soleil ne va nulle part !</h2>
+        <button id="btn-listen" class="listen-btn" hidden>🔊 Écouter l’histoire</button>
+        <select id="voice-pick" class="voice-pick" hidden
+          aria-label="Choisir la voix qui lit l’histoire"></select>
+      </div>
+      <p id="voice-hint" class="voice-hint" hidden>💡 La voix de lecture vient de
+        l’appareil, et celles d’ici sont un peu robotiques. Pour une voix douce :
+        ouvre la page dans Chrome ou Edge, ou télécharge une voix française
+        « améliorée » dans les réglages (souvent Accessibilité → Synthèse vocale).</p>
+      <div id="explain-text" class="explain-text">
         <p>Le soir, on dit que le soleil « se couche ». Mais chut… c’est un secret : le Soleil ne
           se couche pas du tout. Il ne bouge pas. Il ne s’éteint jamais.</p>
         <p>C’est la Terre qui tourne sur elle-même, comme un manège très lent. Elle met un jour
@@ -123,6 +132,11 @@
         Soleil est en vrai 109 fois plus large que la Terre, et 11 700 fois plus loin.</li>
       <li><strong>Le soleil « à l’horizon » à 6 h et 18 h pile :</strong> l’atmosphère, qui courbe
         un peu la lumière et fait durer les levers et couchers, n’est pas simulée.</li>
+      <li><strong>La voix qui lit l’histoire</strong> est celle de votre appareil (rien ne part
+        sur Internet), et sa qualité varie beaucoup d’un téléphone à l’autre. Le site choisit la
+        voix française la plus naturelle qu’il trouve ; si l’accent surprend, le petit menu à
+        côté du bouton 🔊 permet d’en essayer une autre — le choix est retenu, et partagé avec
+        l’épisode 3.</li>
       <li>Le mot magique à retenir : la <strong>rotation</strong> — la Terre tourne sur elle-même,
         autour de son axe, en 24 heures. C’est elle qui fabrique le jour et la nuit.</li>
     </ul>

@@ -84,7 +84,10 @@ jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
   Soleil **fixe** à droite avec ses rayons, moitié jour / moitié nuit, marqueur rose « chez
   toi » + marqueur sarcelle « les enfants de l'autre côté », flèche du sens de rotation
 - `js/main.js` — boucle d'animation, curseur, lecture auto (un tour en 90 s), glissers et taps
-  sur les deux canvas, scénarios en douceur, plein écran (natif + repli iOS), note aux parents
+  sur les deux canvas, scénarios en douceur, plein écran (natif + repli iOS), note aux parents,
+  lecture à voix haute de la boîte-révélation (conteur repris de l'épisode 3 : score des voix
+  françaises, menu de voix, clé localStorage `ltt-voice` partagée entre épisodes — même origine
+  github.io)
 - `test/model.test.mjs` — tests Node du modèle (zéro dépendance)
 
 ## Vérification navigateur

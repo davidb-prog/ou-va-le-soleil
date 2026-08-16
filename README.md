@@ -52,7 +52,11 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 
 - **La boîte « Le Soleil ne va nulle part ! »** : la grande révélation en cinq petits
   paragraphes à lire à voix haute, qui se referment sur le refrain de la série — *… parce que
-  la Terre tourne !*
+  la Terre tourne !* — à lire… ou à **écouter** : la synthèse vocale du navigateur la raconte
+  phrase à phrase, sur un ton de conteur (pauses, exclamations, suspens) — le même conteur que
+  l'épisode 3. Le site choisit d'office la voix française la plus naturelle de l'appareil, un
+  menu permet d'en changer (choix retenu, partagé entre les épisodes), et un conseil s'affiche
+  quand l'appareil n'a que des voix robotiques.
 - **Le pont vers l'épisode 3** : « Et si le soleil se couche chez toi… il se lève chez qui ? »
   → [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
 - **Plein écran** des deux vues (API native, repli maison pour iOS), mise en page mobile
@@ -142,6 +146,10 @@ Tout est dans [`js/model.js`](js/model.js) (aucun accès DOM, toutes les constan
   plus loin). La limite jour/nuit est franche, avec un petit dégradé de crépuscule.
 - **Pas d'atmosphère** : ni réfraction (qui allonge un peu les journées réelles), ni
   crépuscules qui traînent — le ciel du site suit simplement la hauteur du soleil.
+- **La voix de lecture** est celle de l'appareil (rien ne part sur Internet) : sa qualité varie
+  beaucoup. Le site note les voix françaises disponibles et prend la plus naturelle ; sur
+  Chrome ou Edge, ou avec une voix « améliorée » téléchargée, la lecture devient vraiment
+  douce. Le choix de voix est partagé avec l'épisode 3 (même origine GitHub Pages).
 
 ## Structure
 
