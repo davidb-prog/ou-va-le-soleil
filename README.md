@@ -20,7 +20,8 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
     regarde vers le sud), culmine plein **sud** à midi, se couche à l'**ouest**. Le ciel change
     en continu — nuit étoilée, **aube rose**, grand jour, **coucher orangé** — les **ombres**
     s'allongent le matin et le soir, raccourcissent à midi, toujours à l'opposé du soleil. La
-    nuit : étoiles, pleine lune à l'opposé du soleil, fenêtre allumée — et l'enfant est au lit.
+    nuit : étoiles, croissant de lune à l'opposé du soleil, fenêtre allumée — et l'enfant est
+    au lit.
   - **🚀 Depuis l'espace** (canvas) : la Terre vue de dessus du pôle Nord, moitié jour, moitié
     nuit. Le **Soleil est fixe sur le côté droit et ne bouge jamais** (l'acquis dur de
     l'épisode 3 : un soleil qui bouge à l'écran embrouille tout — ici, c'est même tout le
@@ -131,8 +132,11 @@ Tout est dans [`js/model.js`](js/model.js) (aucun accès DOM, toutes les constan
 - **Les ombres à midi** pointent en vrai vers le nord (derrière les objets dans notre vue de
   face) : le site les montre toutes petites « cachées sous les pieds ». Longueur plafonnée à
   6 hauteurs d'objet près du lever/coucher (sinon elle serait infinie).
-- **La lune est toujours pleine** et pile à l'opposé du soleil (levée à 18 h, zénith à
-  minuit). En vrai elle change de phase et d'heure chaque jour — c'est l'épisode 1.
+- **La lune est un croissant-pictogramme**, pile à l'opposé du soleil (levée à 18 h, zénith à
+  minuit) : la silhouette de croissant garantit qu'aucun enfant ne la prend pour le soleil.
+  Double licence : à l'opposé du soleil, une vraie lune serait *pleine* — et un vrai croissant
+  ne monte jamais au zénith à minuit (il reste près du soleil). En vrai, phase et heure de
+  lever changent chaque jour — c'est l'épisode 1.
 - **La vue de l'espace** : Terre vue de dessus du pôle Nord, continents stylisés, tailles et
   distances pas à l'échelle (le Soleil est 109 fois plus large que la Terre et 11 700 fois
   plus loin). La limite jour/nuit est franche, avec un petit dégradé de crépuscule.

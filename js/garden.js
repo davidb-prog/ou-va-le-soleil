@@ -95,21 +95,28 @@ export class GardenView {
       }
     }
 
-    // ---- la lune, pile à l'opposé du soleil (elle veille sur la nuit)
+    // ---- la lune, pile à l'opposé du soleil (elle veille sur la nuit).
+    // Dessinée en CROISSANT, le pictogramme universel de la nuit : impossible
+    // de la confondre avec le soleil, même du coin de l'œil. Orientation fixe
+    // (ouverture à gauche, comme le 🌙 du reste du site) — un croissant qui
+    // pivoterait en traversant le ciel serait plus étrange qu'utile. Licence
+    // assumée et documentée : une lune à l'opposé du soleil serait pleine en
+    // vrai — les phases, c'est l'épisode 1.
     const mAlt = sunAltitude(antipodeHours(h));
     if (mAlt > 0.05) {
       const p = this.spot(antipodeHours(h), w, horizon);
-      const mr = 10 * Math.max(0.8, s);
+      const mr = 12 * Math.max(0.8, s);
       ctx.globalAlpha = clamp01((mAlt - 0.05) * 3);
       ctx.save();
       ctx.shadowColor = 'rgba(233, 237, 248, 0.8)'; ctx.shadowBlur = 14;
       ctx.fillStyle = '#e6ecfa';
-      ctx.beginPath(); ctx.arc(p.x, p.y, mr, 0, TAU); ctx.fill();
+      this.crescentPath(ctx, p.x, p.y, mr, mr * 0.45, mr * 0.82);
+      ctx.fill();
       ctx.restore();
+      // deux petits cratères sur la partie charnue (à droite)
       ctx.fillStyle = '#bcc8e2';
-      ctx.beginPath(); ctx.arc(p.x - mr * 0.3, p.y - mr * 0.22, mr * 0.22, 0, TAU); ctx.fill();
-      ctx.beginPath(); ctx.arc(p.x + mr * 0.28, p.y + mr * 0.18, mr * 0.15, 0, TAU); ctx.fill();
-      ctx.beginPath(); ctx.arc(p.x - mr * 0.05, p.y + 0.4 * mr, mr * 0.12, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x + mr * 0.48, p.y - mr * 0.22, mr * 0.17, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x + mr * 0.38, p.y + mr * 0.34, mr * 0.12, 0, TAU); ctx.fill();
       ctx.globalAlpha = 1;
     }
 
@@ -163,6 +170,23 @@ export class GardenView {
     label(ctx, 'est', 10 + 8 * s, cardY, { size: 10.5, color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
     label(ctx, 'sud', w / 2, cardY, { size: 10.5, align: 'center', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
     label(ctx, 'ouest', w - 10 - 8 * s, cardY, { size: 10.5, align: 'right', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+  }
+
+  // Trace un croissant de lune : le disque (rayon r) mordu par un cercle
+  // décalé de `biteDx` vers la gauche (rayon biteR). Un seul chemin fermé —
+  // grand arc extérieur par la droite, puis remontée le long de la morsure —
+  // donc le halo (shadowBlur) épouse la forme du croissant, et les étoiles
+  // restent visibles dans le creux.
+  crescentPath(ctx, x, y, r, biteDx, biteR) {
+    const d = biteDx;
+    const a = (r * r - biteR * biteR + d * d) / (2 * d); // corde d'intersection
+    const hh = Math.sqrt(Math.max(0, r * r - a * a));
+    const t1 = Math.atan2(hh, -a), t2 = Math.atan2(-hh, -a);   // cornes, sur le disque
+    const u1 = Math.atan2(hh, d - a), u2 = Math.atan2(-hh, d - a); // cornes, sur la morsure
+    ctx.beginPath();
+    ctx.arc(x, y, r, t1, t2, true);            // l'extérieur, en passant par la droite
+    ctx.arc(x - d, y, biteR, u2, u1, false);   // l'intérieur, le long de la morsure
+    ctx.closePath();
   }
 
   cloud(ctx, x, y, k) {
