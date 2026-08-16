@@ -1,1 +1,164 @@
-# ou-va-le-soleil
+# Où va le Soleil la nuit ? 🌅
+
+Épisode 2 du **Petit labo d'astronomie** : un site d'une page, interactif, pour expliquer le
+lever et le coucher du soleil à une enfant de 5 ans, guidée par un parent qui lit à voix haute.
+
+La grande révélation : **le Soleil ne va nulle part**. Il ne bouge pas, ne s'éteint pas, ne
+« se couche » pas vraiment. C'est la **Terre qui tourne** sur elle-même en 24 heures ; la nuit,
+c'est quand notre maison lui tourne le dos — et pendant qu'on dort, il éclaire les enfants de
+l'autre côté de la Terre.
+
+Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
+
+![Le site à midi : le jardin sous le soleil, et la Terre vue de l'espace, maison face au Soleil](docs/screenshot.png)
+
+## Fonctionnalités
+
+- **Deux vues synchronisées en permanence** sur la même heure :
+  - **🌳 Depuis ton jardin** (canvas) : la maison, un arbre, l'enfant. Le soleil *semble*
+    traverser le ciel en arc (trajectoire pointillée), se lève à l'**est** (à gauche — on
+    regarde vers le sud), culmine plein **sud** à midi, se couche à l'**ouest**. Le ciel change
+    en continu — nuit étoilée, **aube rose**, grand jour, **coucher orangé** — les **ombres**
+    s'allongent le matin et le soir, raccourcissent à midi, toujours à l'opposé du soleil. La
+    nuit : étoiles, pleine lune à l'opposé du soleil, fenêtre allumée — et l'enfant est au lit.
+  - **🚀 Depuis l'espace** (canvas) : la Terre vue de dessus du pôle Nord, moitié jour, moitié
+    nuit. Le **Soleil est fixe sur le côté droit et ne bouge jamais** (l'acquis dur de
+    l'épisode 3 : un soleil qui bouge à l'écran embrouille tout — ici, c'est même tout le
+    propos !). La petite **maison rose « chez toi »** tourne avec la Terre et passe du côté
+    jour au côté nuit ; sa fenêtre s'allume quand elle entre dans la nuit. En face, le marqueur
+    sarcelle « **les enfants de l'autre côté** ». Flèche du sens de rotation, étiquettes
+    jour/nuit, pôle Nord au centre.
+- Sous chaque vue, une **petite phrase d'état** raconte le même instant deux fois (« Nuit
+  noire : le soleil est caché… il éclaire l'autre côté de la Terre » / « Ta maison tourne le
+  dos au Soleil ») — autour de 6 h et 18 h, la vue espace annonce le passage de la **limite
+  jour/nuit**.
+
+![Le coucher du soleil : ciel orangé dans le jardin, maison sur la limite jour/nuit vue de l'espace](docs/screenshot-coucher.png)
+
+- **Grand curseur 0–24 h** dont la piste raconte la journée, heure affichée en gros
+  (« Chez toi, il est 12 h 00 — midi ! »). Le temps passe tout seul (un tour de Terre en
+  90 s) ; **pause d'un petit tap** sur une vue, bouton lecture/pause, **espace = pause**.
+- **Glisser horizontalement sur l'une ou l'autre vue fait tourner le temps** : sur le jardin,
+  on suit le soleil du doigt (toute la largeur = la journée) ; sur l'espace, on fait tourner
+  la Terre elle-même.
+- **Quatre boutons-scénarios** : 🌅 *Le soleil se lève* (6 h), ☀️ *Midi pile* (12 h), 🌇 *Le
+  soleil se couche* (18 h), 🌙 *Minuit, tu dors* (0 h). Le temps glisse en douceur — **toujours
+  vers l'avant, le vrai sens de la Terre** — puis une micro-histoire raconte le même instant
+  **depuis le jardin puis depuis l'espace** (« Le voilà ! Ta maison lui tourne le dos, tout
+  simplement… »).
+
+![Minuit : nuit étoilée et fenêtre allumée au jardin ; vu de l'espace, la maison dos au Soleil et les enfants de l'autre côté en plein jour](docs/screenshot-nuit.png)
+
+- **La boîte « Le Soleil ne va nulle part ! »** : la grande révélation en cinq petits
+  paragraphes à lire à voix haute, qui se referment sur le refrain de la série — *… parce que
+  la Terre tourne !*
+- **Le pont vers l'épisode 3** : « Et si le soleil se couche chez toi… il se lève chez qui ? »
+  → [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
+- **Plein écran** des deux vues (API native, repli maison pour iOS), mise en page mobile
+  dédiée : sous 640 px les vues s'empilent, rien ne recouvre jamais les canvas.
+- Accessible : aria-labels descriptifs sur les deux canvas, `prefers-reduced-motion` respecté
+  (rien ne bouge tout seul, les scénarios sautent sans animation), curseur au clavier.
+
+![Le site sur mobile (390 px), au coucher du soleil](docs/screenshot-mobile.png)
+
+## Lancer en local
+
+Aucune dépendance, aucun build. Il faut juste un petit serveur statique
+(les modules ES ne se chargent pas depuis `file://`) :
+
+```bash
+python3 -m http.server 8000
+# ou : npx serve
+```
+
+puis ouvrir <http://localhost:8000>.
+
+## Tests
+
+Le modèle (soleil, ombres, rotation, ciel, scénarios) est pur — aucun accès DOM — et se teste
+sous Node, sans navigateur :
+
+```bash
+node test/model.test.mjs
+```
+
+**57 vérifications**, dont les vérités du récit : le Soleil est **fixe** (sa direction à
+l'écran ne change jamais) ; la Terre avance de 15° par heure, **vers l'est**, un tour en
+24 h ; lever à 6 h à l'**est**, zénith à midi plein **sud**, coucher à 18 h à l'**ouest**
+(hauteur = sin(π·(h−6)/12), la formule de l'épisode 3) ; les **ombres** longues matin et soir,
+courtes à midi, toujours à l'opposé du soleil, absentes la nuit ; **les deux vues racontent la
+même chose** (maison côté jour du globe ⟺ soleil levé au jardin) ; à **minuit chez nous, le
+soleil est au zénith de l'antipode** ; le **ciel est continu** sur 24 h (aucun saut de
+couleur), rose à l'aube, orangé au coucher.
+
+Le site est aussi vérifié en navigateur (Playwright/Chromium, desktop + mobile 390 px) :
+zéro erreur console, sondes de pixels sur la géométrie jour/nuit du disque terrestre, la place
+du Soleil (identique à midi et à minuit !), les couleurs du ciel et la direction des ombres,
+glissers sur les deux vues, tap-pause, scénarios (toujours vers l'avant), plein écran natif
+**et** repli iOS, `prefers-reduced-motion`, captures d'écran examinées aux heures clés.
+
+## Déployer sur GitHub Pages
+
+Le workflow `.github/workflows/deploy-pages.yml` publie le site à chaque push sur `main`.
+Dans les réglages du repo : **Settings → Pages → Source : « GitHub Actions »**
+(le workflow tente aussi de l'activer automatiquement au premier run).
+
+## Le modèle
+
+Tout est dans [`js/model.js`](js/model.js) (aucun accès DOM, toutes les constantes) :
+
+- **L'heure du site est l'heure solaire** d'un jour d'équinoxe : lever 6 h, coucher 18 h,
+  hauteur du soleil = sin(π·(h−6)/12) — les mêmes conventions que l'épisode 3, qui raconte
+  la suite (heure légale et fuseaux).
+- **La vue espace** reprend l'angle de l'épisode 3 : maison à `(h−12)/24·τ`, sens
+  trigonométrique vue du pôle Nord (= vers l'est), 0 = face au Soleil à midi. Le Soleil est
+  une **constante** (`SUN_DIR`), pas une variable : il ne peut pas bouger.
+- **Les ombres** : élévation simplifiée 45°·hauteur (équinoxe vers 45° de latitude — la
+  France), longueur = cotangente plafonnée à 6 hauteurs d'objet, direction = l'opposé exact
+  du soleil.
+- **Le ciel** : quatre palettes-jalons (nuit, aube rose, jour, coucher orangé) interpolées
+  en douceur le long de la journée — la continuité est testée.
+
+## Ce que le site simplifie
+
+- **L'heure du jardin est l'heure solaire.** Midi = soleil au plus haut, plein sud. L'heure
+  légale des montres (la France vit en avance sur son soleil, jusqu'à 2 h en été) et les
+  fuseaux horaires sont le sujet de l'épisode 3.
+- **Un éternel jour d'équinoxe** : lever 6 h, coucher 18 h, jour = nuit = 12 h, partout. En
+  vrai, ça dépend de la saison (l'axe penché de la Terre) et de la latitude.
+- **Hémisphère nord** : la vue jardin regarde vers le sud (est à gauche, ouest à droite, le
+  soleil culmine au sud). Dans l'hémisphère sud, c'est le miroir.
+- **Les ombres à midi** pointent en vrai vers le nord (derrière les objets dans notre vue de
+  face) : le site les montre toutes petites « cachées sous les pieds ». Longueur plafonnée à
+  6 hauteurs d'objet près du lever/coucher (sinon elle serait infinie).
+- **La lune est toujours pleine** et pile à l'opposé du soleil (levée à 18 h, zénith à
+  minuit). En vrai elle change de phase et d'heure chaque jour — c'est l'épisode 1.
+- **La vue de l'espace** : Terre vue de dessus du pôle Nord, continents stylisés, tailles et
+  distances pas à l'échelle (le Soleil est 109 fois plus large que la Terre et 11 700 fois
+  plus loin). La limite jour/nuit est franche, avec un petit dégradé de crépuscule.
+- **Pas d'atmosphère** : ni réfraction (qui allonge un peu les journées réelles), ni
+  crépuscules qui traînent — le ciel du site suit simplement la hauteur du soleil.
+
+## Structure
+
+```
+index.html            page unique (deux vues synchronisées, curseur 0–24 h, scénarios,
+                      révélation, pont vers l'épisode 3, note aux parents)
+css/style.css         thème sombre de la série, responsive (bascule mobile ≤ 640 px), aucune lib
+js/model.js           modèle pur (soleil, ombres, rotation, ciel, scénarios) — testable sous Node
+js/canvas.js          helpers canvas partagés (fitCanvas, étoiles, étiquettes à halo)
+js/garden.js          vue jardin (ciel continu, arc du soleil, lune, ombres, décor)
+js/space.js           vue espace (Soleil FIXE à droite, Terre vue du pôle Nord, marqueurs)
+js/main.js            boucle d'animation + interactions (curseur, glissers, tap-pause,
+                      scénarios, plein écran)
+test/model.test.mjs   tests Node du modèle (57 vérifications)
+```
+
+## La série
+
+1. 🌒 [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/) — pourquoi
+   la Lune change de forme, et les deux coïncidences qui fabriquent une éclipse.
+2. 🌅 **Où va le Soleil la nuit ?** (ce site) — le Soleil ne bouge pas : c'est la Terre qui
+   tourne, et la nuit c'est quand ta maison lui tourne le dos.
+3. 🌍 [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/) — la
+   Terre tourne, et il n'est pas la même heure partout.
