@@ -53,7 +53,7 @@ function toggleSpin() {
 
 $('btn-spin').addEventListener('click', toggleSpin);
 document.addEventListener('keydown', (e) => {
-  if (e.code === 'Space' && !e.target.closest('button, input, a, summary')) {
+  if (e.code === 'Space' && !e.target.closest('button, input, a, summary, select')) {
     e.preventDefault();
     toggleSpin();
   }
@@ -281,6 +281,156 @@ function frame(ms) {
     // la boucle survit à un raté de rendu ponctuel (canvas en cours de layout…)
     requestAnimationFrame(frame);
   }
+}
+
+// ---- « Écouter l'histoire » : la boîte « Le Soleil ne va nulle part ! » lue
+// à voix haute par la synthèse vocale du navigateur (hors-ligne, rien n'est
+// envoyé nulle part). Même conteur que l'épisode 3 : on note chaque voix
+// française et on prend d'office la plus douce — français de France et voix
+// « naturelles » d'abord, voix robotiques et accents lointains en dernier —
+// et un petit menu laisse les parents en changer. ----
+
+const listenBtn = $('btn-listen');
+const voiceSel = $('voice-pick');
+const voiceHint = $('voice-hint');
+if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
+  listenBtn.hidden = false;
+  let speaking = false;
+  let frVoices = [];
+  let chosenURI = null;
+  // même clé que l'épisode 3 : sur github.io (même origine), la voix choisie
+  // par la famille se partage d'un épisode à l'autre — c'est voulu
+  try { chosenURI = window.localStorage.getItem('ltt-voice'); } catch (e) { /* mode privé */ }
+
+  const voiceScore = (v) => {
+    const lang = (v.lang || '').replace('_', '-').toLowerCase();
+    const name = (v.name || '').toLowerCase();
+    let s = 0;
+    if (lang.indexOf('fr-fr') === 0) s += 60;      // le français de France d'abord
+    else if (lang.indexOf('fr') === 0) s += 20;
+    if (lang.indexOf('fr-ca') === 0) s -= 30;      // l'accent québécois surprend ici
+    // les voix neurales (Edge, Google…) et « premium » sont bien plus naturelles
+    if (/natural|neural|online|premium|enhanced|am[ée]lior[ée]e|siri/.test(name)) s += 30;
+    if (name.indexOf('google') !== -1) s += 24;
+    if (/audrey|thomas|aur[ée]lie|marie|denise|henri|[ée]lo[ïi]se|vivienne|r[ée]my|jacqueline|charline|coralie|hortense/.test(name)) s += 12;
+    if (!v.localService) s += 6;
+    // les moteurs d'appoint et les voix rigolotes, très robotiques, en dernier
+    if (/espeak|eloquence|compact|robot/.test(name)) s -= 50;
+    if (/eddy|\bflo\b|grandma|grandpa|\breed\b|rocko|sandy|shelley|jester|bells|organ|superstar|trinoids|whisper|zarvox|bad news|bahh|boing|bubbles|cellos|wobble/.test(name)) s -= 40;
+    return s;
+  };
+
+  const prettyName = (v) => {
+    let n = v.name.replace(/^microsoft\s+/i, '')
+      .replace(/\s*[-–—]\s*(french|fran[çc]ais).*$/i, '')
+      .replace(/\s*\((french|fran[çc]ais)[^)]*\)\s*$/i, '');
+    const lang = (v.lang || '').replace('_', '-');
+    if (lang && lang.toLowerCase().indexOf('fr-fr') !== 0) n += ' · ' + lang;
+    return n;
+  };
+
+  const refreshVoices = () => {
+    const all = window.speechSynthesis.getVoices();
+    frVoices = [];
+    for (const v of all) {
+      if ((v.lang || '').replace('_', '-').toLowerCase().indexOf('fr') === 0) frVoices.push(v);
+    }
+    frVoices.sort((a, b) => voiceScore(b) - voiceScore(a));
+    if (voiceSel) {
+      voiceSel.innerHTML = '';
+      for (const v of frVoices) {
+        const opt = document.createElement('option');
+        opt.value = v.voiceURI;
+        opt.textContent = prettyName(v);
+        voiceSel.appendChild(opt);
+      }
+      let known = false;
+      for (const v of frVoices) { if (v.voiceURI === chosenURI) known = true; }
+      if (known) voiceSel.value = chosenURI;
+      voiceSel.hidden = frVoices.length < 2;
+    }
+    if (voiceHint) {
+      // en dessous de ce score, l'appareil n'a que des voix métalliques :
+      // on souffle aux parents comment en obtenir une plus douce
+      const best = frVoices.length ? voiceScore(frVoices[0]) : -1;
+      voiceHint.hidden = best >= 84;
+    }
+  };
+  refreshVoices();
+  if ('onvoiceschanged' in window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = refreshVoices;
+  }
+
+  const pickVoice = () => {
+    for (const v of frVoices) { if (v.voiceURI === chosenURI) return v; }
+    return frVoices.length ? frVoices[0] : null;
+  };
+
+  const resetListen = () => {
+    speaking = false;
+    listenBtn.textContent = '🔊 Écouter l’histoire';
+    listenBtn.setAttribute('aria-pressed', 'false');
+  };
+
+  let gen = 0; // ignore les onend/onerror des lectures annulées
+  const startReading = () => {
+    gen++;
+    const myGen = gen;
+    window.speechSynthesis.cancel();
+    const voice = pickVoice();
+    // une phrase par bulle (les longs textes d'une traite se font couper), en
+    // retenant les fins de paragraphes pour y respirer plus longtemps
+    const chunks = [];
+    const paras = $('explain-text').querySelectorAll('p');
+    for (const para of paras) {
+      const bits = para.textContent.replace(/\s+/g, ' ').match(/[^.!?…]+[.!?…]*/g) || [];
+      const clean = [];
+      for (const b of bits) { if (b.trim()) clean.push(b.trim()); }
+      for (let i = 0; i < clean.length; i++) {
+        chunks.push({ text: clean[i], endPara: i === clean.length - 1 });
+      }
+    }
+    // ton de conteur : les phrases s'enchaînent avec de vraies pauses, sur un
+    // débit posé, et un peu de relief là où le texte s'exclame ou questionne
+    // (la synthèse du navigateur n'offre que rate et pitch — on s'en sert)
+    let at = 0;
+    const speakNext = () => {
+      if (myGen !== gen) return;
+      if (at >= chunks.length) { resetListen(); return; }
+      const c = chunks[at++];
+      const u = new SpeechSynthesisUtterance(c.text);
+      u.lang = voice ? voice.lang : 'fr-FR';
+      if (voice) u.voice = voice;
+      u.rate = 0.92; u.pitch = 1.04;
+      if (/!\s*$/.test(c.text)) { u.rate = 0.96; u.pitch = 1.14; }  // l'émerveillement
+      else if (/\?\s*$/.test(c.text)) { u.pitch = 1.12; }           // la question
+      else if (c.text.indexOf('…') !== -1) { u.rate = 0.87; }       // le suspens
+      u.onend = () => {
+        if (myGen !== gen) return;
+        window.setTimeout(speakNext, c.endPara ? 620 : 300);
+      };
+      u.onerror = () => { if (myGen === gen) resetListen(); };
+      window.speechSynthesis.speak(u);
+    };
+    speaking = true;
+    listenBtn.textContent = '⏹ Arrêter';
+    listenBtn.setAttribute('aria-pressed', 'true');
+    speakNext();
+  };
+
+  listenBtn.addEventListener('click', () => {
+    if (speaking) { gen++; window.speechSynthesis.cancel(); resetListen(); return; }
+    refreshVoices(); // certaines listes de voix n'arrivent qu'après le chargement
+    startReading();
+  });
+  if (voiceSel) {
+    voiceSel.addEventListener('change', () => {
+      chosenURI = voiceSel.value;
+      try { window.localStorage.setItem('ltt-voice', chosenURI); } catch (e) { /* tant pis */ }
+      if (speaking) startReading(); // on réécoute tout de suite avec la nouvelle voix
+    });
+  }
+  window.addEventListener('pagehide', () => { window.speechSynthesis.cancel(); });
 }
 
 renderInvite();
