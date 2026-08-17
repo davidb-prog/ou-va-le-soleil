@@ -168,7 +168,11 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 /* ---------- boutons-scénarios + histoire ---------- */
 
 .scenario-panel { margin-top: 16px; padding: 14px 16px 16px; }
-.scenario-title { font-weight: 700; font-size: 1.05rem; margin: 2px 2px 10px; }
+.scenario-title {
+  font-weight: 700; font-size: 1.05rem; margin: 2px 2px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px 12px; flex-wrap: wrap;
+}
 .scenario-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 @media (max-width: 860px) { .scenario-buttons { grid-template-columns: 1fr 1fr; } }
 

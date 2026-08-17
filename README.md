@@ -46,7 +46,10 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
   soleil se couche* (18 h), 🌙 *Minuit, tu dors* (0 h). Le temps glisse en douceur — **toujours
   vers l'avant, le vrai sens de la Terre** — puis une micro-histoire raconte le même instant
   **depuis le jardin puis depuis l'espace** (« Le voilà ! Ta maison lui tourne le dos, tout
-  simplement… »).
+  simplement… »). Comme dans l'épisode 3, le jeu existe **avec ou sans la voix** : le bouton
+  🔇/🔊 à côté du titre active la version sonore — le conteur dit « Dans ton jardin… », puis
+  « Et maintenant, vu de l'espace… » — et le choix est retenu d'une visite (et d'un épisode)
+  à l'autre.
 
 ![Minuit : nuit étoilée et fenêtre allumée au jardin ; vu de l'espace, la maison dos au Soleil et les enfants de l'autre côté en plein jour](docs/screenshot-nuit.png)
 
@@ -54,7 +57,8 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
   paragraphes à lire à voix haute, qui se referment sur le refrain de la série — *… parce que
   la Terre tourne !* — à lire… ou à **écouter** : la synthèse vocale du navigateur la raconte
   phrase à phrase, sur un ton de conteur (pauses, exclamations, suspens) — le même conteur que
-  l'épisode 3. Le site choisit d'office la voix française la plus naturelle de l'appareil, un
+  l'épisode 3, et que la version sonore des scénarios. Le site choisit d'office la voix
+  française la plus naturelle de l'appareil, un
   menu permet d'en changer (choix retenu, partagé entre les épisodes), et un conseil s'affiche
   quand l'appareil n'a que des voix robotiques.
 - **Le pont vers l'épisode 3** : « Et si le soleil se couche chez toi… il se lève chez qui ? »
@@ -162,7 +166,7 @@ js/canvas.js          helpers canvas partagés (fitCanvas, étoiles, étiquettes
 js/garden.js          vue jardin (ciel continu, arc du soleil, lune, ombres, décor)
 js/space.js           vue espace (Soleil FIXE à droite, Terre vue du pôle Nord, marqueurs)
 js/main.js            boucle d'animation + interactions (curseur, glissers, tap-pause,
-                      scénarios, plein écran)
+                      scénarios et leur version sonore, plein écran, conteur)
 test/model.test.mjs   tests Node du modèle (57 vérifications)
 ```
 
