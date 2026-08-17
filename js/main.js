@@ -16,6 +16,7 @@ const sim = {
   playing: !reduceMotion, // le temps passe tout seul (un tour de Terre en 90 s)
   tween: null,            // { from, delta, target, start, dur } pendant un scénario
 };
+let activeScn = null; // le scénario affiché — nul dès qu'on reprend la main
 
 const garden = new GardenView($('garden-view'));
 const space = new SpaceView($('space-view'));
@@ -41,12 +42,14 @@ function setActiveScenario(id) {
 
 function stopAuto() {
   sim.tween = null;
+  activeScn = null;
   if (sim.playing) setPlaying(false);
   setActiveScenario(null);
 }
 
 function toggleSpin() {
   sim.tween = null;
+  activeScn = null;
   setActiveScenario(null);
   setPlaying(!sim.playing);
 }
@@ -210,6 +213,8 @@ function runScenario(scn) {
   setPlaying(false);
   setActiveScenario(scn.id);
   renderStory(scn);
+  activeScn = scn;
+  tellScenario(); // la version sonore, si le parent l'a activée
   const delta = wrap24(scn.h - sim.h);
   if (reduceMotion || delta < 0.02 || delta > 23.98) {
     sim.tween = null;
@@ -283,19 +288,30 @@ function frame(ms) {
   }
 }
 
-// ---- « Écouter l'histoire » : la boîte « Le Soleil ne va nulle part ! » lue
-// à voix haute par la synthèse vocale du navigateur (hors-ligne, rien n'est
-// envoyé nulle part). Même conteur que l'épisode 3 : on note chaque voix
-// française et on prend d'office la plus douce — français de France et voix
-// « naturelles » d'abord, voix robotiques et accents lointains en dernier —
-// et un petit menu laisse les parents en changer. ----
+// ---- le conteur : une seule voix pour tout le site — la boîte « Le Soleil
+// ne va nulle part ! » ET la version sonore des scénarios. La synthèse vocale
+// du navigateur lit hors-ligne, rien n'est envoyé nulle part. Même conteur
+// que l'épisode 3 : on note chaque voix française et on prend d'office la
+// plus douce — français de France et voix « naturelles » d'abord, voix
+// robotiques et accents lointains en dernier — et un petit menu laisse les
+// parents en changer. ----
+
+// une phrase par bulle (les longs textes d'une traite se font couper) ; la
+// dernière phrase du bloc marque une vraie respiration
+function sentenceChunks(text, endPara) {
+  const bits = text.replace(/\s+/g, ' ').match(/[^.!?…]+[.!?…]*/g) || [];
+  const out = [];
+  for (const b of bits) { if (b.trim()) out.push({ text: b.trim(), endPara: false }); }
+  if (out.length && endPara) out[out.length - 1].endPara = true;
+  return out;
+}
 
 const listenBtn = $('btn-listen');
 const voiceSel = $('voice-pick');
 const voiceHint = $('voice-hint');
+let narrator = null; // { speak(chunks, onDone), stop() } — null sans synthèse vocale
+
 if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
-  listenBtn.hidden = false;
-  let speaking = false;
   let frVoices = [];
   let chosenURI = null;
   // même clé que l'épisode 3 : sur github.io (même origine), la voix choisie
@@ -366,37 +382,26 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
     return frVoices.length ? frVoices[0] : null;
   };
 
-  const resetListen = () => {
-    speaking = false;
-    listenBtn.textContent = '🔊 Écouter l’histoire';
-    listenBtn.setAttribute('aria-pressed', 'false');
-  };
+  // une lecture à la fois : gen invalide les onend des lectures annulées, et
+  // le onDone de la lecture précédente est toujours prévenu qu'elle s'achève
+  let gen = 0;
+  let curDone = null;
+  const settle = () => { const d = curDone; curDone = null; if (d) d(); };
+  const stopSpeaking = () => { gen++; window.speechSynthesis.cancel(); settle(); };
 
-  let gen = 0; // ignore les onend/onerror des lectures annulées
-  const startReading = () => {
-    gen++;
+  // ton de conteur : les phrases s'enchaînent avec de vraies pauses, sur un
+  // débit posé, et un peu de relief là où le texte s'exclame ou questionne
+  // (la synthèse du navigateur n'offre que rate et pitch — on s'en sert)
+  const speakChunks = (chunks, onDone) => {
+    stopSpeaking();
+    refreshVoices(); // certaines listes de voix n'arrivent qu'après le chargement
     const myGen = gen;
-    window.speechSynthesis.cancel();
+    curDone = onDone || null;
     const voice = pickVoice();
-    // une phrase par bulle (les longs textes d'une traite se font couper), en
-    // retenant les fins de paragraphes pour y respirer plus longtemps
-    const chunks = [];
-    const paras = $('explain-text').querySelectorAll('p');
-    for (const para of paras) {
-      const bits = para.textContent.replace(/\s+/g, ' ').match(/[^.!?…]+[.!?…]*/g) || [];
-      const clean = [];
-      for (const b of bits) { if (b.trim()) clean.push(b.trim()); }
-      for (let i = 0; i < clean.length; i++) {
-        chunks.push({ text: clean[i], endPara: i === clean.length - 1 });
-      }
-    }
-    // ton de conteur : les phrases s'enchaînent avec de vraies pauses, sur un
-    // débit posé, et un peu de relief là où le texte s'exclame ou questionne
-    // (la synthèse du navigateur n'offre que rate et pitch — on s'en sert)
     let at = 0;
     const speakNext = () => {
       if (myGen !== gen) return;
-      if (at >= chunks.length) { resetListen(); return; }
+      if (at >= chunks.length) { settle(); return; }
       const c = chunks[at++];
       const u = new SpeechSynthesisUtterance(c.text);
       u.lang = voice ? voice.lang : 'fr-FR';
@@ -409,28 +414,91 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
         if (myGen !== gen) return;
         window.setTimeout(speakNext, c.endPara ? 620 : 300);
       };
-      u.onerror = () => { if (myGen === gen) resetListen(); };
+      u.onerror = () => { if (myGen === gen) settle(); };
       window.speechSynthesis.speak(u);
     };
-    speaking = true;
-    listenBtn.textContent = '⏹ Arrêter';
-    listenBtn.setAttribute('aria-pressed', 'true');
     speakNext();
   };
+  narrator = { speak: speakChunks, stop: stopSpeaking };
 
+  // -- « Écouter l'histoire » : la boîte-révélation, phrase à phrase --
+  listenBtn.hidden = false;
+  let reading = false;
+  const resetListen = () => {
+    reading = false;
+    listenBtn.textContent = '🔊 Écouter l’histoire';
+    listenBtn.setAttribute('aria-pressed', 'false');
+  };
+  const startReading = () => {
+    const chunks = [];
+    const paras = $('explain-text').querySelectorAll('p');
+    for (const para of paras) {
+      for (const c of sentenceChunks(para.textContent, true)) chunks.push(c);
+    }
+    speakChunks(chunks, resetListen);
+    reading = true;
+    listenBtn.textContent = '⏹ Arrêter';
+    listenBtn.setAttribute('aria-pressed', 'true');
+  };
   listenBtn.addEventListener('click', () => {
-    if (speaking) { gen++; window.speechSynthesis.cancel(); resetListen(); return; }
-    refreshVoices(); // certaines listes de voix n'arrivent qu'après le chargement
+    if (reading) { stopSpeaking(); return; } // le onDone remet le bouton
     startReading();
   });
   if (voiceSel) {
     voiceSel.addEventListener('change', () => {
       chosenURI = voiceSel.value;
       try { window.localStorage.setItem('ltt-voice', chosenURI); } catch (e) { /* tant pis */ }
-      if (speaking) startReading(); // on réécoute tout de suite avec la nouvelle voix
+      if (reading) startReading(); // on réécoute tout de suite avec la nouvelle voix
     });
   }
   window.addEventListener('pagehide', () => { window.speechSynthesis.cancel(); });
+} else {
+  $('btn-scn-voice').hidden = true; // pas de synthèse vocale : pas de version sonore
+}
+
+// ---- la version sonore des scénarios : quand l'enfant choisit un moment, le
+// conteur raconte le même instant deux fois — depuis le jardin, puis depuis
+// l'espace. On ne lit pas les bulles écrites telles quelles : à l'oral, il
+// manque les enchaînements — le conteur ajoute « Dans ton jardin… » et
+// « Et maintenant, vu de l'espace… », et retire les émojis, imprononçables. ----
+
+const scnVoiceBtn = $('btn-scn-voice');
+let scnVoiceOn = false;
+// même clé que l'épisode 3 : la famille qui a déjà activé la voix là-bas la
+// retrouve ici (même origine github.io) — c'est voulu
+try { scnVoiceOn = window.localStorage.getItem('ltt-scn-voice') === '1'; } catch (e) { /* mode privé */ }
+
+function setScnVoiceUi() {
+  scnVoiceBtn.textContent = scnVoiceOn ? '🔊 la voix raconte' : '🔇 sans la voix';
+  scnVoiceBtn.setAttribute('aria-pressed', scnVoiceOn ? 'true' : 'false');
+}
+setScnVoiceUi();
+scnVoiceBtn.addEventListener('click', () => {
+  scnVoiceOn = !scnVoiceOn;
+  try { window.localStorage.setItem('ltt-scn-voice', scnVoiceOn ? '1' : '0'); } catch (e) { /* tant pis */ }
+  setScnVoiceUi();
+  if (!narrator) return;
+  if (scnVoiceOn) tellScenario(); else narrator.stop();
+});
+
+const EMOJI_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+
+function spokenStory(scn) {
+  // retirer un émoji laisse un espace orphelin devant le point final — et un
+  // « . » isolé se fait lire « point » par certaines voix : on le recolle
+  const clean = (t) => t.replace(EMOJI_RE, '').replace(/\s+/g, ' ')
+    .replace(/\s+\./g, '.').trim();
+  const chunks = [{ text: 'Dans ton jardin…', endPara: false }];
+  for (const c of sentenceChunks(clean(scn.jardin), true)) chunks.push(c);
+  chunks.push({ text: 'Et maintenant, vu de l’espace…', endPara: false });
+  for (const c of sentenceChunks(clean(scn.espace), true)) chunks.push(c);
+  return chunks;
+}
+
+function tellScenario() {
+  if (narrator && scnVoiceOn && activeScn) {
+    narrator.speak(spokenStory(activeScn));
+  }
 }
 
 renderInvite();

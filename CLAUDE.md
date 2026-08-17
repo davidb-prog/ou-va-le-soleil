@@ -85,9 +85,10 @@ jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
   toi » + marqueur sarcelle « les enfants de l'autre côté », flèche du sens de rotation
 - `js/main.js` — boucle d'animation, curseur, lecture auto (un tour en 90 s), glissers et taps
   sur les deux canvas, scénarios en douceur, plein écran (natif + repli iOS), note aux parents,
-  lecture à voix haute de la boîte-révélation (conteur repris de l'épisode 3 : score des voix
-  françaises, menu de voix, clé localStorage `ltt-voice` partagée entre épisodes — même origine
-  github.io)
+  conteur repris de l'épisode 3 (score des voix françaises, menu de voix, clé localStorage
+  `ltt-voice` partagée entre épisodes — même origine github.io) qui lit la boîte-révélation ET
+  la version sonore des scénarios (bouton 🔇/🔊 `btn-scn-voice` à côté du titre du jeu, clé
+  `ltt-scn-voice` partagée elle aussi avec l'épisode 3)
 - `test/model.test.mjs` — tests Node du modèle (zéro dépendance)
 
 ## Vérification navigateur
