@@ -1,6 +1,6 @@
 # Où va le Soleil la nuit ? 🌅
 
-Épisode 2 du **Petit labo d'astronomie** : un site d'une page, interactif, pour expliquer le
+Un épisode du **Petit labo d'astronomie** : un site d'une page, interactif, pour expliquer le
 lever et le coucher du soleil à une enfant de 5 ans, guidée par un parent qui lit à voix haute.
 
 La grande révélation : **le Soleil ne va nulle part**. Il ne bouge pas, ne s'éteint pas, ne
