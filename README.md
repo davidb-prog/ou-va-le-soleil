@@ -172,9 +172,12 @@ test/model.test.mjs   tests Node du modèle (57 vérifications)
 
 ## La série
 
-1. 🌒 [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/) — pourquoi
-   la Lune change de forme, et les deux coïncidences qui fabriquent une éclipse.
-2. 🌅 **Où va le Soleil la nuit ?** (ce site) — le Soleil ne bouge pas : c'est la Terre qui
-   tourne, et la nuit c'est quand ta maison lui tourne le dos.
-3. 🌍 [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/) — la
-   Terre tourne, et il n'est pas la même heure partout.
+- 🌒 [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/) — les deux
+  coïncidences qui fabriquent une éclipse.
+- 🌅 **Où va le Soleil la nuit ?** (ce site) — le Soleil ne bouge pas : c'est la Terre qui
+  tourne, et la nuit c'est quand ta maison lui tourne le dos.
+- 🌍 [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/) — la
+  Terre tourne, et il n'est pas la même heure partout.
+- 🌙 [Pourquoi la Lune change de forme ?](https://davidb-prog.github.io/la-lune-change-de-forme/) —
+  la Lune est toujours à moitié éclairée ; c'est nous qui la voyons d'un côté différent
+  chaque nuit.
