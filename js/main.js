@@ -1,5 +1,5 @@
 // Câblage de l'interface : boucle d'animation, curseur du temps, glissers et
-// petits taps sur les deux vues, scénarios racontés, plein écran. Les deux
+// petits taps sur les deux vues, scénarios racontés, jeu des défis. Les deux
 // vues sont TOUJOURS synchronisées sur la même heure sim.h — c'est le cœur
 // du site : le même moment, deux regards.
 
@@ -128,40 +128,7 @@ wireTimeDrag($('space-view'), () => {
   return 24 / TAU / R;
 });
 
-// ---- plein écran de la scène (API native, repli CSS pour iOS) ----
-
 const stagePanel = $('stage-panel');
-const fsBtn = $('fs-toggle');
-
-function setFsUi(active) {
-  fsBtn.textContent = active ? '✕ Quitter le plein écran' : '⛶ Plein écran';
-}
-fsBtn.addEventListener('click', () => {
-  if (document.fullscreenElement === stagePanel) { document.exitFullscreen(); return; }
-  if (stagePanel.classList.contains('fs-fallback')) {
-    stagePanel.classList.remove('fs-fallback');
-    setFsUi(false);
-    return;
-  }
-  if (stagePanel.requestFullscreen) {
-    const p = stagePanel.requestFullscreen();
-    if (p && p.then) {
-      p.then(null, () => { stagePanel.classList.add('fs-fallback'); setFsUi(true); });
-    }
-    return;
-  }
-  stagePanel.classList.add('fs-fallback');
-  setFsUi(true);
-});
-document.addEventListener('fullscreenchange', () => {
-  setFsUi(document.fullscreenElement === stagePanel);
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && stagePanel.classList.contains('fs-fallback')) {
-    stagePanel.classList.remove('fs-fallback');
-    setFsUi(false);
-  }
-});
 
 // ---- les boutons-scénarios et leurs micro-histoires ----
 
@@ -297,7 +264,7 @@ function updateTexts() {
 const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
 // On ne redessine que si quelque chose a changé (l'heure, ou la taille d'un
-// canvas — rotation d'écran, plein écran…) : en pause, zéro travail par frame,
+// canvas — rotation d'écran, ouverture du jeu…) : en pause, zéro travail par frame,
 // la batterie du téléphone dit merci.
 const drawn = { h: -1, sizes: '' };
 function sizeKey() {

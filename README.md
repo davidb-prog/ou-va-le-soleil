@@ -72,9 +72,9 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
   quand l'appareil n'a que des voix robotiques.
 - **Le pont vers l'épisode 3** : « Et si le soleil se couche chez toi… il se lève chez qui ? »
   → [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
-- **Plein écran** des deux vues (API native, repli maison pour iOS), mise en page mobile
-  dédiée : sous 640 px les vues s'empilent, rien ne recouvre jamais les canvas, l'en-tête se
-  fait tout petit (le jardin se voit dès le premier écran), les boutons font au moins 44 px.
+- **Mise en page mobile dédiée** : sous 640 px les vues s'empilent, plafonnées en hauteur
+  d'écran pour tenir ensemble dans le viewport, rien ne recouvre jamais les canvas, l'en-tête
+  se fait tout petit (le jardin se voit dès le premier écran), les boutons font au moins 44 px.
   Les canvas laissent passer le défilement vertical (`touch-action: pan-y`) : glisser
   horizontalement fait tourner le temps, balayer verticalement fait défiler la page. Appuyer
   sur un scénario ramène doucement les vues à l'écran. En pause, plus aucun redessin
@@ -120,7 +120,7 @@ zéro erreur console, sondes de pixels sur la géométrie jour/nuit du disque te
 du Soleil (identique à midi et à minuit !), les couleurs du ciel et la direction des ombres,
 glissers sur les deux vues, tap-pause, scénarios (toujours vers l'avant), le jeu complet
 (défi raté hors fenêtre, gagné dans la fenêtre après la tempo, « Encore une ! », glisser sur
-les mini-vues), plein écran natif **et** repli iOS, `prefers-reduced-motion`, captures d'écran
+les mini-vues), `prefers-reduced-motion`, captures d'écran
 examinées aux heures clés.
 
 ## Déployer sur GitHub Pages
@@ -186,7 +186,7 @@ js/garden.js          vue jardin (ciel continu, arc du soleil, lune, ombres, dé
 js/space.js           vue espace (Soleil FIXE à droite, Terre vue du pôle Nord, marqueurs ;
                       mode « mini » sans étiquettes pour le jeu)
 js/main.js            boucle d'animation + interactions (curseur, glissers, tap-pause,
-                      scénarios et leur version sonore, jeu, plein écran, conteur)
+                      scénarios et leur version sonore, jeu, conteur)
 test/model.test.mjs   tests Node du modèle (67 vérifications)
 ```
 

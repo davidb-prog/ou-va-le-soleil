@@ -320,47 +320,6 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 }
 .site-footer a { color: var(--sun); }
 
-/* ---------- plein écran de la scène (API native, repli iOS) ---------- */
-
-.stage-panel:fullscreen {
-  display: flex; flex-direction: column; border-radius: 0; padding: 12px 14px;
-  background: #0b1020;
-}
-.stage-panel:fullscreen .views-grid { flex: 1; min-height: 0; align-items: stretch; }
-.stage-panel:fullscreen .view-block { display: flex; flex-direction: column; min-height: 0; }
-.stage-panel:fullscreen .canvas-wrap { flex: 1; height: auto; min-height: 0; }
-.stage-panel.fs-fallback {
-  position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 60;
-  display: flex; flex-direction: column; border-radius: 0; margin: 0;
-  overflow-y: auto; -webkit-overflow-scrolling: touch;
-}
-.stage-panel.fs-fallback .views-grid { flex: 1; min-height: 0; align-items: stretch; }
-.stage-panel.fs-fallback .view-block { display: flex; flex-direction: column; min-height: 0; }
-.stage-panel.fs-fallback .canvas-wrap { flex: 1; height: auto; min-height: 200px; }
-@supports (aspect-ratio: 1 / 1) {
-  .stage-panel:fullscreen .canvas-wrap, .stage-panel.fs-fallback .canvas-wrap { aspect-ratio: auto; }
-}
-/* Sur mobile en plein écran, on N'étire PAS la scène (leçon de l'épisode 3) :
-   on empile normalement, chaque vue garde une belle hauteur, la page défile. */
-@media (max-width: 640px) {
-  .stage-panel:fullscreen .views-grid,
-  .stage-panel.fs-fallback .views-grid { flex: none; }
-  .stage-panel:fullscreen .view-block,
-  .stage-panel.fs-fallback .view-block { display: block; }
-  .stage-panel:fullscreen .canvas-wrap,
-  .stage-panel.fs-fallback .canvas-wrap { flex: none; }
-  .stage-panel:fullscreen .canvas-wrap,
-  .stage-panel.fs-fallback .canvas-wrap { max-height: none; }
-  .stage-panel:fullscreen .ratio-garden,
-  .stage-panel.fs-fallback .ratio-garden { height: min(72vw, 46vh); }
-  .stage-panel:fullscreen .ratio-space,
-  .stage-panel.fs-fallback .ratio-space { height: min(88vw, 52vh); }
-  @supports (aspect-ratio: 1 / 1) {
-    .stage-panel:fullscreen .ratio-garden, .stage-panel.fs-fallback .ratio-garden,
-    .stage-panel:fullscreen .ratio-space, .stage-panel.fs-fallback .ratio-space { aspect-ratio: auto; }
-  }
-}
-
 /* ---------- petits écrans ---------- */
 
 /* sous 640 px : les deux vues s'empilent (jardin d'abord), rien ne recouvre les canvas */

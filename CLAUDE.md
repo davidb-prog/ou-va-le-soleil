@@ -86,7 +86,7 @@ jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
   va nulle part ! », jeu « Fais tourner la Terre ! » (deux mini-vues répliquées), pont vers
   l'épisode 3, note aux parents repliable
 - `css/style.css` — thème sombre de la série ; bascule mobile ≤ 640 px (aucune incrustation ne
-  recouvre les canvas à 390 px : tout descend sous le visuel) ; repli plein écran `.fs-fallback`
+  recouvre les canvas à 390 px : tout descend sous le visuel)
 - `js/model.js` — modèle pur : constantes, hauteur/azimut du soleil, ombres (longueur,
   direction), angle de rotation de la Terre, jalons et interpolation des couleurs du ciel,
   étoiles, scénarios et textes, défis du jeu (`DEFIS`, `defiReussi`, `hourDist`), heures
@@ -99,7 +99,7 @@ jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
   toi » + marqueur sarcelle « les enfants de l'autre côté », flèche du sens de rotation ;
   option `{ mini: true }` (le jeu) : mêmes dessins sans les étiquettes de texte
 - `js/main.js` — boucle d'animation, curseur, lecture auto (un tour en 90 s), glissers et taps
-  sur les deux canvas, scénarios en douceur, plein écran (natif + repli iOS), note aux parents,
+  sur les deux canvas, scénarios en douceur, note aux parents,
   jeu des défis (mini-vues, `nextDefi`/`winDefi`/`checkDefi`), conteur repris de l'épisode 3
   (score des voix françaises, menu de voix, clé localStorage `ltt-voice` partagée entre
   épisodes — même origine github.io) qui lit la boîte-révélation, la version sonore des
@@ -113,8 +113,8 @@ Suite Playwright maintenue dans le scratchpad des sessions (`test-site.cjs`) : d
 mobile 390 px, zéro erreur console, captures d'écran **regardées vraiment** aux heures clés
 (6 h, 12 h, 18 h, minuit), sondes de pixels (`getImageData`) pour la géométrie jour/nuit de la
 vue espace et les couleurs du ciel, glissers, tap-pause, scénarios, le jeu complet (défi raté
-hors fenêtre, gagné après la tempo, « Encore une ! », glisser sur les mini-vues), plein écran
-natif **et** repli `.fs-fallback`, `prefers-reduced-motion`. Lancer le serveur avant chaque run :
+hors fenêtre, gagné après la tempo, « Encore une ! », glisser sur les mini-vues),
+`prefers-reduced-motion`. Lancer le serveur avant chaque run :
 `python3 -m http.server 8123`. Playwright est installé en global :
 `NODE_PATH=/opt/node22/lib/node_modules node test-site.cjs` ; `chromium.launch()` avec repli
 `executablePath: '/opt/pw-browsers/chromium'` ; faire défiler l'élément dans le viewport avant
