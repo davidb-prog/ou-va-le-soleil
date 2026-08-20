@@ -125,7 +125,19 @@ navigateur (bien moins robotique). Règles dures :
 - **Le site reste 100 % statique** : les fichiers sont générés HORS site par
   `tools/build-voix.mjs` (Node ≥ 18, zéro dépendance, clé `ELEVENLABS_API_KEY` +
   `ELEVENLABS_VOICE_ID` en variables d'environnement — jamais commitées, jamais côté site).
-  Modèle `eleven_multilingual_v2`, plan Starter (licence commerciale, pas d'attribution).
+  Modèle `eleven_multilingual_v2`, sortie 64 kb/s (de la parole — sobre), plan Starter
+  (licence commerciale, pas d'attribution).
+- **La clé API vit sur la machine de David** (`~/.zshrc`), JAMAIS dans un cloud environment
+  (pas de magasin de secrets, valeurs lisibles, et `api.elevenlabs.io` bloqué par le réseau
+  Trusted — vérifié). Clé utilisateur dédiée `petit-labo-tts`, scope restreint (Text-to-Speech
+  + lecture des voix, PAS d'édition/suppression de voix ni d'accès User), plafond mensuel
+  `character_limit` ≈ un épisode × 5 (~15 000), expiration ≤ 30 jours, régénérée au prochain
+  épisode. La génération se fait en local (script direct ou session `claude` locale).
+- **Discipline de commit des mp3** (git ne delta-compresse pas l'audio : chaque
+  régénération commitée = un blob mort à vie) : les prises du choix de voix vont dans
+  `tools/essais/` (gitignoré) ; on itère librement dans l'arbre de travail (`--only`…) ;
+  `assets/audio/` ne se committe qu'UNE fois la prise validée par David à l'écoute —
+  un seul commit par épisode pour l'ensemble des segments. Pas de Git LFS (3 Mo).
 - **La voix enregistrée ne ment jamais** : `assets/audio/manifest.json` stocke le texte oral
   exact de chaque bloc ; le site ne joue un mp3 que si son texte correspond ENCORE au texte
   affiché (sinon repli synthèse), et `node test/voix.test.mjs` échoue si un texte a changé

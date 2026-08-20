@@ -21,6 +21,8 @@ import { fileURLToPath } from 'node:url';
 import { corpus, hashTexte } from './voix-lib.mjs';
 
 const MODELE = 'eleven_multilingual_v2';
+// de la parole : 64 kb/s suffisent largement (moitié du poids de 128)
+const FORMAT_SORTIE = 'mp3_44100_64';
 const REGLAGES_VOIX = { stability: 0.5, similarity_boost: 0.75, style: 0.3 };
 // la phrase-test du mode --essai : expressive, avec suspens et exclamation
 const PHRASE_ESSAI = 'Regarde bien : le Soleil, lui, n’a pas bougé d’un poil ! '
@@ -42,7 +44,7 @@ const voix = valeur('--voice') || process.env.ELEVENLABS_VOICE_ID || '';
 
 async function genererMp3(texte, voiceId) {
   const url = 'https://api.elevenlabs.io/v1/text-to-speech/' + voiceId
-    + '?output_format=mp3_44100_128';
+    + '?output_format=' + FORMAT_SORTIE;
   const rep = await fetch(url, {
     method: 'POST',
     headers: { 'xi-api-key': cle, 'content-type': 'application/json' },
@@ -144,6 +146,8 @@ for (const id of Object.keys(manifeste.blocs)) {
 }
 manifeste.voix = voix;
 manifeste.modele = MODELE;
+manifeste.format = FORMAT_SORTIE;
+manifeste.reglages = REGLAGES_VOIX;
 writeFileSync(cheminManifeste, JSON.stringify(manifeste, null, 2) + '\n');
 ecrirePageEcoute(blocs);
 console.log('\nManifeste écrit. Réécouter : servir le dépôt puis ouvrir /tools/ecoute.html');
