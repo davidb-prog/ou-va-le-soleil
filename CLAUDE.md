@@ -11,8 +11,6 @@ vues synchronisées sur la même heure.
 Les épisodes voisins font référence (identité visuelle, niveau d'exigence, conventions) :
 épisode 1 <https://github.com/davidb-prog/eclipse-explorer> (« La mécanique des éclipses »),
 épisode 3 <https://github.com/davidb-prog/la-terre-tourne> (« Quelle heure est-il là-bas ? »).
-Le pied de page de l'épisode 3 annonce cet épisode « en préparation » : penser à le mettre à
-jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
 
 ## Contraintes
 
