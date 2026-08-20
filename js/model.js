@@ -262,7 +262,7 @@ export const SCENARIOS = [
   {
     id: 'midi', emoji: '☀️', label: 'Midi pile', sub: '12 h — tout en haut', h: 12,
     jardin: 'Le soleil est au plus haut, plein sud. Les ombres sont toutes petites : elles se cachent sous tes pieds !',
-    espace: 'Ta maison est en plein milieu du côté jour, bien en face du Soleil. C’est pour ça qu’il est si haut dans ton ciel.',
+    espace: 'Ta maison est en plein milieu du côté jour, bien en face du Soleil. C’est pour ça qu’il est si haut dans le ciel.',
   },
   {
     id: 'coucher', emoji: '🌇', label: 'Le soleil se couche', sub: '18 h — bonne nuit ?', h: 18,
