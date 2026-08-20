@@ -227,10 +227,26 @@ function runScenario(scn) {
   renderStory(scn);
   activeScn = scn;
   tellScenario(); // la version sonore, si le parent l'a activée
-  // Sur mobile, les vues sont plus haut dans la page : on les ramène à l'écran
-  // pour que l'enfant VOIE le temps glisser (sur grand écran, rien ne bouge).
-  const vg = document.querySelector('.views-grid').getBoundingClientRect();
-  if (vg.bottom < 120 || vg.top > window.innerHeight - 120) {
+  // Les vues sont plus haut dans la page : on les ramène à l'écran pour que
+  // l'enfant VOIE le temps glisser. Vues empilées (mobile) : à CHAQUE appui,
+  // on cale le haut des vues sous le bord de l'écran — leurs hauteurs sont
+  // plafonnées en vh pour que jardin ET espace tiennent ensemble. Côte à côte
+  // (grand écran) : on ne bouge que si la scène est vraiment hors champ.
+  const grid = document.querySelector('.views-grid');
+  const vg = grid.getBoundingClientRect();
+  const blocks = grid.children;
+  const stacked = blocks.length > 1 &&
+    blocks[1].getBoundingClientRect().top >= blocks[0].getBoundingClientRect().bottom - 1;
+  if (stacked) {
+    const target = Math.max(0, window.scrollY + vg.top - 8);
+    if (Math.abs(window.scrollY - target) > 30) {
+      if (!reduceMotion && 'scrollBehavior' in document.documentElement.style) {
+        window.scrollTo({ top: target, behavior: 'smooth' });
+      } else {
+        window.scrollTo(0, target);
+      }
+    }
+  } else if (vg.bottom < 120 || vg.top > window.innerHeight - 120) {
     stagePanel.scrollIntoView(reduceMotion ? true : { behavior: 'smooth', block: 'start' });
   }
   const delta = wrap24(scn.h - sim.h);

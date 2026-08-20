@@ -121,6 +121,8 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
   pointer-events: none; opacity: 1; transition: opacity .4s;
 }
 .drag-hint.hide { opacity: 0; }
+/* le display explicite ci-dessus l'emporterait sur l'attribut hidden */
+.drag-hint[hidden] { display: none; }
 
 /* ---------- le grand curseur du temps ---------- */
 
@@ -342,6 +344,8 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .stage-panel.fs-fallback .view-block { display: block; }
   .stage-panel:fullscreen .canvas-wrap,
   .stage-panel.fs-fallback .canvas-wrap { flex: none; }
+  .stage-panel:fullscreen .canvas-wrap,
+  .stage-panel.fs-fallback .canvas-wrap { max-height: none; }
   .stage-panel:fullscreen .ratio-garden,
   .stage-panel.fs-fallback .ratio-garden { height: min(72vw, 46vh); }
   .stage-panel:fullscreen .ratio-space,
@@ -365,10 +369,13 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   body { background-attachment: scroll; }
 
   .views-grid { grid-template-columns: 1fr; }
-  .ratio-garden { aspect-ratio: 4 / 3; }
+  /* les deux vues, plafonnées en hauteur d'écran : après un appui-scénario,
+     jardin ET espace tiennent ensemble dans le viewport d'un téléphone */
+  .ratio-garden { aspect-ratio: 16 / 10; max-height: 34vh; }
+  .ratio-space { max-height: 40vh; }
   @supports not (aspect-ratio: 1 / 1) {
-    .ratio-garden { height: min(68vw, 420px); }
-    .ratio-space { height: min(88vw, 420px); }
+    .ratio-garden { height: min(55vw, 34vh); }
+    .ratio-space { height: min(88vw, 40vh); }
   }
   .drag-hint { font-size: .8rem; }
 
