@@ -244,10 +244,10 @@ check('quatre défis : lever, midi, coucher… et le grand jour de l’autre cô
 }
 check('chaque défi est atteignable : réussi pile sur sa cible',
   DEFIS.every((d) => defiReussi(d, d.h)));
-check('la fenêtre de réussite fait ±30 min, pas plus',
-  DEFI_WINDOW_H === 0.5 &&
-  DEFIS.every((d) => defiReussi(d, d.h + 0.5) && defiReussi(d, d.h - 0.5) &&
-    !defiReussi(d, d.h + 0.6) && !defiReussi(d, d.h - 0.6)));
+check('la fenêtre de réussite fait ±45 min, pas plus',
+  DEFI_WINDOW_H === 0.75 &&
+  DEFIS.every((d) => defiReussi(d, d.h + 0.75) && defiReussi(d, d.h - 0.75) &&
+    !defiReussi(d, d.h + 0.9) && !defiReussi(d, d.h - 0.9)));
 {
   let ok = true;
   for (const a of DEFIS) {
@@ -265,7 +265,7 @@ check('le défi-vedette dit la vérité : à sa cible, zénith chez eux, nuit no
 check('la petite tempo anti « gagné en passant » est courte mais réelle',
   DEFI_DWELL_MS >= 200 && DEFI_DWELL_MS <= 1000);
 check('hystérésis du bravo : la fenêtre de sortie est plus large que celle d’entrée',
-  DEFI_EXIT_WINDOW_H > DEFI_WINDOW_H && DEFI_EXIT_WINDOW_H <= 1);
+  DEFI_EXIT_WINDOW_H > DEFI_WINDOW_H && DEFI_EXIT_WINDOW_H <= 1.5);
 {
   let ok = true;
   for (const a of DEFIS) {

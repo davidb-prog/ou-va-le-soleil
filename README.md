@@ -58,12 +58,12 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
   ⭐ *fais briller le grand jour chez les enfants de l'autre côté* — il faut plonger sa propre
   maison dans la nuit !), et l'enfant le **fabrique** en faisant tourner le temps du doigt sur
   deux mini-vues répliquées (jardin + espace, toujours synchronisées sur la même heure — la
-  vue espace en version « pure image », sans étiquettes). Fenêtre de réussite ±30 min, petite
-  tempo anti « gagné en passant », « ⭐ Bravo ! » raconté sur les deux regards, bouton
-  « Encore une ! ». À la victoire, **recalage doux** de l'heure pile sur le moment (annulé
-  par tout glisser — rien n'est jamais verrouillé), et le **bravo ne ment jamais** : si on
-  remporte la Terre ailleurs, il se range (avec une fenêtre de sortie ±45 min, pour ne pas
-  clignoter au bord) et revient quand on re-fabrique le moment. Le conteur (bouton 🔇/🔊) lit
+  vue espace en version « pure image », sans étiquettes). Fenêtre de réussite ±45 min (large,
+  pour des doigts de 5 ans), petite tempo anti « gagné en passant », « ⭐ Bravo ! » raconté
+  sur les deux regards, bouton « Encore une ! ». À la victoire, **recalage doux** de l'heure
+  pile sur le moment (annulé par tout glisser — rien n'est jamais verrouillé), et le **bravo
+  ne ment jamais** : si on remporte la Terre ailleurs, il se range (avec une fenêtre de sortie
+  ±1 h 15, pour ne pas clignoter au bord) et revient quand on re-fabrique le moment. Le conteur (bouton 🔇/🔊) lit
   consignes et bravos ; les défis vivent dans le modèle pur et sont testés (tous atteignables,
   fenêtres jamais chevauchées).
 - **La boîte « Le Soleil ne va nulle part ! »** : la grande révélation en cinq petits
