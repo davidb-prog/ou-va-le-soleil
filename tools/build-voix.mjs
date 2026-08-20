@@ -18,7 +18,7 @@
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { corpus, hashTexte } from './voix-lib.mjs';
+import { corpus, empreinteBloc } from './voix-lib.mjs';
 
 const MODELE = 'eleven_multilingual_v2';
 // de la parole : 64 kb/s suffisent largement (moitié du poids de 128)
@@ -45,13 +45,17 @@ const cle = process.env.ELEVENLABS_API_KEY || '';
 // retenue dans le manifeste (pratique pour les retouches --only)
 const voix = valeur('--voice') || process.env.ELEVENLABS_VOICE_ID || manifeste.voix || '';
 
-async function genererMp3(texte, voiceId) {
+async function genererMp3(texte, voiceId, precedent) {
   const url = 'https://api.elevenlabs.io/v1/text-to-speech/' + voiceId
     + '?output_format=' + FORMAT_SORTIE;
+  const corps = { text: texte, model_id: MODELE, voice_settings: REGLAGES_VOIX };
+  // le contexte de prosodie des fragments (« …et fabrique… ») : influence le
+  // ton sans être prononcé
+  if (precedent) corps.previous_text = precedent;
   const rep = await fetch(url, {
     method: 'POST',
     headers: { 'xi-api-key': cle, 'content-type': 'application/json' },
-    body: JSON.stringify({ text: texte, model_id: MODELE, voice_settings: REGLAGES_VOIX }),
+    body: JSON.stringify(corps),
   });
   if (!rep.ok) {
     throw new Error('ElevenLabs ' + rep.status + ' : ' + (await rep.text()).slice(0, 300));
@@ -109,7 +113,7 @@ let total = 0;
 for (const b of blocs) {
   total += b.texte.length;
   const connu = manifeste.blocs[b.id];
-  const aJour = connu && connu.hash === hashTexte(b.texte)
+  const aJour = connu && connu.hash === empreinteBloc(b)
     && existsSync(dossierAudio + b.id + '.mp3') && manifeste.voix === voix;
   const force = seulement === b.id;
   if (seulement && !force) continue;
@@ -137,9 +141,9 @@ if (!cle || !voix) {
 mkdirSync(dossierAudio, { recursive: true });
 for (const b of aFaire) {
   process.stdout.write(b.id + ' … ');
-  const mp3 = await genererMp3(b.texte, voix);
+  const mp3 = await genererMp3(b.texte, voix, b.precedent);
   writeFileSync(dossierAudio + b.id + '.mp3', mp3);
-  manifeste.blocs[b.id] = { texte: b.texte, hash: hashTexte(b.texte), fichier: b.id + '.mp3' };
+  manifeste.blocs[b.id] = { texte: b.texte, hash: empreinteBloc(b), fichier: b.id + '.mp3' };
   console.log('ok (' + Math.round(mp3.length / 1024) + ' ko)');
 }
 // les blocs disparus du site ne doivent pas hanter le manifeste

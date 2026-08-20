@@ -224,7 +224,7 @@ export const DEFIS = [
   },
   {
     id: 'midi', emoji: '☀️', h: 12,
-    consigne: 'midi ! Mets le soleil au plus haut du ciel.',
+    consigne: 'midi, le milieu du jour ! Mets le soleil au plus haut du ciel.',
     bravo: 'Bravo ! Le soleil est au plus haut, plein sud — et les ombres sont si petites qu’elles se cachent sous les pieds !',
   },
   {

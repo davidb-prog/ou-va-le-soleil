@@ -4,7 +4,7 @@
 // doit JAMAIS dire autre chose que ce que le site affiche.
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { corpus, hashTexte } from '../tools/voix-lib.mjs';
+import { corpus, empreinteBloc } from '../tools/voix-lib.mjs';
 import { texteOral, EMOJI_RE, VOIX_TRANSITIONS } from '../js/model.js';
 
 let failed = 0;
@@ -48,6 +48,9 @@ check('les transitions du conteur sont dans le corpus',
 check('le défi-vedette a sa consigne et son bravo',
   blocs.some((b) => b.id === 'defi-autre-cote-consigne') &&
   blocs.some((b) => b.id === 'defi-autre-cote-bravo'));
+check('chaque consigne porte son amorce de prosodie (« …et fabrique… »)',
+  blocs.filter((b) => b.id.endsWith('-consigne'))
+    .every((b) => b.precedent && b.precedent.indexOf('fabrique') !== -1));
 // EMOJI_RE porte le drapeau /g (stateful avec .test) : on le clone sans
 const emojiUne = new RegExp(EMOJI_RE.source, 'u');
 check('aucun émoji dans les textes oraux',
@@ -70,14 +73,14 @@ if (enregistres.length === 0) {
   check('chaque bloc du corpus a son fichier enregistré',
     blocs.every((b) => manifeste.blocs[b.id]),
     blocs.filter((b) => !manifeste.blocs[b.id]).map((b) => b.id).join(', '));
-  check('chaque fichier dit ENCORE le texte du site (texte et hash à jour)',
+  check('chaque fichier dit ENCORE le texte du site (texte et empreinte à jour)',
     blocs.every((b) => {
       const m = manifeste.blocs[b.id];
-      return m && m.texte === b.texte && m.hash === hashTexte(b.texte);
+      return m && m.texte === b.texte && m.hash === empreinteBloc(b);
     }),
     blocs.filter((b) => {
       const m = manifeste.blocs[b.id];
-      return !m || m.texte !== b.texte || m.hash !== hashTexte(b.texte);
+      return !m || m.texte !== b.texte || m.hash !== empreinteBloc(b);
     }).map((b) => b.id).join(', '));
   check('aucun bloc fantôme dans le manifeste',
     enregistres.every((id) => blocs.some((b) => b.id === id)));
