@@ -10,7 +10,7 @@ import {
   shadowDirX, SUN_DIR, earthAngle, houseFacesSun, antipodeHours,
   SKY_NIGHT, SKY_DAWN, SKY_DAY, SKY_DUSK, SKY_KEYFRAMES, hexToRgb, mixRgb,
   skyStopsRgb, skyStops, skyPhase, starAlpha, formatHM, periodWord, SCENARIOS,
-  DEFIS, DEFI_WINDOW_H, DEFI_DWELL_MS, hourDist, defiReussi,
+  DEFIS, DEFI_WINDOW_H, DEFI_EXIT_WINDOW_H, DEFI_DWELL_MS, hourDist, defiReussi,
 } from '../js/model.js';
 
 let failed = 0;
@@ -244,10 +244,10 @@ check('quatre défis : lever, midi, coucher… et le grand jour de l’autre cô
 }
 check('chaque défi est atteignable : réussi pile sur sa cible',
   DEFIS.every((d) => defiReussi(d, d.h)));
-check('la fenêtre de réussite fait ±30 min, pas plus',
-  DEFI_WINDOW_H === 0.5 &&
-  DEFIS.every((d) => defiReussi(d, d.h + 0.5) && defiReussi(d, d.h - 0.5) &&
-    !defiReussi(d, d.h + 0.6) && !defiReussi(d, d.h - 0.6)));
+check('la fenêtre de réussite fait ±45 min, pas plus',
+  DEFI_WINDOW_H === 0.75 &&
+  DEFIS.every((d) => defiReussi(d, d.h + 0.75) && defiReussi(d, d.h - 0.75) &&
+    !defiReussi(d, d.h + 0.9) && !defiReussi(d, d.h - 0.9)));
 {
   let ok = true;
   for (const a of DEFIS) {
@@ -264,6 +264,17 @@ check('le défi-vedette dit la vérité : à sa cible, zénith chez eux, nuit no
   approx(sunAltitude(antipodeHours(DEFIS[3].h)), 1) && approx(sunAltitude(DEFIS[3].h), -1));
 check('la petite tempo anti « gagné en passant » est courte mais réelle',
   DEFI_DWELL_MS >= 200 && DEFI_DWELL_MS <= 1000);
+check('hystérésis du bravo : la fenêtre de sortie est plus large que celle d’entrée',
+  DEFI_EXIT_WINDOW_H > DEFI_WINDOW_H && DEFI_EXIT_WINDOW_H <= 1.5);
+{
+  let ok = true;
+  for (const a of DEFIS) {
+    for (const b of DEFIS) {
+      if (a !== b && hourDist(a.h, b.h) <= 2 * DEFI_EXIT_WINDOW_H) ok = false;
+    }
+  }
+  check('même les fenêtres de sortie ne se chevauchent jamais entre défis', ok);
+}
 check('apostrophes typographiques « ’ » dans les textes du jeu (jamais le « \' » droit)',
   DEFIS.every((d) => (d.consigne + d.bravo).indexOf("'") === -1));
 

@@ -4,7 +4,8 @@
 // du site : le même moment, deux regards.
 
 import { TAU, wrap24, formatHM, periodWord, skyPhase, earthAngle,
-         SPIN_HOURS_PER_SEC, SCENARIOS, DEFIS, defiReussi, DEFI_DWELL_MS } from './model.js';
+         SPIN_HOURS_PER_SEC, SCENARIOS, DEFIS, defiReussi, hourDist,
+         DEFI_DWELL_MS, DEFI_EXIT_WINDOW_H } from './model.js';
 import { GardenView } from './garden.js';
 import { SpaceView } from './space.js';
 
@@ -106,7 +107,10 @@ function wireTimeDrag(canvas, hoursPerPixel) {
       unlocked = true;
       stopAuto();
     }
-    if (unlocked) sim.h = wrap24(sim.h + dx * hoursPerPixel());
+    if (unlocked) {
+      sim.tween = null; // un recalage en cours cède aussitôt la main au doigt
+      sim.h = wrap24(sim.h + dx * hoursPerPixel());
+    }
     lastX = e.clientX;
   });
   const release = (e) => {
@@ -541,7 +545,8 @@ wireTimeDrag(gameSpaceC, () => {
 let defi = null;        // le défi en cours (null : jeu fermé)
 let defiIndex = -1;
 let defiEnterMs = null; // entrée dans la fenêtre (tempo anti « gagné en passant »)
-let defiGagne = false;
+let defiGagne = false;  // gagné au moins une fois — « Encore une ! » est acquis
+let bravoVisible = false;
 
 // le même conteur (et le même bouton 🔇/🔊) que les scénarios
 function tellDefi(text) {
@@ -556,6 +561,7 @@ function nextDefi() {
   }
   defi = DEFIS[defiIndex];
   defiGagne = false;
+  bravoVisible = false;
   defiEnterMs = null;
   $('game-defi').textContent = defi.emoji + ' ' + defi.consigne;
   $('game-bravo').hidden = true;
@@ -563,23 +569,48 @@ function nextDefi() {
   tellDefi(defi.consigne);
 }
 
-function winDefi() {
+function winDefi(ms) {
+  const premiere = !defiGagne;
   defiGagne = true;
+  bravoVisible = true;
   const bravo = $('game-bravo');
   bravo.textContent = '⭐ ' + defi.bravo;
   bravo.hidden = false;
   $('btn-encore').hidden = false;
-  tellDefi(defi.bravo);
+  if (premiere) {
+    tellDefi(defi.bravo);
+    // Le recalage doux : le temps glisse jusqu'au moment PILE (par le chemin
+    // court — on est à moins de 30 min), pour afficher le bravo sur l'image
+    // parfaite. Rien n'est verrouillé : un glisser annule le tween aussitôt.
+    // À la première victoire seulement — les allers-retours suivants dans la
+    // fenêtre ne jouent pas à l'aimant.
+    const delta = wrap24(defi.h - sim.h + 12) - 12;
+    if (reduceMotion || Math.abs(delta) < 0.005) {
+      sim.h = defi.h;
+    } else {
+      sim.tween = { from: sim.h, delta: delta, target: defi.h, start: ms, dur: 450 };
+    }
+  }
 }
 
 // La vérification vit dans la boucle : gagné quand l'heure RESTE un petit
 // instant dans la fenêtre — glisser, curseur ou lecture auto, peu importe
-// comment l'enfant y arrive.
+// comment l'enfant y arrive. Et le bravo ne MENT jamais : si l'enfant
+// remporte la Terre ailleurs, il se range (la consigne est toujours là) ;
+// re-fabriquer le moment le fait revenir, sans relire la voix.
 function checkDefi(ms) {
-  if (!defi || defiGagne || gameZone.hidden) return;
+  if (!defi || gameZone.hidden) return;
+  if (bravoVisible) {
+    if (hourDist(sim.h, defi.h) > DEFI_EXIT_WINDOW_H) {
+      bravoVisible = false;
+      defiEnterMs = null;
+      $('game-bravo').hidden = true;
+    }
+    return;
+  }
   if (defiReussi(defi, sim.h)) {
     if (defiEnterMs === null) defiEnterMs = ms;
-    else if (ms - defiEnterMs >= DEFI_DWELL_MS) winDefi();
+    else if (ms - defiEnterMs >= DEFI_DWELL_MS) winDefi(ms);
   } else {
     defiEnterMs = null;
   }
