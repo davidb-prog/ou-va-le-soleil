@@ -126,11 +126,64 @@ wireTimeDrag($('garden-view'), () => {
   const w = Math.max(60, $('garden-view').clientWidth - 84);
   return 12 / w;
 });
-wireTimeDrag($('space-view'), () => {
-  // un rayon de Terre sous le doigt ≈ 3 h 49 (même toucher que l'épisode 3)
-  const R = space.layout ? space.layout.R : 120;
-  return 24 / TAU / R;
-});
+
+// ---- glisser ROTATIF sur les vues espace (repris de la vue du pôle de
+// l'épisode 3) : on attrape le disque et l'angle du doigt autour du centre
+// de la Terre devient le temps — un cercle du doigt fait vraiment tourner la
+// Terre, dans le sens du geste (un glisser en ligne droite marche aussi :
+// c'est un bout d'arc). Petit tap = pause, comme partout. ----
+
+const wrapPi = (a) => ((a + Math.PI) % TAU + TAU) % TAU - Math.PI;
+
+function wireRotaryDrag(canvas, view) {
+  let dragging = false, lastA = null, lastX = 0, lastY = 0, moved = 0, downT = 0, unlocked = false;
+  const angleAt = (e) => {
+    const l = view.layout;
+    if (!l) return null;
+    const rect = canvas.getBoundingClientRect();
+    const dx = (e.clientX - rect.left) - l.cx;
+    const dy = l.cy - (e.clientY - rect.top); // y vers le haut : sens trigonométrique
+    // trop près du centre, l'angle s'affole : on ignore ces positions
+    if (dx * dx + dy * dy < 0.18 * 0.18 * l.R * l.R) return null;
+    return Math.atan2(dy, dx);
+  };
+  canvas.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    unlocked = false;
+    lastA = angleAt(e);
+    lastX = e.clientX; lastY = e.clientY; moved = 0; downT = performance.now();
+    if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
+    hideHint();
+    e.preventDefault();
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    moved += Math.abs(e.clientX - lastX) + Math.abs(e.clientY - lastY);
+    lastX = e.clientX; lastY = e.clientY;
+    const a = angleAt(e);
+    if (!unlocked) {
+      if (moved > 8) { unlocked = true; stopAuto(); }
+      lastA = a;
+      return;
+    }
+    if (a === null || lastA === null) { lastA = a; return; }
+    const dA = wrapPi(a - lastA);
+    if (dA) {
+      sim.tween = null; // un recalage en cours cède aussitôt la main au doigt
+      sim.h = wrap24(sim.h + dA / TAU * 24);
+    }
+    lastA = a;
+  });
+  const release = () => {
+    if (dragging && moved <= 6 && performance.now() - downT < 600) toggleSpin();
+    dragging = false;
+    lastA = null;
+  };
+  canvas.addEventListener('pointerup', release);
+  canvas.addEventListener('pointercancel', () => { dragging = false; lastA = null; });
+}
+
+wireRotaryDrag($('space-view'), space);
 
 const stagePanel = $('stage-panel');
 
@@ -537,10 +590,7 @@ wireTimeDrag(gameGardenC, () => {
   const w = Math.max(60, gameGardenC.clientWidth - 84);
   return 12 / w;
 });
-wireTimeDrag(gameSpaceC, () => {
-  const R = gameSpace.layout ? gameSpace.layout.R : 120;
-  return 24 / TAU / R;
-});
+wireRotaryDrag(gameSpaceC, gameSpace);
 
 let defi = null;        // le défi en cours (null : jeu fermé)
 let defiIndex = -1;
@@ -631,6 +681,22 @@ jouerBtn.addEventListener('click', () => {
   nextDefi();
 });
 $('btn-encore').addEventListener('click', nextDefi);
+
+// ---- la boîte « Le Soleil ne va nulle part ! » : repliée sur mobile pour
+// raccourcir la page (le résumé n'apparaît qu'en ≤ 640 px), toujours ouverte
+// sur ordinateur — même si un clavier joue avec le résumé masqué. Mécanique
+// reprise de l'épisode 3. ----
+
+const explainFold = $('explain-fold');
+const mqMobile = window.matchMedia('(max-width: 640px)');
+function syncExplainFold() {
+  if (mqMobile.matches) return; // sur mobile, l'enfant plie et déplie librement
+  explainFold.open = true;
+}
+if (mqMobile.matches) explainFold.open = false; // au chargement : repliée
+explainFold.addEventListener('toggle', syncExplainFold);
+if (mqMobile.addEventListener) mqMobile.addEventListener('change', syncExplainFold);
+else if (mqMobile.addListener) mqMobile.addListener(syncExplainFold); // vieux Safari
 
 renderInvite();
 setPlaying(sim.playing);

@@ -39,9 +39,10 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 - **Grand curseur 0–24 h** dont la piste raconte la journée, heure affichée en gros
   (« Chez toi, il est 12 h 00 — midi ! »). Le temps passe tout seul (un tour de Terre en
   90 s) ; **pause d'un petit tap** sur une vue, bouton lecture/pause, **espace = pause**.
-- **Glisser horizontalement sur l'une ou l'autre vue fait tourner le temps** : sur le jardin,
-  on suit le soleil du doigt (toute la largeur = la journée) ; sur l'espace, on fait tourner
-  la Terre elle-même.
+- **Glisser sur l'une ou l'autre vue fait tourner le temps** : sur le jardin, on suit le
+  soleil du doigt (toute la largeur = la journée) ; sur l'espace, glisser **rotatif** — on
+  attrape le disque et l'angle du doigt autour du centre fait tourner la Terre (un cercle du
+  doigt = un tour complet, même geste que la vue du pôle de « Quelle heure est-il là-bas ? »).
 - **Quatre boutons-scénarios** : 🌅 *Le soleil se lève* (6 h), ☀️ *Midi pile* (12 h), 🌇 *Le
   soleil se couche* (18 h), 🌙 *Minuit, tu dors* (0 h). Le temps glisse en douceur — **toujours
   vers l'avant, le vrai sens de la Terre** — puis une micro-histoire raconte le même instant
@@ -79,10 +80,11 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 - **Mise en page mobile dédiée** : sous 640 px les vues s'empilent, plafonnées en hauteur
   d'écran pour tenir ensemble dans le viewport, rien ne recouvre jamais les canvas, l'en-tête
   se fait tout petit (le jardin se voit dès le premier écran), les boutons font au moins 44 px.
-  Les canvas laissent passer le défilement vertical (`touch-action: pan-y`) : glisser
-  horizontalement fait tourner le temps, balayer verticalement fait défiler la page. Appuyer
-  sur un scénario ramène doucement les vues à l'écran. En pause, plus aucun redessin
-  (batterie).
+  Le geste posé sur une vue appartient toujours au glisser du temps (`touch-action: none`,
+  comme « Pourquoi la Lune change de forme ? ») — un doigt un peu de travers ne part jamais
+  en défilement, et les vues plafonnées laissent de la page autour pour défiler. La grande
+  histoire se replie derrière son titre (comme la note aux parents). Appuyer sur un scénario
+  ramène doucement les vues à l'écran. En pause, plus aucun redessin (batterie).
 - Accessible : aria-labels descriptifs sur les deux canvas, `prefers-reduced-motion` respecté
   (rien ne bouge tout seul, les scénarios sautent sans animation), curseur au clavier.
 
