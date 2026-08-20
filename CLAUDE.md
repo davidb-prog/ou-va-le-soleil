@@ -74,7 +74,11 @@ jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
   `DEFI_WINDOW_H`, tempo `DEFI_DWELL_MS` anti « gagné en passant ») — le dernier défi est la
   révélation à l'envers : grand jour chez les enfants de l'autre côté = minuit chez soi.
   Ouvrir le jeu met en pause (rien ne doit gagner tout seul) ; le conteur 🔇/🔊 des scénarios
-  lit aussi consignes et bravos.
+  lit aussi consignes et bravos (à la première victoire seulement). **Le bravo ne ment
+  jamais** : à la victoire, recalage doux de l'heure pile sur la cible (annulé par tout
+  glisser — rien n'est jamais verrouillé) ; si l'enfant remporte la Terre hors de la fenêtre
+  de sortie (`DEFI_EXIT_WINDOW_H`, ±45 min — hystérésis anti-clignotement), le bravo se range
+  et revient s'il re-fabrique le moment ; « Encore une ! » reste acquis.
 - Rien ne recouvre jamais les canvas (la bulle « glisse ici » vit SOUS le jardin) ; en pause,
   aucun redessin (garde « même heure + mêmes tailles » dans la boucle rAF — batterie).
 

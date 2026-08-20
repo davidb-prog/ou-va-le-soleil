@@ -206,6 +206,10 @@ export const DEFI_WINDOW_H = 0.5;
 // Il faut RESTER un instant sur le bon moment : un grand coup de glisser qui
 // traverse la fenêtre ne gagne pas « en passant ».
 export const DEFI_DWELL_MS = 350;
+// Honnêteté du bravo : il ne reste affiché que tant que le moment est encore
+// à l'écran. On ne le retire qu'en sortant d'une fenêtre un peu plus large
+// que celle d'entrée — l'hystérésis évite le clignotement au bord.
+export const DEFI_EXIT_WINDOW_H = 0.75;
 
 // Le dernier défi est la révélation du site transformée en action : pour
 // faire briller le grand jour chez les enfants de l'autre côté, l'enfant
