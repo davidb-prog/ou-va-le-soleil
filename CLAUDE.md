@@ -22,7 +22,9 @@ jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
 - **Compat mobiles anciens** : pas d'optional chaining `?.` ni de nullish `??` ; pas de
   lookbehind dans les regex ; repli `@supports` pour `aspect-ratio` ; `top/right/bottom/left`
   plutôt que `inset` ; préfixer `-webkit-backdrop-filter` et `-webkit-transform` ;
-  `touch-action: none` sur les canvas interactifs ; tester à 390 px de large.
+  `touch-action: pan-y` sur les canvas interactifs (le geste du site est horizontal — un
+  balayage vertical doit continuer de faire défiler la page, jamais la coincer) ; tester à
+  390 px de large.
 - `js/model.js` est **pur** (aucun accès DOM) et doit le rester : il se teste avec
   `node test/model.test.mjs`. Toutes les constantes (heures de lever/coucher, couleurs de ciel,
   scénarios, géométrie ombre/soleil) vivent dedans — ne jamais les recopier ailleurs.
@@ -64,31 +66,45 @@ jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
   0–24 h reste le maître à bord.
 - Les boutons-scénarios (lever, midi, coucher, minuit) font tourner le temps **en douceur et
   toujours vers l'avant** (le vrai sens de la Terre), puis racontent la micro-histoire
-  jardin + espace.
+  jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran.
+- Le jeu « Fais tourner la Terre ! » (fin de page, replié derrière « Jouer ») : le site
+  demande un moment, l'enfant le **fabrique** en faisant tourner le temps sur deux mini-vues
+  répliquées (mêmes classes de vues, toujours synchronisées sur `sim.h` ; vue espace en mode
+  `mini` sans étiquettes). Défis dans `model.js` (`DEFIS`, `defiReussi`, fenêtre ±30 min
+  `DEFI_WINDOW_H`, tempo `DEFI_DWELL_MS` anti « gagné en passant ») — le dernier défi est la
+  révélation à l'envers : grand jour chez les enfants de l'autre côté = minuit chez soi.
+  Ouvrir le jeu met en pause (rien ne doit gagner tout seul) ; le conteur 🔇/🔊 des scénarios
+  lit aussi consignes et bravos.
+- Rien ne recouvre jamais les canvas (la bulle « glisse ici » vit SOUS le jardin) ; en pause,
+  aucun redessin (garde « même heure + mêmes tailles » dans la boucle rAF — batterie).
 
 ## Structure
 
 - `index.html` — page unique : en-tête (titre « Où va le Soleil la nuit ? », kicker
   « Petit labo d'astronomie — épisode 2 », refrain « … parce que la Terre tourne ! »), les deux
   vues synchronisées, grand curseur 0–24 h, boutons-scénarios + histoire, boîte « Le Soleil ne
-  va nulle part ! », pont vers l'épisode 3, note aux parents repliable
+  va nulle part ! », jeu « Fais tourner la Terre ! » (deux mini-vues répliquées), pont vers
+  l'épisode 3, note aux parents repliable
 - `css/style.css` — thème sombre de la série ; bascule mobile ≤ 640 px (aucune incrustation ne
-  recouvre les canvas à 390 px : tout descend sous le visuel) ; repli plein écran `.fs-fallback`
+  recouvre les canvas à 390 px : tout descend sous le visuel)
 - `js/model.js` — modèle pur : constantes, hauteur/azimut du soleil, ombres (longueur,
   direction), angle de rotation de la Terre, jalons et interpolation des couleurs du ciel,
-  étoiles, scénarios et textes, heures formatées
+  étoiles, scénarios et textes, défis du jeu (`DEFIS`, `defiReussi`, `hourDist`), heures
+  formatées
 - `js/garden.js` — vue « depuis ton jardin » (canvas) : décor maison + arbre + enfant, ciel
   continu, arc du soleil (trajectoire pointillée), lune opposée, étoiles, nuages, ombres qui
   s'allongent et tournent, repères est/sud/ouest
 - `js/space.js` — vue « depuis l'espace » (canvas) : la Terre vue de dessus du pôle Nord,
   Soleil **fixe** à droite avec ses rayons, moitié jour / moitié nuit, marqueur rose « chez
-  toi » + marqueur sarcelle « les enfants de l'autre côté », flèche du sens de rotation
+  toi » + marqueur sarcelle « les enfants de l'autre côté », flèche du sens de rotation ;
+  option `{ mini: true }` (le jeu) : mêmes dessins sans les étiquettes de texte
 - `js/main.js` — boucle d'animation, curseur, lecture auto (un tour en 90 s), glissers et taps
-  sur les deux canvas, scénarios en douceur, plein écran (natif + repli iOS), note aux parents,
-  conteur repris de l'épisode 3 (score des voix françaises, menu de voix, clé localStorage
-  `ltt-voice` partagée entre épisodes — même origine github.io) qui lit la boîte-révélation ET
-  la version sonore des scénarios (bouton 🔇/🔊 `btn-scn-voice` à côté du titre du jeu, clé
-  `ltt-scn-voice` partagée elle aussi avec l'épisode 3)
+  sur les deux canvas, scénarios en douceur, note aux parents,
+  jeu des défis (mini-vues, `nextDefi`/`winDefi`/`checkDefi`), conteur repris de l'épisode 3
+  (score des voix françaises, menu de voix, clé localStorage `ltt-voice` partagée entre
+  épisodes — même origine github.io) qui lit la boîte-révélation, la version sonore des
+  scénarios ET les consignes/bravos des défis (bouton 🔇/🔊 `btn-scn-voice` à côté du titre de
+  « Joue avec le temps », clé `ltt-scn-voice` partagée elle aussi avec l'épisode 3)
 - `test/model.test.mjs` — tests Node du modèle (zéro dépendance)
 
 ## Vérification navigateur
@@ -96,8 +112,9 @@ jour (dépôt `la-terre-tourne`) quand celui-ci sera fusionné et publié.
 Suite Playwright maintenue dans le scratchpad des sessions (`test-site.cjs`) : desktop +
 mobile 390 px, zéro erreur console, captures d'écran **regardées vraiment** aux heures clés
 (6 h, 12 h, 18 h, minuit), sondes de pixels (`getImageData`) pour la géométrie jour/nuit de la
-vue espace et les couleurs du ciel, glissers, tap-pause, scénarios, plein écran natif **et**
-repli `.fs-fallback`, `prefers-reduced-motion`. Lancer le serveur avant chaque run :
+vue espace et les couleurs du ciel, glissers, tap-pause, scénarios, le jeu complet (défi raté
+hors fenêtre, gagné après la tempo, « Encore une ! », glisser sur les mini-vues),
+`prefers-reduced-motion`. Lancer le serveur avant chaque run :
 `python3 -m http.server 8123`. Playwright est installé en global :
 `NODE_PATH=/opt/node22/lib/node_modules node test-site.cjs` ; `chromium.launch()` avec repli
 `executablePath: '/opt/pw-browsers/chromium'` ; faire défiler l'élément dans le viewport avant

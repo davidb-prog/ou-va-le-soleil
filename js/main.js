@@ -1,10 +1,10 @@
 // Câblage de l'interface : boucle d'animation, curseur du temps, glissers et
-// petits taps sur les deux vues, scénarios racontés, plein écran. Les deux
+// petits taps sur les deux vues, scénarios racontés, jeu des défis. Les deux
 // vues sont TOUJOURS synchronisées sur la même heure sim.h — c'est le cœur
 // du site : le même moment, deux regards.
 
 import { TAU, wrap24, formatHM, periodWord, skyPhase, earthAngle,
-         SPIN_HOURS_PER_SEC, SCENARIOS } from './model.js';
+         SPIN_HOURS_PER_SEC, SCENARIOS, DEFIS, defiReussi, DEFI_DWELL_MS } from './model.js';
 import { GardenView } from './garden.js';
 import { SpaceView } from './space.js';
 
@@ -29,7 +29,12 @@ let sliderHeld = false;
 function setPlaying(p) {
   sim.playing = p;
   const btn = $('btn-spin');
-  btn.textContent = p ? '⏸ Pause' : '▶ Le temps passe tout seul';
+  // libellé court et de largeur stable : sinon toute la ligne se remet en page
+  // à chaque appui (et déborde sur mobile)
+  btn.textContent = p ? '⏸ Pause' : '▶ Lecture';
+  btn.setAttribute('aria-label', p
+    ? 'Mettre en pause (le temps passe tout seul)'
+    : 'Relancer le temps qui passe tout seul');
   btn.setAttribute('aria-pressed', p ? 'true' : 'false');
 }
 
@@ -70,6 +75,9 @@ slider.addEventListener('pointerdown', () => { sliderHeld = true; });
 window.addEventListener('pointerup', () => { sliderHeld = false; });
 window.addEventListener('pointercancel', () => { sliderHeld = false; });
 
+// La bulle « glisse ici » vit SOUS le canvas (rien ne recouvre les vues). Au
+// premier geste — ou après 8 s — elle s'efface ET se replie d'un même
+// glissement (le CSS anime le repli) : jamais d'espace vide, jamais de saut.
 function hideHint() {
   const hint = $('drag-hint');
   if (hint) hint.classList.add('hide');
@@ -120,40 +128,7 @@ wireTimeDrag($('space-view'), () => {
   return 24 / TAU / R;
 });
 
-// ---- plein écran de la scène (API native, repli CSS pour iOS) ----
-
 const stagePanel = $('stage-panel');
-const fsBtn = $('fs-toggle');
-
-function setFsUi(active) {
-  fsBtn.textContent = active ? '✕ Quitter le plein écran' : '⛶ Plein écran';
-}
-fsBtn.addEventListener('click', () => {
-  if (document.fullscreenElement === stagePanel) { document.exitFullscreen(); return; }
-  if (stagePanel.classList.contains('fs-fallback')) {
-    stagePanel.classList.remove('fs-fallback');
-    setFsUi(false);
-    return;
-  }
-  if (stagePanel.requestFullscreen) {
-    const p = stagePanel.requestFullscreen();
-    if (p && p.then) {
-      p.then(null, () => { stagePanel.classList.add('fs-fallback'); setFsUi(true); });
-    }
-    return;
-  }
-  stagePanel.classList.add('fs-fallback');
-  setFsUi(true);
-});
-document.addEventListener('fullscreenchange', () => {
-  setFsUi(document.fullscreenElement === stagePanel);
-});
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && stagePanel.classList.contains('fs-fallback')) {
-    stagePanel.classList.remove('fs-fallback');
-    setFsUi(false);
-  }
-});
 
 // ---- les boutons-scénarios et leurs micro-histoires ----
 
@@ -215,6 +190,28 @@ function runScenario(scn) {
   renderStory(scn);
   activeScn = scn;
   tellScenario(); // la version sonore, si le parent l'a activée
+  // Les vues sont plus haut dans la page : on les ramène à l'écran pour que
+  // l'enfant VOIE le temps glisser. Vues empilées (mobile) : à CHAQUE appui,
+  // on cale le haut des vues sous le bord de l'écran — leurs hauteurs sont
+  // plafonnées en vh pour que jardin ET espace tiennent ensemble. Côte à côte
+  // (grand écran) : on ne bouge que si la scène est vraiment hors champ.
+  const grid = document.querySelector('.views-grid');
+  const vg = grid.getBoundingClientRect();
+  const blocks = grid.children;
+  const stacked = blocks.length > 1 &&
+    blocks[1].getBoundingClientRect().top >= blocks[0].getBoundingClientRect().bottom - 1;
+  if (stacked) {
+    const target = Math.max(0, window.scrollY + vg.top - 8);
+    if (Math.abs(window.scrollY - target) > 30) {
+      if (!reduceMotion && 'scrollBehavior' in document.documentElement.style) {
+        window.scrollTo({ top: target, behavior: 'smooth' });
+      } else {
+        window.scrollTo(0, target);
+      }
+    }
+  } else if (vg.bottom < 120 || vg.top > window.innerHeight - 120) {
+    stagePanel.scrollIntoView(reduceMotion ? true : { behavior: 'smooth', block: 'start' });
+  }
   const delta = wrap24(scn.h - sim.h);
   if (reduceMotion || delta < 0.02 || delta > 23.98) {
     sim.tween = null;
@@ -266,6 +263,16 @@ function updateTexts() {
 
 const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
+// On ne redessine que si quelque chose a changé (l'heure, ou la taille d'un
+// canvas — rotation d'écran, ouverture du jeu…) : en pause, zéro travail par frame,
+// la batterie du téléphone dit merci.
+const drawn = { h: -1, sizes: '' };
+function sizeKey() {
+  const g = $('garden-view'), s = $('space-view'), gz = $('game-zone');
+  return g.clientWidth + 'x' + g.clientHeight + '|' + s.clientWidth + 'x' + s.clientHeight +
+    '|' + (gz.hidden ? 'jeu-fermé' : $('game-garden').clientWidth);
+}
+
 let lastMs = performance.now();
 function frame(ms) {
   try {
@@ -279,9 +286,18 @@ function frame(ms) {
     } else if (sim.playing) {
       sim.h = wrap24(sim.h + SPIN_HOURS_PER_SEC * dt);
     }
-    garden.draw(sim.h);
-    space.draw(sim.h);
-    updateTexts();
+    const sizes = sizeKey();
+    if (sim.h !== drawn.h || sizes !== drawn.sizes) {
+      drawn.h = sim.h; drawn.sizes = sizes;
+      garden.draw(sim.h);
+      space.draw(sim.h);
+      if (!gameZone.hidden && gameGardenC.offsetWidth > 0) {
+        gameGarden.draw(sim.h);
+        gameSpace.draw(sim.h);
+      }
+      updateTexts();
+    }
+    checkDefi(ms);
   } finally {
     // la boucle survit à un raté de rendu ponctuel (canvas en cours de layout…)
     requestAnimationFrame(frame);
@@ -500,6 +516,90 @@ function tellScenario() {
     narrator.speak(spokenStory(activeScn));
   }
 }
+
+// ---- le jeu « Fais tourner la Terre ! » : le site demande un moment, l'enfant
+// le FABRIQUE en faisant tourner le temps. Les deux mini-vues sont les mêmes
+// vues que plus haut, synchronisées sur la même heure — le cœur du site,
+// jusque dans le jeu. ----
+
+const gameZone = $('game-zone');
+const gameGardenC = $('game-garden');
+const gameSpaceC = $('game-space');
+const gameGarden = new GardenView(gameGardenC);
+const gameSpace = new SpaceView(gameSpaceC, { mini: true });
+const jouerBtn = $('btn-jouer');
+
+wireTimeDrag(gameGardenC, () => {
+  const w = Math.max(60, gameGardenC.clientWidth - 84);
+  return 12 / w;
+});
+wireTimeDrag(gameSpaceC, () => {
+  const R = gameSpace.layout ? gameSpace.layout.R : 120;
+  return 24 / TAU / R;
+});
+
+let defi = null;        // le défi en cours (null : jeu fermé)
+let defiIndex = -1;
+let defiEnterMs = null; // entrée dans la fenêtre (tempo anti « gagné en passant »)
+let defiGagne = false;
+
+// le même conteur (et le même bouton 🔇/🔊) que les scénarios
+function tellDefi(text) {
+  if (narrator && scnVoiceOn) narrator.speak(sentenceChunks(text, true));
+}
+
+function nextDefi() {
+  // le défi suivant — en sautant celui que l'heure actuelle réussit déjà
+  for (let i = 1; i <= DEFIS.length; i++) {
+    const cand = (defiIndex + i) % DEFIS.length;
+    if (!defiReussi(DEFIS[cand], sim.h)) { defiIndex = cand; break; }
+  }
+  defi = DEFIS[defiIndex];
+  defiGagne = false;
+  defiEnterMs = null;
+  $('game-defi').textContent = defi.emoji + ' ' + defi.consigne;
+  $('game-bravo').hidden = true;
+  $('btn-encore').hidden = true;
+  tellDefi(defi.consigne);
+}
+
+function winDefi() {
+  defiGagne = true;
+  const bravo = $('game-bravo');
+  bravo.textContent = '⭐ ' + defi.bravo;
+  bravo.hidden = false;
+  $('btn-encore').hidden = false;
+  tellDefi(defi.bravo);
+}
+
+// La vérification vit dans la boucle : gagné quand l'heure RESTE un petit
+// instant dans la fenêtre — glisser, curseur ou lecture auto, peu importe
+// comment l'enfant y arrive.
+function checkDefi(ms) {
+  if (!defi || defiGagne || gameZone.hidden) return;
+  if (defiReussi(defi, sim.h)) {
+    if (defiEnterMs === null) defiEnterMs = ms;
+    else if (ms - defiEnterMs >= DEFI_DWELL_MS) winDefi();
+  } else {
+    defiEnterMs = null;
+  }
+}
+
+jouerBtn.addEventListener('click', () => {
+  if (!gameZone.hidden) {
+    gameZone.hidden = true;
+    defi = null;
+    jouerBtn.textContent = '🎮 Jouer';
+    jouerBtn.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  gameZone.hidden = false;
+  jouerBtn.textContent = '📦 Ranger le jeu';
+  jouerBtn.setAttribute('aria-expanded', 'true');
+  stopAuto(); // l'enfant prend la main : rien ne doit gagner tout seul
+  nextDefi();
+});
+$('btn-encore').addEventListener('click', nextDefi);
 
 renderInvite();
 setPlaying(sim.playing);

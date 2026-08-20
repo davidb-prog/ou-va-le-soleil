@@ -29,7 +29,14 @@ const CITY_LIGHTS = [
 ]; // [angle β en degrés, rayon relatif]
 
 export class SpaceView {
-  constructor(canvas) { this.canvas = canvas; this.layout = null; }
+  // opts.mini : version miniature (le jeu) — mêmes dessins, mais SANS les
+  // étiquettes de texte, qui se chevaucheraient : la grande vue au-dessus
+  // les a déjà apprises, la mini est une pure image.
+  constructor(canvas, opts) {
+    this.canvas = canvas;
+    this.layout = null;
+    this.mini = !!(opts && opts.mini);
+  }
 
   draw(h) {
     const f = fitCanvas(this.canvas);
@@ -133,16 +140,18 @@ export class SpaceView {
 
     // ---- « jour » / « nuit », écrits en bas du disque (à l'écart des étiquettes
     // des marqueurs, qui vivent à mi-rayon)
-    label(ctx, '☀️ jour', cx + R * 0.42, cy + R * 0.82,
-      { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(255, 236, 190, 0.95)', clampW: w, clampH: H });
-    label(ctx, '🌙 nuit', cx - R * 0.42, cy + R * 0.82,
-      { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(200, 212, 240, 0.95)', clampW: w, clampH: H });
+    if (!this.mini) {
+      label(ctx, '☀️ jour', cx + R * 0.42, cy + R * 0.82,
+        { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(255, 236, 190, 0.95)', clampW: w, clampH: H });
+      label(ctx, '🌙 nuit', cx - R * 0.42, cy + R * 0.82,
+        { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(200, 212, 240, 0.95)', clampW: w, clampH: H });
+    }
 
     // ---- chez toi (β = 0) et les enfants de l'autre côté (β = π)
     const kHome = -A;
     this.houseMarker(ctx, cx + R * 0.86 * Math.cos(kHome), cy + R * 0.86 * Math.sin(kHome),
       Math.max(9, R * 0.15), Math.cos(kHome) < 0);
-    label(ctx, 'chez toi', cx + R * 0.5 * Math.cos(kHome), cy + R * 0.5 * Math.sin(kHome),
+    if (!this.mini) label(ctx, 'chez toi', cx + R * 0.5 * Math.cos(kHome), cy + R * 0.5 * Math.sin(kHome),
       { align: 'center', size: Math.max(10, M * 0.03), color: '#ffb3cd', clampW: w, clampH: H });
 
     const kFar = kHome + Math.PI;
@@ -155,11 +164,13 @@ export class SpaceView {
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
     ctx.lineWidth = 1.8;
     ctx.beginPath(); ctx.arc(fx, fy, Math.max(4.5, R * 0.055), 0, TAU); ctx.stroke();
-    const fsz = Math.max(9, M * 0.026);
-    label(ctx, 'les enfants', cx + R * 0.5 * Math.cos(kFar), cy + R * 0.5 * Math.sin(kFar) - fsz * 0.62,
-      { align: 'center', size: fsz, color: '#8fe0cb', clampW: w, clampH: H });
-    label(ctx, 'de l’autre côté', cx + R * 0.5 * Math.cos(kFar), cy + R * 0.5 * Math.sin(kFar) + fsz * 0.62,
-      { align: 'center', size: fsz, color: '#8fe0cb', clampW: w, clampH: H });
+    if (!this.mini) {
+      const fsz = Math.max(9, M * 0.026);
+      label(ctx, 'les enfants', cx + R * 0.5 * Math.cos(kFar), cy + R * 0.5 * Math.sin(kFar) - fsz * 0.62,
+        { align: 'center', size: fsz, color: '#8fe0cb', clampW: w, clampH: H });
+      label(ctx, 'de l’autre côté', cx + R * 0.5 * Math.cos(kFar), cy + R * 0.5 * Math.sin(kFar) + fsz * 0.62,
+        { align: 'center', size: fsz, color: '#8fe0cb', clampW: w, clampH: H });
+    }
 
     // ---- la flèche du sens de rotation (vers l'est), au-dessus du disque
     ctx.save();
@@ -180,7 +191,7 @@ export class SpaceView {
     ctx.lineTo(ax - vx * 2 - Math.cos(ka) * 5, ay - vy * 2 - Math.sin(ka) * 5);
     ctx.closePath(); ctx.fill();
     ctx.restore();
-    label(ctx, 'la Terre tourne', cx, cy - R - M * 0.06,
+    if (!this.mini) label(ctx, 'la Terre tourne', cx, cy - R - M * 0.06,
       { align: 'center', size: Math.max(10, M * 0.03), color: 'rgba(205, 215, 240, 0.9)', clampW: w, clampH: H });
 
     // ---- le Soleil, FIXE sur le côté droit — il ne bouge jamais
@@ -204,10 +215,12 @@ export class SpaceView {
     sc.addColorStop(0, '#fff7d6'); sc.addColorStop(0.6, COLOR_SUN); sc.addColorStop(1, COLOR_SUN_DEEP);
     ctx.fillStyle = sc;
     ctx.beginPath(); ctx.arc(sunX, sunY, sunR, 0, TAU); ctx.fill();
-    label(ctx, 'le Soleil', sunX, sunY + sunR * 1.75 + 8,
-      { align: 'center', size: Math.max(11, M * 0.034), color: COLOR_SUN, clampW: w, clampH: H });
-    label(ctx, 'il ne bouge pas !', sunX, sunY + sunR * 1.75 + 8 + Math.max(11, M * 0.034),
-      { align: 'center', size: Math.max(9, M * 0.026), weight: 400, color: 'rgba(255, 223, 140, 0.85)', clampW: w, clampH: H });
+    if (!this.mini) {
+      label(ctx, 'le Soleil', sunX, sunY + sunR * 1.75 + 8,
+        { align: 'center', size: Math.max(11, M * 0.034), color: COLOR_SUN, clampW: w, clampH: H });
+      label(ctx, 'il ne bouge pas !', sunX, sunY + sunR * 1.75 + 8 + Math.max(11, M * 0.034),
+        { align: 'center', size: Math.max(9, M * 0.026), weight: 400, color: 'rgba(255, 223, 140, 0.85)', clampW: w, clampH: H });
+    }
   }
 
   // La petite maison rose « chez toi », accrochée au bord du disque ; sa

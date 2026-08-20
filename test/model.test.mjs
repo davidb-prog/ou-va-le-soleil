@@ -10,6 +10,7 @@ import {
   shadowDirX, SUN_DIR, earthAngle, houseFacesSun, antipodeHours,
   SKY_NIGHT, SKY_DAWN, SKY_DAY, SKY_DUSK, SKY_KEYFRAMES, hexToRgb, mixRgb,
   skyStopsRgb, skyStops, skyPhase, starAlpha, formatHM, periodWord, SCENARIOS,
+  DEFIS, DEFI_WINDOW_H, DEFI_DWELL_MS, hourDist, defiReussi,
 } from '../js/model.js';
 
 let failed = 0;
@@ -220,6 +221,51 @@ check('au coucher, l’histoire espace insiste : le Soleil n’a pas bougé',
 check('apostrophes typographiques « ’ » partout dans les textes UI (jamais le « \' » droit)',
   SCENARIOS.every((s) =>
     (s.label + s.sub + s.jardin + s.espace).indexOf("'") === -1));
+
+console.log('Le jeu « Fais tourner la Terre ! »');
+check('l’écart d’heures fait le tour du cadran : 23 h 30 ↔ 0 h 30 = 1 h',
+  approx(hourDist(23.5, 0.5), 1) && approx(hourDist(6, 18), 12) && approx(hourDist(3, 3), 0));
+check('quatre défis : lever, midi, coucher… et le grand jour de l’autre côté',
+  DEFIS.length === 4 &&
+  DEFIS[0].id === 'lever' && DEFIS[0].h === 6 &&
+  DEFIS[1].id === 'midi' && DEFIS[1].h === 12 &&
+  DEFIS[2].id === 'coucher' && DEFIS[2].h === 18 &&
+  DEFIS[3].id === 'autre-cote' && DEFIS[3].h === 0);
+{
+  const ids = {};
+  let ok = true;
+  for (const d of DEFIS) {
+    if (ids[d.id]) ok = false;
+    ids[d.id] = true;
+    if (!(d.h >= 0 && d.h < 24)) ok = false;
+    if (!d.consigne || !d.bravo || !d.emoji) ok = false;
+  }
+  check('identifiants uniques, heures valides, consigne + bravo partout', ok);
+}
+check('chaque défi est atteignable : réussi pile sur sa cible',
+  DEFIS.every((d) => defiReussi(d, d.h)));
+check('la fenêtre de réussite fait ±30 min, pas plus',
+  DEFI_WINDOW_H === 0.5 &&
+  DEFIS.every((d) => defiReussi(d, d.h + 0.5) && defiReussi(d, d.h - 0.5) &&
+    !defiReussi(d, d.h + 0.6) && !defiReussi(d, d.h - 0.6)));
+{
+  let ok = true;
+  for (const a of DEFIS) {
+    for (const b of DEFIS) {
+      if (a !== b && hourDist(a.h, b.h) <= 2 * DEFI_WINDOW_H) ok = false;
+    }
+  }
+  check('les fenêtres des défis ne se chevauchent jamais (une seule réponse à la fois)', ok);
+}
+check('le défi « autre-cote » gagne autour de minuit, même par le côté 23 h',
+  defiReussi(DEFIS[3], 0) && defiReussi(DEFIS[3], 23.6) && defiReussi(DEFIS[3], 0.4) &&
+  !defiReussi(DEFIS[3], 22) && !defiReussi(DEFIS[3], 2));
+check('le défi-vedette dit la vérité : à sa cible, zénith chez eux, nuit noire chez nous',
+  approx(sunAltitude(antipodeHours(DEFIS[3].h)), 1) && approx(sunAltitude(DEFIS[3].h), -1));
+check('la petite tempo anti « gagné en passant » est courte mais réelle',
+  DEFI_DWELL_MS >= 200 && DEFI_DWELL_MS <= 1000);
+check('apostrophes typographiques « ’ » dans les textes du jeu (jamais le « \' » droit)',
+  DEFIS.every((d) => (d.consigne + d.bravo).indexOf("'") === -1));
 
 console.log('');
 if (failed > 0) {
