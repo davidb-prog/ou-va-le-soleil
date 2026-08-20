@@ -20,9 +20,10 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 - **Compat mobiles anciens** : pas d'optional chaining `?.` ni de nullish `??` ; pas de
   lookbehind dans les regex ; repli `@supports` pour `aspect-ratio` ; `top/right/bottom/left`
   plutôt que `inset` ; préfixer `-webkit-backdrop-filter` et `-webkit-transform` ;
-  `touch-action: pan-y` sur les canvas interactifs (le geste du site est horizontal — un
-  balayage vertical doit continuer de faire défiler la page, jamais la coincer) ; tester à
-  390 px de large.
+  `touch-action: none` sur les canvas interactifs (le choix de « la Lune » : le geste posé
+  sur une vue appartient toujours au glisser du temps, un doigt un peu de travers ne doit
+  jamais partir en défilement — les vues plafonnées en hauteur laissent de la page autour
+  pour défiler) ; tester à 390 px de large.
 - `js/model.js` est **pur** (aucun accès DOM) et doit le rester : il se teste avec
   `node test/model.test.mjs`. Toutes les constantes (heures de lever/coucher, couleurs de ciel,
   scénarios, géométrie ombre/soleil) vivent dedans — ne jamais les recopier ailleurs.
@@ -85,8 +86,9 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 - `index.html` — page unique : en-tête (titre « Où va le Soleil la nuit ? », kicker
   « Petit labo d'astronomie — épisode 2 », refrain « … parce que la Terre tourne ! »), les deux
   vues synchronisées, grand curseur 0–24 h, boutons-scénarios + histoire, boîte « Le Soleil ne
-  va nulle part ! », jeu « Fais tourner la Terre ! » (deux mini-vues répliquées), pont vers
-  l'épisode 3, note aux parents repliable
+  va nulle part ! » (repliée derrière son titre sur mobile, comme l'épisode 3), jeu « Fais
+  tourner la Terre ! » (deux mini-vues répliquées), pont vers l'épisode 3, note aux parents
+  repliable
 - `css/style.css` — thème sombre de la série ; bascule mobile ≤ 640 px (aucune incrustation ne
   recouvre les canvas à 390 px : tout descend sous le visuel)
 - `js/model.js` — modèle pur : constantes, hauteur/azimut du soleil, ombres (longueur,

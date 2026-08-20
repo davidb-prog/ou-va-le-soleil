@@ -72,7 +72,13 @@
       <div id="story" class="story" aria-live="polite"></div>
     </div>
 
-    <div class="panel explain-panel">
+    <!-- sur mobile, la boîte se replie comme la note aux parents (le résumé ne
+         s'affiche qu'en ≤ 640 px ; sur ordinateur, main.js la garde ouverte) -->
+    <details class="panel explain-panel" id="explain-fold" open>
+      <summary class="explain-summary">
+        <h2>🌞 Le Soleil ne va nulle part !</h2>
+        <span class="hint">appuie ici pour lire ou écouter l’histoire</span>
+      </summary>
       <div class="explain-head">
         <h2>🌞 Le Soleil ne va nulle part !</h2>
         <button id="btn-listen" class="listen-btn" hidden>🔊 Écouter l’histoire</button>
@@ -97,7 +103,7 @@
         <p><strong>Alors, où va le soleil la nuit ? Nulle part : c’est nous qui tournons…
           parce que la Terre tourne !</strong></p>
       </div>
-    </div>
+    </details>
 
     <div class="panel game-panel">
       <div class="game-head">

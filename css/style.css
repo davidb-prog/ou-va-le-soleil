@@ -99,10 +99,11 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 }
 .canvas-wrap canvas { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; }
 
-/* pan-y (et non none) : glisser HORIZONTALEMENT fait tourner le temps, mais un
-   balayage vertical continue de faire défiler la page — sinon, sur mobile, les
-   canvas empilés occupent tout l'écran et la page semble coincée. */
-#garden-view, #space-view { touch-action: pan-y; cursor: grab; }
+/* touch-action: none (le choix de « la Lune ») : le geste posé sur une vue
+   appartient TOUJOURS au glisser du temps — un doigt un peu de travers ne part
+   jamais en défilement de page. Les vues sont plafonnées en hauteur : il reste
+   toujours de la page autour pour faire défiler. */
+#garden-view, #space-view { touch-action: none; cursor: grab; }
 #garden-view:active, #space-view:active { cursor: grabbing; }
 
 /* la petite phrase sous chaque vue : le même instant, raconté deux fois */
@@ -218,6 +219,22 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 .explain-panel { margin-top: 16px; padding: 16px 20px 18px; }
 .explain-head { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; margin-bottom: 8px; }
 .explain-head h2 { margin: 0; font-size: 1.15rem; color: var(--sun); }
+/* le résumé repliable ne sert que sur mobile : sur ordinateur il est masqué
+   et main.js garde la boîte ouverte (le titre reste celui de .explain-head) —
+   même mécanique que l'épisode 3 */
+.explain-summary { display: none; }
+@media (max-width: 640px) {
+  .explain-panel { padding: 4px 16px 6px; }
+  .explain-panel[open] { padding-bottom: 16px; }
+  .explain-summary { display: block; cursor: pointer; padding: 12px 4px; list-style: none; }
+  .explain-summary::-webkit-details-marker { display: none; }
+  .explain-summary::before { content: '▸ '; color: var(--sun); font-weight: 700; }
+  .explain-panel[open] .explain-summary::before { content: '▾ '; }
+  .explain-summary h2 { display: inline; margin: 0; font-size: 1.15rem; color: var(--sun); }
+  .explain-summary .hint { display: block; margin: 3px 0 0 1.35em; font-size: .8rem; }
+  /* sur mobile, le titre vit dans le résumé : celui de la rangée disparaît */
+  .explain-head h2 { display: none; }
+}
 .listen-btn {
   margin-left: auto; border-radius: 999px; padding: 8px 16px; font-weight: 700;
   background: linear-gradient(180deg, #4a3a0d, #332807); border: 1px solid var(--sun-deep);
@@ -265,7 +282,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
   color: var(--sun); font-weight: 700; font-size: 1.05rem;
 }
 #btn-encore { margin-top: 2px; }
-#game-garden, #game-space { touch-action: pan-y; cursor: grab; }
+#game-garden, #game-space { touch-action: none; cursor: grab; }
 #game-garden:active, #game-space:active { cursor: grabbing; }
 
 /* ---------- le pont vers l'épisode 3 ---------- */

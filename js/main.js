@@ -632,6 +632,22 @@ jouerBtn.addEventListener('click', () => {
 });
 $('btn-encore').addEventListener('click', nextDefi);
 
+// ---- la boîte « Le Soleil ne va nulle part ! » : repliée sur mobile pour
+// raccourcir la page (le résumé n'apparaît qu'en ≤ 640 px), toujours ouverte
+// sur ordinateur — même si un clavier joue avec le résumé masqué. Mécanique
+// reprise de l'épisode 3. ----
+
+const explainFold = $('explain-fold');
+const mqMobile = window.matchMedia('(max-width: 640px)');
+function syncExplainFold() {
+  if (mqMobile.matches) return; // sur mobile, l'enfant plie et déplie librement
+  explainFold.open = true;
+}
+if (mqMobile.matches) explainFold.open = false; // au chargement : repliée
+explainFold.addEventListener('toggle', syncExplainFold);
+if (mqMobile.addEventListener) mqMobile.addEventListener('change', syncExplainFold);
+else if (mqMobile.addListener) mqMobile.addListener(syncExplainFold); // vieux Safari
+
 renderInvite();
 setPlaying(sim.playing);
 requestAnimationFrame(frame);

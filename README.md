@@ -79,10 +79,11 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 - **Mise en page mobile dédiée** : sous 640 px les vues s'empilent, plafonnées en hauteur
   d'écran pour tenir ensemble dans le viewport, rien ne recouvre jamais les canvas, l'en-tête
   se fait tout petit (le jardin se voit dès le premier écran), les boutons font au moins 44 px.
-  Les canvas laissent passer le défilement vertical (`touch-action: pan-y`) : glisser
-  horizontalement fait tourner le temps, balayer verticalement fait défiler la page. Appuyer
-  sur un scénario ramène doucement les vues à l'écran. En pause, plus aucun redessin
-  (batterie).
+  Le geste posé sur une vue appartient toujours au glisser du temps (`touch-action: none`,
+  comme « Pourquoi la Lune change de forme ? ») — un doigt un peu de travers ne part jamais
+  en défilement, et les vues plafonnées laissent de la page autour pour défiler. La grande
+  histoire se replie derrière son titre (comme la note aux parents). Appuyer sur un scénario
+  ramène doucement les vues à l'écran. En pause, plus aucun redessin (batterie).
 - Accessible : aria-labels descriptifs sur les deux canvas, `prefers-reduced-motion` respecté
   (rien ne bouge tout seul, les scénarios sautent sans animation), curseur au clavier.
 
