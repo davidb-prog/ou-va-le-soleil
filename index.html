@@ -12,7 +12,7 @@
 
 <header class="site-header">
   <p class="kicker">Petit labo d’astronomie</p>
-  <h1>Où va le Soleil la nuit ?</h1>
+  <h1>Où va le Soleil la&nbsp;nuit&nbsp;?</h1>
   <p class="tagline">Le soir, le soleil disparaît derrière l’horizon… mais il ne va nulle part :
     il ne bouge pas d’un poil ! C’est nous qui tournons. Regarde le même moment depuis ton jardin
     et depuis l’espace — <strong>… parce que la Terre tourne !</strong></p>
@@ -24,19 +24,21 @@
 
     <div class="panel stage-panel" id="stage-panel">
       <div class="stage-head">
-        <span class="stage-title">Le même moment, deux regards
-          <span class="hint">(glisse sur une image pour faire tourner le temps · petit tap = pause)</span></span>
-        <button id="btn-spin" class="spin-btn" aria-pressed="true">⏸ Pause</button>
-        <button id="fs-toggle" class="spin-btn" aria-label="Basculer les deux vues en plein écran">⛶ Plein écran</button>
+        <span class="stage-title">Le même moment, deux regards</span>
+        <div class="stage-actions">
+          <button id="btn-spin" class="spin-btn" aria-pressed="true">⏸ Pause</button>
+          <button id="fs-toggle" class="spin-btn" aria-label="Basculer les deux vues en plein écran">⛶ Plein écran</button>
+        </div>
       </div>
+      <p class="stage-hint hint">Glisse sur une image pour faire tourner le temps · un petit tap met en pause.</p>
 
       <div class="views-grid">
         <div class="view-block">
           <div class="view-head view-head-garden">🌳 Depuis ton jardin</div>
           <div class="canvas-wrap ratio-garden">
             <canvas id="garden-view" aria-label="Ton jardin, vu en regardant vers le sud : la maison, un arbre et toi. Le soleil se lève à gauche (à l’est), monte jusqu’au sud à midi et se couche à droite (à l’ouest), pendant que le ciel change de couleur en continu — nuit étoilée, aube rose, grand jour, coucher orangé. Les ombres s’allongent le matin et le soir, raccourcissent à midi. Faites glisser horizontalement pour faire tourner le temps ; un petit tap met en pause."></canvas>
-            <div class="drag-hint" id="drag-hint">👆 Glisse ici : tu fais tourner le temps !</div>
           </div>
+          <div class="drag-hint" id="drag-hint">👆 Glisse sur les images : tu fais tourner le temps !</div>
           <p class="view-status" id="garden-status" aria-live="off">☀️ Le soleil brille dans ton ciel</p>
         </div>
 

@@ -66,12 +66,13 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 .stage-panel { padding: 12px; }
 .stage-head {
   display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap;
-  font-size: .88rem; color: var(--muted); margin: 2px 4px 10px;
+  font-size: .92rem; color: var(--muted); margin: 2px 4px 2px;
 }
-.stage-title { flex: 1 1 260px; }
-.spin-btn { margin-left: auto; padding: 5px 12px; font-size: .8rem; border-radius: 999px; }
-.stage-head .spin-btn { margin-left: 0; }
-.stage-head #btn-spin { margin-left: auto; }
+.stage-title { flex: 1 1 auto; font-weight: 700; }
+/* les deux boutons restent groupés sur une même ligne, quelle que soit la largeur */
+.stage-actions { display: flex; gap: 8px; margin-left: auto; flex: none; }
+.stage-hint { margin: 0 4px 10px; }
+.spin-btn { padding: 5px 12px; font-size: .8rem; border-radius: 999px; }
 
 .views-grid {
   display: grid;
@@ -98,7 +99,10 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 }
 .canvas-wrap canvas { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; display: block; }
 
-#garden-view, #space-view { touch-action: none; cursor: grab; }
+/* pan-y (et non none) : glisser HORIZONTALEMENT fait tourner le temps, mais un
+   balayage vertical continue de faire défiler la page — sinon, sur mobile, les
+   canvas empilés occupent tout l'écran et la page semble coincée. */
+#garden-view, #space-view { touch-action: pan-y; cursor: grab; }
 #garden-view:active, #space-view:active { cursor: grabbing; }
 
 /* la petite phrase sous chaque vue : le même instant, raconté deux fois */
@@ -107,15 +111,13 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
   min-height: 1.4em;
 }
 
-/* petit rappel « glisse ici » superposé au jardin (transitoire, non cliquable) */
+/* petit rappel « glisse ici », SOUS le jardin (transitoire) : rien ne recouvre
+   jamais les canvas — display: table pour un centrage qui marche partout */
 .drag-hint {
-  position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%);
-  max-width: calc(100% - 20px); text-align: center;
-  background: rgba(7, 11, 23, .62);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+  display: table; max-width: 100%; margin: 8px auto 0; text-align: center;
+  background: var(--surface-2);
   border: 1px solid var(--border); border-radius: 999px;
-  padding: 7px 14px; font-size: .85rem; color: var(--text);
+  padding: 6px 14px; font-size: .85rem; color: var(--text);
   pointer-events: none; opacity: 1; transition: opacity .4s;
 }
 .drag-hint.hide { opacity: 0; }
@@ -321,13 +323,24 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 
 /* sous 640 px : les deux vues s'empilent (jardin d'abord), rien ne recouvre les canvas */
 @media (max-width: 640px) {
+  /* en-tête compact : un bout de jardin doit se voir dès le premier écran */
+  .site-header { padding: 18px 16px 10px; }
+  .site-header h1 { font-size: clamp(1.65rem, 7.5vw, 2.2rem); }
+  .tagline { font-size: .92rem; }
+  main { padding: 0 12px 48px; }
+  /* le fond fixe force des repeints à chaque défilement sur Android */
+  body { background-attachment: scroll; }
+
   .views-grid { grid-template-columns: 1fr; }
   .ratio-garden { aspect-ratio: 4 / 3; }
   @supports not (aspect-ratio: 1 / 1) {
     .ratio-garden { height: min(68vw, 420px); }
     .ratio-space { height: min(88vw, 420px); }
   }
-  .drag-hint { bottom: 8px; font-size: .8rem; }
+  .drag-hint { font-size: .8rem; }
+
+  /* des cibles tactiles d'au moins ~44 px pour les petits doigts */
+  .spin-btn, .listen-btn, .game-btn, .voice-pick { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
 }
 
 @media (max-width: 480px) {
@@ -335,6 +348,10 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   .scn { min-height: 64px; }
   .stage-head { font-size: .82rem; }
   .bridge-panel { padding: 14px 14px; gap: 10px; }
+  /* les histoires : la pastille au-dessus du texte, qui garde toute la largeur */
+  .story-line { display: block; }
+  .story-chip { display: inline-block; }
+  .story-text { margin: 4px 0 0; }
 }
 
 /* ---------- accessibilité : mouvement réduit ---------- */

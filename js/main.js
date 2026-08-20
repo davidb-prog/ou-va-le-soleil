@@ -29,7 +29,12 @@ let sliderHeld = false;
 function setPlaying(p) {
   sim.playing = p;
   const btn = $('btn-spin');
-  btn.textContent = p ? '⏸ Pause' : '▶ Le temps passe tout seul';
+  // libellé court et de largeur stable : sinon toute la ligne se remet en page
+  // à chaque appui (et déborde sur mobile)
+  btn.textContent = p ? '⏸ Pause' : '▶ Lecture';
+  btn.setAttribute('aria-label', p
+    ? 'Mettre en pause (le temps passe tout seul)'
+    : 'Relancer le temps qui passe tout seul');
   btn.setAttribute('aria-pressed', p ? 'true' : 'false');
 }
 
@@ -70,11 +75,18 @@ slider.addEventListener('pointerdown', () => { sliderHeld = true; });
 window.addEventListener('pointerup', () => { sliderHeld = false; });
 window.addEventListener('pointercancel', () => { sliderHeld = false; });
 
+// La bulle « glisse ici » vit SOUS le canvas (rien ne recouvre les vues) : au
+// premier geste elle s'efface sur place, et le minuteur replie sa ligne — pas
+// pendant un glisser, pour ne pas décaler la vue sous le doigt.
 function hideHint() {
   const hint = $('drag-hint');
-  if (hint) hint.classList.add('hide');
+  if (hint && !hint.hidden) hint.classList.add('hide');
 }
-setTimeout(hideHint, 8000);
+setTimeout(() => {
+  hideHint();
+  const hint = $('drag-hint');
+  setTimeout(() => { if (hint) hint.hidden = true; }, 450);
+}, 8000);
 
 // ---- glisser = faire tourner le temps, petit tap = pause/lecture ----
 // `hoursPerPixel` traduit le geste : sur le jardin, suivre le soleil du doigt ;
@@ -215,6 +227,12 @@ function runScenario(scn) {
   renderStory(scn);
   activeScn = scn;
   tellScenario(); // la version sonore, si le parent l'a activée
+  // Sur mobile, les vues sont plus haut dans la page : on les ramène à l'écran
+  // pour que l'enfant VOIE le temps glisser (sur grand écran, rien ne bouge).
+  const vg = document.querySelector('.views-grid').getBoundingClientRect();
+  if (vg.bottom < 120 || vg.top > window.innerHeight - 120) {
+    stagePanel.scrollIntoView(reduceMotion ? true : { behavior: 'smooth', block: 'start' });
+  }
   const delta = wrap24(scn.h - sim.h);
   if (reduceMotion || delta < 0.02 || delta > 23.98) {
     sim.tween = null;
@@ -266,6 +284,15 @@ function updateTexts() {
 
 const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
+// On ne redessine que si quelque chose a changé (l'heure, ou la taille d'un
+// canvas — rotation d'écran, plein écran…) : en pause, zéro travail par frame,
+// la batterie du téléphone dit merci.
+const drawn = { h: -1, sizes: '' };
+function sizeKey() {
+  const g = $('garden-view'), s = $('space-view');
+  return g.clientWidth + 'x' + g.clientHeight + '|' + s.clientWidth + 'x' + s.clientHeight;
+}
+
 let lastMs = performance.now();
 function frame(ms) {
   try {
@@ -279,9 +306,13 @@ function frame(ms) {
     } else if (sim.playing) {
       sim.h = wrap24(sim.h + SPIN_HOURS_PER_SEC * dt);
     }
-    garden.draw(sim.h);
-    space.draw(sim.h);
-    updateTexts();
+    const sizes = sizeKey();
+    if (sim.h !== drawn.h || sizes !== drawn.sizes) {
+      drawn.h = sim.h; drawn.sizes = sizes;
+      garden.draw(sim.h);
+      space.draw(sim.h);
+      updateTexts();
+    }
   } finally {
     // la boucle survit à un raté de rendu ponctuel (canvas en cours de layout…)
     requestAnimationFrame(frame);
