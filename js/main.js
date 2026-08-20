@@ -4,7 +4,7 @@
 // du site : le même moment, deux regards.
 
 import { TAU, wrap24, formatHM, periodWord, skyPhase, earthAngle,
-         SPIN_HOURS_PER_SEC, SCENARIOS } from './model.js';
+         SPIN_HOURS_PER_SEC, SCENARIOS, DEFIS, defiReussi, DEFI_DWELL_MS } from './model.js';
 import { GardenView } from './garden.js';
 import { SpaceView } from './space.js';
 
@@ -289,8 +289,9 @@ const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) /
 // la batterie du téléphone dit merci.
 const drawn = { h: -1, sizes: '' };
 function sizeKey() {
-  const g = $('garden-view'), s = $('space-view');
-  return g.clientWidth + 'x' + g.clientHeight + '|' + s.clientWidth + 'x' + s.clientHeight;
+  const g = $('garden-view'), s = $('space-view'), gz = $('game-zone');
+  return g.clientWidth + 'x' + g.clientHeight + '|' + s.clientWidth + 'x' + s.clientHeight +
+    '|' + (gz.hidden ? 'jeu-fermé' : $('game-garden').clientWidth);
 }
 
 let lastMs = performance.now();
@@ -311,8 +312,13 @@ function frame(ms) {
       drawn.h = sim.h; drawn.sizes = sizes;
       garden.draw(sim.h);
       space.draw(sim.h);
+      if (!gameZone.hidden && gameGardenC.offsetWidth > 0) {
+        gameGarden.draw(sim.h);
+        gameSpace.draw(sim.h);
+      }
       updateTexts();
     }
+    checkDefi(ms);
   } finally {
     // la boucle survit à un raté de rendu ponctuel (canvas en cours de layout…)
     requestAnimationFrame(frame);
@@ -531,6 +537,90 @@ function tellScenario() {
     narrator.speak(spokenStory(activeScn));
   }
 }
+
+// ---- le jeu « Fais tourner la Terre ! » : le site demande un moment, l'enfant
+// le FABRIQUE en faisant tourner le temps. Les deux mini-vues sont les mêmes
+// vues que plus haut, synchronisées sur la même heure — le cœur du site,
+// jusque dans le jeu. ----
+
+const gameZone = $('game-zone');
+const gameGardenC = $('game-garden');
+const gameSpaceC = $('game-space');
+const gameGarden = new GardenView(gameGardenC);
+const gameSpace = new SpaceView(gameSpaceC, { mini: true });
+const jouerBtn = $('btn-jouer');
+
+wireTimeDrag(gameGardenC, () => {
+  const w = Math.max(60, gameGardenC.clientWidth - 84);
+  return 12 / w;
+});
+wireTimeDrag(gameSpaceC, () => {
+  const R = gameSpace.layout ? gameSpace.layout.R : 120;
+  return 24 / TAU / R;
+});
+
+let defi = null;        // le défi en cours (null : jeu fermé)
+let defiIndex = -1;
+let defiEnterMs = null; // entrée dans la fenêtre (tempo anti « gagné en passant »)
+let defiGagne = false;
+
+// le même conteur (et le même bouton 🔇/🔊) que les scénarios
+function tellDefi(text) {
+  if (narrator && scnVoiceOn) narrator.speak(sentenceChunks(text, true));
+}
+
+function nextDefi() {
+  // le défi suivant — en sautant celui que l'heure actuelle réussit déjà
+  for (let i = 1; i <= DEFIS.length; i++) {
+    const cand = (defiIndex + i) % DEFIS.length;
+    if (!defiReussi(DEFIS[cand], sim.h)) { defiIndex = cand; break; }
+  }
+  defi = DEFIS[defiIndex];
+  defiGagne = false;
+  defiEnterMs = null;
+  $('game-defi').textContent = defi.emoji + ' ' + defi.consigne;
+  $('game-bravo').hidden = true;
+  $('btn-encore').hidden = true;
+  tellDefi(defi.consigne);
+}
+
+function winDefi() {
+  defiGagne = true;
+  const bravo = $('game-bravo');
+  bravo.textContent = '⭐ ' + defi.bravo;
+  bravo.hidden = false;
+  $('btn-encore').hidden = false;
+  tellDefi(defi.bravo);
+}
+
+// La vérification vit dans la boucle : gagné quand l'heure RESTE un petit
+// instant dans la fenêtre — glisser, curseur ou lecture auto, peu importe
+// comment l'enfant y arrive.
+function checkDefi(ms) {
+  if (!defi || defiGagne || gameZone.hidden) return;
+  if (defiReussi(defi, sim.h)) {
+    if (defiEnterMs === null) defiEnterMs = ms;
+    else if (ms - defiEnterMs >= DEFI_DWELL_MS) winDefi();
+  } else {
+    defiEnterMs = null;
+  }
+}
+
+jouerBtn.addEventListener('click', () => {
+  if (!gameZone.hidden) {
+    gameZone.hidden = true;
+    defi = null;
+    jouerBtn.textContent = '🎮 Jouer';
+    jouerBtn.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  gameZone.hidden = false;
+  jouerBtn.textContent = '📦 Ranger le jeu';
+  jouerBtn.setAttribute('aria-expanded', 'true');
+  stopAuto(); // l'enfant prend la main : rien ne doit gagner tout seul
+  nextDefi();
+});
+$('btn-encore').addEventListener('click', nextDefi);
 
 renderInvite();
 setPlaying(sim.playing);

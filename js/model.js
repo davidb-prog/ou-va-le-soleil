@@ -196,6 +196,53 @@ export function periodWord(hours) {
   return 'la nuit';
 }
 
+// ------------------------------------------------------------------------ le jeu
+// « Fais tourner la Terre ! » : le site demande un moment de la journée, et
+// l'enfant le FABRIQUE en faisant tourner le temps (glisser sur les vues, ou
+// le grand curseur — qui reste le maître à bord).
+
+// Fenêtre de réussite : ±30 min autour de l'heure cible.
+export const DEFI_WINDOW_H = 0.5;
+// Il faut RESTER un instant sur le bon moment : un grand coup de glisser qui
+// traverse la fenêtre ne gagne pas « en passant ».
+export const DEFI_DWELL_MS = 350;
+
+// Le dernier défi est la révélation du site transformée en action : pour
+// faire briller le grand jour chez les enfants de l'autre côté, l'enfant
+// doit plonger sa propre maison dans la nuit.
+export const DEFIS = [
+  {
+    id: 'lever', emoji: '🌅', h: 6,
+    consigne: 'le matin ! Fais lever le soleil dans ton jardin.',
+    bravo: 'Bravo ! Le soleil se lève à l’est… et vu de l’espace, c’est ta maison qui vient de tourner vers lui !',
+  },
+  {
+    id: 'midi', emoji: '☀️', h: 12,
+    consigne: 'midi pile ! Mets le soleil tout en haut du ciel.',
+    bravo: 'Bravo ! Le soleil est au plus haut, plein sud — et les ombres sont si petites qu’elles se cachent sous les pieds !',
+  },
+  {
+    id: 'coucher', emoji: '🌇', h: 18,
+    consigne: 'le soir ! Couche le soleil, fais le ciel tout orange.',
+    bravo: 'Bravo ! Le ciel est tout orange… et regarde la vue de l’espace : le Soleil, lui, n’a pas bougé d’un poil !',
+  },
+  {
+    id: 'autre-cote', emoji: '⭐', h: 0,
+    consigne: 'le grand jour… chez les enfants de l’autre côté de la Terre !',
+    bravo: 'Bravo ! Chez toi c’est la nuit noire, tout le monde dort… et chez eux, c’est midi en plein soleil !',
+  },
+];
+
+// Écart entre deux heures sur le cadran de 24 h (23 h 30 et 0 h 30 : 1 h).
+export function hourDist(a, b) {
+  const d = Math.abs(wrap24(a) - wrap24(b));
+  return Math.min(d, 24 - d);
+}
+
+export function defiReussi(defi, h) {
+  return hourDist(h, defi.h) <= DEFI_WINDOW_H;
+}
+
 // ------------------------------------------------------------------ les scénarios
 // Quatre moments de la journée : le temps glisse en douceur (toujours vers
 // l'avant, le vrai sens de la Terre), puis on raconte le même instant deux fois —

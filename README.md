@@ -53,6 +53,15 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 
 ![Minuit : nuit étoilée et fenêtre allumée au jardin ; vu de l'espace, la maison dos au Soleil et les enfants de l'autre côté en plein jour](docs/screenshot-nuit.png)
 
+- **Le jeu « 🌍 Fais tourner la Terre ! »**, après la révélation : le site demande un moment
+  de la journée (🌅 fais lever le soleil, ☀️ midi pile, 🌇 couche le soleil… et le défi-vedette
+  ⭐ *fais briller le grand jour chez les enfants de l'autre côté* — il faut plonger sa propre
+  maison dans la nuit !), et l'enfant le **fabrique** en faisant tourner le temps du doigt sur
+  deux mini-vues répliquées (jardin + espace, toujours synchronisées sur la même heure — la
+  vue espace en version « pure image », sans étiquettes). Fenêtre de réussite ±30 min, petite
+  tempo anti « gagné en passant », « ⭐ Bravo ! » raconté sur les deux regards, bouton
+  « Encore une ! ». Le conteur (bouton 🔇/🔊) lit consignes et bravos ; les défis vivent dans
+  le modèle pur et sont testés (tous atteignables, fenêtres jamais chevauchées).
 - **La boîte « Le Soleil ne va nulle part ! »** : la grande révélation en cinq petits
   paragraphes à lire à voix haute, qui se referment sur le refrain de la série — *… parce que
   la Terre tourne !* — à lire… ou à **écouter** : la synthèse vocale du navigateur la raconte
@@ -64,7 +73,12 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 - **Le pont vers l'épisode 3** : « Et si le soleil se couche chez toi… il se lève chez qui ? »
   → [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
 - **Plein écran** des deux vues (API native, repli maison pour iOS), mise en page mobile
-  dédiée : sous 640 px les vues s'empilent, rien ne recouvre jamais les canvas.
+  dédiée : sous 640 px les vues s'empilent, rien ne recouvre jamais les canvas, l'en-tête se
+  fait tout petit (le jardin se voit dès le premier écran), les boutons font au moins 44 px.
+  Les canvas laissent passer le défilement vertical (`touch-action: pan-y`) : glisser
+  horizontalement fait tourner le temps, balayer verticalement fait défiler la page. Appuyer
+  sur un scénario ramène doucement les vues à l'écran. En pause, plus aucun redessin
+  (batterie).
 - Accessible : aria-labels descriptifs sur les deux canvas, `prefers-reduced-motion` respecté
   (rien ne bouge tout seul, les scénarios sautent sans animation), curseur au clavier.
 
@@ -91,20 +105,23 @@ sous Node, sans navigateur :
 node test/model.test.mjs
 ```
 
-**57 vérifications**, dont les vérités du récit : le Soleil est **fixe** (sa direction à
+**67 vérifications**, dont les vérités du récit : le Soleil est **fixe** (sa direction à
 l'écran ne change jamais) ; la Terre avance de 15° par heure, **vers l'est**, un tour en
 24 h ; lever à 6 h à l'**est**, zénith à midi plein **sud**, coucher à 18 h à l'**ouest**
 (hauteur = sin(π·(h−6)/12), la formule de l'épisode 3) ; les **ombres** longues matin et soir,
 courtes à midi, toujours à l'opposé du soleil, absentes la nuit ; **les deux vues racontent la
 même chose** (maison côté jour du globe ⟺ soleil levé au jardin) ; à **minuit chez nous, le
 soleil est au zénith de l'antipode** ; le **ciel est continu** sur 24 h (aucun saut de
-couleur), rose à l'aube, orangé au coucher.
+couleur), rose à l'aube, orangé au coucher ; les **défis du jeu** sont tous atteignables,
+à des heures toutes différentes, et leurs fenêtres (±30 min) ne se chevauchent jamais.
 
 Le site est aussi vérifié en navigateur (Playwright/Chromium, desktop + mobile 390 px) :
 zéro erreur console, sondes de pixels sur la géométrie jour/nuit du disque terrestre, la place
 du Soleil (identique à midi et à minuit !), les couleurs du ciel et la direction des ombres,
-glissers sur les deux vues, tap-pause, scénarios (toujours vers l'avant), plein écran natif
-**et** repli iOS, `prefers-reduced-motion`, captures d'écran examinées aux heures clés.
+glissers sur les deux vues, tap-pause, scénarios (toujours vers l'avant), le jeu complet
+(défi raté hors fenêtre, gagné dans la fenêtre après la tempo, « Encore une ! », glisser sur
+les mini-vues), plein écran natif **et** repli iOS, `prefers-reduced-motion`, captures d'écran
+examinées aux heures clés.
 
 ## Déployer sur GitHub Pages
 
@@ -159,15 +176,18 @@ Tout est dans [`js/model.js`](js/model.js) (aucun accès DOM, toutes les constan
 
 ```
 index.html            page unique (deux vues synchronisées, curseur 0–24 h, scénarios,
-                      révélation, pont vers l'épisode 3, note aux parents)
+                      révélation, jeu « Fais tourner la Terre ! », pont vers l'épisode 3,
+                      note aux parents)
 css/style.css         thème sombre de la série, responsive (bascule mobile ≤ 640 px), aucune lib
-js/model.js           modèle pur (soleil, ombres, rotation, ciel, scénarios) — testable sous Node
+js/model.js           modèle pur (soleil, ombres, rotation, ciel, scénarios, défis du jeu) —
+                      testable sous Node
 js/canvas.js          helpers canvas partagés (fitCanvas, étoiles, étiquettes à halo)
 js/garden.js          vue jardin (ciel continu, arc du soleil, lune, ombres, décor)
-js/space.js           vue espace (Soleil FIXE à droite, Terre vue du pôle Nord, marqueurs)
+js/space.js           vue espace (Soleil FIXE à droite, Terre vue du pôle Nord, marqueurs ;
+                      mode « mini » sans étiquettes pour le jeu)
 js/main.js            boucle d'animation + interactions (curseur, glissers, tap-pause,
-                      scénarios et leur version sonore, plein écran, conteur)
-test/model.test.mjs   tests Node du modèle (57 vérifications)
+                      scénarios et leur version sonore, jeu, plein écran, conteur)
+test/model.test.mjs   tests Node du modèle (67 vérifications)
 ```
 
 ## La série
