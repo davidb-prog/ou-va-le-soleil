@@ -18,10 +18,14 @@ console.log('Le texte oral (texteOral)');
 check('« 6 h 30 » se dit « 6 heures 30 », « 18 h » se dit « 18 heures »',
   texteOral('à 6 h 30 puis 18 h pile') === 'à 6 heures 30 puis 18 heures pile');
 check('« 24 heures » écrit en toutes lettres ne bouge pas',
-  texteOral('24 heures — un jour entier') === '24 heures — un jour entier');
+  texteOral('24 heures pour un tour') === '24 heures pour un tour');
 check('les émojis disparaissent et le point se recolle',
   texteOral('Le soleil brille 🌞 .') === 'Le soleil brille.');
 check('les espaces multiples se replient', texteOral('un  \n  seul') === 'un seul');
+check('les guillemets français disparaissent (la synthèse trébuche dessus)',
+  texteOral('On dit qu’il « se lève »… en vrai') === 'On dit qu’il se lève… en vrai');
+check('le tiret cadratin devient une virgule',
+  texteOral('un jour entier — 24 heures — pour tourner') === 'un jour entier, 24 heures, pour tourner');
 
 console.log('Le corpus vocal');
 const blocs = corpus();
@@ -50,6 +54,8 @@ check('aucun émoji dans les textes oraux',
   blocs.every((b) => !emojiUne.test(b.texte)));
 check('aucune heure en chiffres non oralisée (« N h ») ne subsiste',
   blocs.every((b) => !/\d\s*h\b/.test(b.texte)));
+check('aucun guillemet ni tiret cadratin dans les textes oraux',
+  blocs.every((b) => !/[«»—]/.test(b.texte)));
 check('apostrophes typographiques « ’ » partout (jamais le « \' » droit)',
   blocs.every((b) => b.texte.indexOf("'") === -1));
 check('le corpus tient dans le plan Starter d’ElevenLabs (≈ 30 000 crédits)',

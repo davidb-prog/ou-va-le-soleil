@@ -39,8 +39,11 @@ const valeur = (nom) => {
   return i !== -1 && args[i + 1] ? args[i + 1] : null;
 };
 
+const manifeste = lireManifeste();
 const cle = process.env.ELEVENLABS_API_KEY || '';
-const voix = valeur('--voice') || process.env.ELEVENLABS_VOICE_ID || '';
+// la voix : --voice, sinon la variable d'environnement, sinon celle déjà
+// retenue dans le manifeste (pratique pour les retouches --only)
+const voix = valeur('--voice') || process.env.ELEVENLABS_VOICE_ID || manifeste.voix || '';
 
 async function genererMp3(texte, voiceId) {
   const url = 'https://api.elevenlabs.io/v1/text-to-speech/' + voiceId
@@ -79,7 +82,6 @@ function ecrirePageEcoute(blocs) {
 }
 
 const blocs = corpus();
-const manifeste = lireManifeste();
 
 // -- mode essai : une phrase-test par voix candidate, pour choisir la voix --
 if (drapeau('--essai') || valeur('--essai')) {
