@@ -113,16 +113,21 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 
 /* petit rappel « glisse ici », SOUS le jardin (transitoire) : rien ne recouvre
    jamais les canvas — display: table pour un centrage qui marche partout */
+/* le conteneur (un bloc : max-height s'anime, ce que display: table ignore)
+   s'efface ET se replie ENSEMBLE, en douceur — une bulle invisible qui
+   garderait sa place ferait un trou, puis un saut au repli */
 .drag-hint {
-  display: table; max-width: 100%; margin: 8px auto 0; text-align: center;
-  background: var(--surface-2);
-  border: 1px solid var(--border); border-radius: 999px;
-  padding: 6px 14px; font-size: .85rem; color: var(--text);
-  pointer-events: none; opacity: 1; transition: opacity .4s;
+  margin: 8px 0 0; text-align: center; overflow: hidden;
+  pointer-events: none; opacity: 1; max-height: 90px;
+  font-size: .85rem;
+  transition: opacity .3s, max-height .35s ease .05s, margin .35s ease .05s;
 }
-.drag-hint.hide { opacity: 0; }
-/* le display explicite ci-dessus l'emporterait sur l'attribut hidden */
-.drag-hint[hidden] { display: none; }
+.drag-hint-pill {
+  display: inline-block; max-width: 100%;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 999px; padding: 6px 14px; color: var(--text);
+}
+.drag-hint.hide { opacity: 0; max-height: 0; margin-top: 0; }
 
 /* ---------- le grand curseur du temps ---------- */
 

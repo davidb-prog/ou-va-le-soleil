@@ -75,18 +75,14 @@ slider.addEventListener('pointerdown', () => { sliderHeld = true; });
 window.addEventListener('pointerup', () => { sliderHeld = false; });
 window.addEventListener('pointercancel', () => { sliderHeld = false; });
 
-// La bulle « glisse ici » vit SOUS le canvas (rien ne recouvre les vues) : au
-// premier geste elle s'efface sur place, et le minuteur replie sa ligne — pas
-// pendant un glisser, pour ne pas décaler la vue sous le doigt.
+// La bulle « glisse ici » vit SOUS le canvas (rien ne recouvre les vues). Au
+// premier geste — ou après 8 s — elle s'efface ET se replie d'un même
+// glissement (le CSS anime le repli) : jamais d'espace vide, jamais de saut.
 function hideHint() {
   const hint = $('drag-hint');
-  if (hint && !hint.hidden) hint.classList.add('hide');
+  if (hint) hint.classList.add('hide');
 }
-setTimeout(() => {
-  hideHint();
-  const hint = $('drag-hint');
-  setTimeout(() => { if (hint) hint.hidden = true; }, 450);
-}, 8000);
+setTimeout(hideHint, 8000);
 
 // ---- glisser = faire tourner le temps, petit tap = pause/lecture ----
 // `hoursPerPixel` traduit le geste : sur le jardin, suivre le soleil du doigt ;
