@@ -39,9 +39,10 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 - **Grand curseur 0–24 h** dont la piste raconte la journée, heure affichée en gros
   (« Chez toi, il est 12 h 00 — midi ! »). Le temps passe tout seul (un tour de Terre en
   90 s) ; **pause d'un petit tap** sur une vue, bouton lecture/pause, **espace = pause**.
-- **Glisser horizontalement sur l'une ou l'autre vue fait tourner le temps** : sur le jardin,
-  on suit le soleil du doigt (toute la largeur = la journée) ; sur l'espace, on fait tourner
-  la Terre elle-même.
+- **Glisser sur l'une ou l'autre vue fait tourner le temps** : sur le jardin, on suit le
+  soleil du doigt (toute la largeur = la journée) ; sur l'espace, glisser **rotatif** — on
+  attrape le disque et l'angle du doigt autour du centre fait tourner la Terre (un cercle du
+  doigt = un tour complet, même geste que la vue du pôle de « Quelle heure est-il là-bas ? »).
 - **Quatre boutons-scénarios** : 🌅 *Le soleil se lève* (6 h), ☀️ *Midi pile* (12 h), 🌇 *Le
   soleil se couche* (18 h), 🌙 *Minuit, tu dors* (0 h). Le temps glisse en douceur — **toujours
   vers l'avant, le vrai sens de la Terre** — puis une micro-histoire raconte le même instant

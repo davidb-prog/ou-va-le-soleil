@@ -60,9 +60,11 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   l'épisode 3 : un soleil qui bouge à l'écran embrouille tout. Rien ne doit jamais le déplacer.
 - Les deux vues sont **synchronisées sur la même heure** en permanence (côte à côte sur grand
   écran, empilées sur mobile).
-- Glisser horizontalement sur **l'une ou l'autre vue** fait tourner le temps (et donc la
-  Terre) ; un petit tap sur une vue met en pause / relance ; espace = pause ; le grand curseur
-  0–24 h reste le maître à bord.
+- Glisser sur **l'une ou l'autre vue** fait tourner le temps (et donc la Terre) — jardin :
+  glisser horizontal, on suit le soleil du doigt ; vues espace : glisser **rotatif** autour du
+  centre du disque (repris de la vue du pôle de l'épisode 3 — un cercle du doigt fait vraiment
+  tourner la Terre, jamais osciller). Un petit tap sur une vue met en pause / relance ;
+  espace = pause ; le grand curseur 0–24 h reste le maître à bord.
 - Les boutons-scénarios (lever, midi, coucher, minuit) font tourner le temps **en douceur et
   toujours vers l'avant** (le vrai sens de la Terre), puis racontent la micro-histoire
   jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran.
