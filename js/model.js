@@ -249,6 +249,34 @@ export function defiReussi(defi, h) {
   return hourDist(h, defi.h) <= DEFI_WINDOW_H;
 }
 
+// ------------------------------------------------------------------------ la voix
+// Ce que le conteur DIT : texte écrit → texte oral. Partagé par le site
+// (repli synthèse vocale), l'outil tools/build-voix.mjs (fichiers ElevenLabs)
+// et les tests — la voix enregistrée ne doit jamais dire autre chose que le
+// texte affiché.
+
+// les émojis sont imprononçables
+export const EMOJI_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+
+// les transitions du conteur entre les deux regards d'un scénario
+export const VOIX_TRANSITIONS = {
+  jardin: 'Dans ton jardin…',
+  espace: 'Et maintenant, vu de l’espace…',
+};
+
+// Texte oral : émojis retirés, « 6 h 30 » → « 6 heures 30 » (l'heure écrite se
+// lit mal par certaines voix), espaces recollés — retirer un émoji laisse un
+// espace orphelin devant le point final, et un « . » isolé se fait lire
+// « point ».
+export function texteOral(t) {
+  return t.replace(EMOJI_RE, '')
+    .replace(/(\d+)\s*h\s+(\d+)/g, '$1 heures $2')
+    .replace(/(\d+)\s*h\b/g, '$1 heures')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+\./g, '.')
+    .trim();
+}
+
 // ------------------------------------------------------------------ les scénarios
 // Quatre moments de la journée : le temps glisse en douceur (toujours vers
 // l'avant, le vrai sens de la Terre), puis on raconte le même instant deux fois —

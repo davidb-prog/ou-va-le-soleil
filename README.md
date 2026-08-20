@@ -109,6 +109,7 @@ sous Node, sans navigateur :
 
 ```bash
 node test/model.test.mjs
+node test/voix.test.mjs
 ```
 
 **67 vérifications**, dont les vérités du récit : le Soleil est **fixe** (sa direction à
@@ -192,8 +193,13 @@ js/garden.js          vue jardin (ciel continu, arc du soleil, lune, ombres, dé
 js/space.js           vue espace (Soleil FIXE à droite, Terre vue du pôle Nord, marqueurs ;
                       mode « mini » sans étiquettes pour le jeu)
 js/main.js            boucle d'animation + interactions (curseur, glissers, tap-pause,
-                      scénarios et leur version sonore, jeu, conteur)
+                      scénarios et leur version sonore, jeu, conteur — voix enregistrée
+                      si disponible, synthèse du navigateur en repli)
 test/model.test.mjs   tests Node du modèle (67 vérifications)
+test/voix.test.mjs    corpus vocal + cohérence des fichiers enregistrés avec les textes
+tools/voix-lib.mjs    corpus des blocs parlés (la seule partie propre à cet épisode)
+tools/build-voix.mjs  génération des mp3 du conteur avec ElevenLabs (hors site)
+assets/audio/         manifest.json + les mp3 du conteur
 ```
 
 ## La série

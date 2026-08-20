@@ -112,6 +112,32 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   scénarios ET les consignes/bravos des défis (bouton 🔇/🔊 `btn-scn-voice` à côté du titre de
   « Joue avec le temps », clé `ltt-scn-voice` partagée elle aussi avec l'épisode 3)
 - `test/model.test.mjs` — tests Node du modèle (zéro dépendance)
+- `test/voix.test.mjs` — corpus vocal + cohérence manifeste ↔ textes du site
+- `tools/voix-lib.mjs` — corpus des blocs parlés (seule partie propre à l'épisode)
+- `tools/build-voix.mjs` — génération des mp3 ElevenLabs (hors site, idempotent)
+- `assets/audio/` — manifest.json + les mp3 du conteur (commités)
+
+## La voix enregistrée (ElevenLabs)
+
+Le conteur peut jouer des **mp3 commités** dans `assets/audio/` au lieu de la synthèse du
+navigateur (bien moins robotique). Règles dures :
+
+- **Le site reste 100 % statique** : les fichiers sont générés HORS site par
+  `tools/build-voix.mjs` (Node ≥ 18, zéro dépendance, clé `ELEVENLABS_API_KEY` +
+  `ELEVENLABS_VOICE_ID` en variables d'environnement — jamais commitées, jamais côté site).
+  Modèle `eleven_multilingual_v2`, plan Starter (licence commerciale, pas d'attribution).
+- **La voix enregistrée ne ment jamais** : `assets/audio/manifest.json` stocke le texte oral
+  exact de chaque bloc ; le site ne joue un mp3 que si son texte correspond ENCORE au texte
+  affiché (sinon repli synthèse), et `node test/voix.test.mjs` échoue si un texte a changé
+  sans régénération. Texte oral = `texteOral()` de `model.js` (émojis retirés,
+  « 6 h 30 » → « 6 heures 30 »), partagé site/outil/tests.
+- L'outil est **idempotent** (hash par bloc : on ne régénère que ce qui change), `--dry-run`
+  chiffre les crédits, `--essai voiceId1,voiceId2` fabrique une phrase-test par voix candidate,
+  `--only <id>` refait un seul bloc, et il écrit `tools/ecoute.html` (gitignoré) pour tout
+  réécouter. Seule `corpus()` dans `tools/voix-lib.mjs` est propre à cet épisode — le reste se
+  porte tel quel sur les autres (la Terre tourne, la Lune, les saisons…).
+- L'artifact de test embarque manifeste et sons en data URI (`window.__VOIX_MANIFESTE`,
+  injecté par `build-artifact.mjs`).
 
 ## Vérification navigateur
 
