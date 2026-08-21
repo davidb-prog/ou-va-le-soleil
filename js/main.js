@@ -491,12 +491,24 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
   // le onDone de la lecture précédente est toujours prévenu qu'elle s'achève
   let gen = 0;
   let curDone = null;
-  let curAudio = null;
+  // UN SEUL élément audio, réutilisé pour tous les blocs : une fois débloqué
+  // par un geste (iOS ne permet play() que dans la foulée d'un toucher), il
+  // peut rejouer SANS geste — indispensable pour le bravo du jeu, déclenché
+  // par la boucle d'animation quand l'enfant fabrique le bon moment.
+  let lecteur = null;
+  const getLecteur = () => {
+    if (!lecteur) lecteur = new Audio();
+    return lecteur;
+  };
   const settle = () => { const d = curDone; curDone = null; if (d) d(); };
   const stopSpeaking = () => {
     gen++;
     window.speechSynthesis.cancel();
-    if (curAudio) { try { curAudio.pause(); } catch (e) { /* déjà arrêté */ } curAudio = null; }
+    if (lecteur) {
+      try { lecteur.pause(); } catch (e) { /* déjà arrêté */ }
+      lecteur.onended = null;
+      lecteur.onerror = null;
+    }
     settle();
   };
 
@@ -549,10 +561,10 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
       };
       const src = audioSrc(it.id, it.text);
       if (!src) { fallback(); return; }
-      const a = new Audio(src);
-      curAudio = a;
+      const a = getLecteur();
       a.onended = () => { if (myGen === gen) window.setTimeout(after, 620); };
       a.onerror = fallback;
+      a.src = src;
       const p = a.play();
       if (p && p.then) p.then(null, fallback);
     };
