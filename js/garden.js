@@ -185,9 +185,7 @@ export class GardenView {
     const houseX = w * 0.2, houseW = 96 * s, houseH = 74 * s;
     const treeX = w * 0.64, treeH = 92 * s;
     const childX = w * 0.44, childH = 40 * s;
-    // debout dès le lever (le scénario de 6 h dit « bonjour ! » — et son ombre
-    // immense au soleil rasant est la plus belle leçon d'ombres du site)
-    const childHere = h >= 6 && h < 20.5; // au dodo la nuit !
+    const childHere = h >= 7 && h < 20.5; // au dodo la nuit !
 
     shadow(houseX, horizon + 4 * s, houseH * 0.85, houseW * 0.34, 13 * s);
     shadow(treeX, horizon + 4 * s, treeH * 0.8, 20 * s, 11 * s);
@@ -285,7 +283,7 @@ export class GardenView {
     ctx.beginPath(); ctx.arc(x - 2 * s, baseY - 76 * s, 26 * s, 0, TAU); ctx.fill();
   }
 
-  // Toi, dans le jardin (au lit entre 20 h 30 et 6 h — debout avec le soleil !).
+  // Toi, dans le jardin (au lit entre 20 h 30 et 7 h !).
   child(ctx, x, baseY, s, dayK) {
     const hh = 40 * s;
     // les jambes
