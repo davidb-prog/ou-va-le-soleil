@@ -146,12 +146,14 @@ export class SpaceView {
     ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(cx, cy, R + 1, -80 * DEG, 80 * DEG); ctx.stroke();
 
-    // ---- « jour » / « nuit », écrits en bas du disque (à l'écart des étiquettes
-    // des marqueurs, qui vivent à mi-rayon)
+    // ---- « jour » / « nuit », juste SOUS le disque : hors du chemin des
+    // marqueurs qui orbitent au bord (posés dans le disque, la maison de 6 h
+    // ou les enfants de 17 h leur passaient dessus)
     if (!this.mini) {
-      label(ctx, '☀️ jour', cx + R * 0.42, cy + R * 0.82,
+      const jnY = cy + R + M * 0.05;
+      label(ctx, '☀️ jour', cx + R * 0.45, jnY,
         { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(255, 236, 190, 0.95)', clampW: w, clampH: H });
-      label(ctx, '🌙 nuit', cx - R * 0.42, cy + R * 0.82,
+      label(ctx, '🌙 nuit', cx - R * 0.45, jnY,
         { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(200, 212, 240, 0.95)', clampW: w, clampH: H });
     }
 
