@@ -70,8 +70,8 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran.
 - Le jeu « Fais tourner la Terre ! » (fin de page, replié derrière « Jouer ») : le site
   demande un moment, l'enfant le **fabrique** en faisant tourner le temps sur deux mini-vues
-  répliquées (mêmes classes de vues, toujours synchronisées sur `sim.h` ; vue espace en mode
-  `mini` sans étiquettes). Défis dans `model.js` (`DEFIS`, `defiReussi`, fenêtre ±45 min
+  répliquées (mêmes classes de vues, toujours synchronisées sur `sim.h` ; les deux vues en
+  mode `mini` sans étiquettes ni repères). Défis dans `model.js` (`DEFIS`, `defiReussi`, fenêtre ±45 min
   `DEFI_WINDOW_H`, tempo `DEFI_DWELL_MS` anti « gagné en passant ») — le dernier défi est la
   révélation à l'envers : grand jour chez les enfants de l'autre côté = minuit chez soi.
   Ouvrir le jeu met en pause (rien ne doit gagner tout seul) ; le conteur 🔇/🔊 des scénarios
@@ -99,7 +99,8 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   formatées
 - `js/garden.js` — vue « depuis ton jardin » (canvas) : décor maison + arbre + enfant, ciel
   continu, arc du soleil (trajectoire pointillée), lune opposée, étoiles, nuages, ombres qui
-  s'allongent et tournent, repères est/sud/ouest
+  s'allongent et tournent, repères est/sud/ouest ; option `{ mini: true }` (le jeu) : mêmes
+  dessins sans les repères cardinaux
 - `js/space.js` — vue « depuis l'espace » (canvas) : la Terre vue de dessus du pôle Nord,
   Soleil **fixe** à droite avec ses rayons, moitié jour / moitié nuit, marqueur rose « chez
   toi » + marqueur sarcelle « les enfants de l'autre côté », flèche du sens de rotation ;

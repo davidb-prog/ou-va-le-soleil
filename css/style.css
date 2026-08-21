@@ -367,7 +367,10 @@ button:focus-visible, input:focus-visible, a:focus-visible {
      sur iPhone/Safari). */
   .views-grid .ratio-garden { aspect-ratio: auto; height: min(55vw, 34vh); }
   .views-grid .ratio-space { aspect-ratio: auto; height: min(88vw, 40vh); }
-  /* les mini-vues du jeu, plus étroites, gardent leurs proportions */
+  /* les mini-vues du jeu, plus étroites, gardent leurs proportions — écart
+     resserré et colonne espace élargie : chaque pixel compte pour le disque
+     que l'enfant fait tourner du doigt */
+  .game-views { gap: 8px; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
   .game-views .ratio-garden { aspect-ratio: 16 / 10; }
   @supports not (aspect-ratio: 1 / 1) {
     .game-views .ratio-garden { height: 30vw; }

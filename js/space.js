@@ -48,11 +48,12 @@ export class SpaceView {
     const M = Math.min(w, H * 1.35);
     const R = M * 0.3;
     const cx = w * 0.4, cy = H * 0.53;
-    // la mini du jeu : Soleil plus petit et un peu rentré — ses rayons
-    // restent entiers ET l'écart avec le disque reste franc (le halo ne
+    // la mini du jeu : Soleil plus petit et bien rentré — ses rayons restent
+    // entiers avec une vraie marge (à 0.055, ils affleuraient le bord droit
+    // sur téléphone) ET l'écart avec le disque reste franc (le halo ne
     // mange pas la Terre ni le marqueur de la maison)
     const sunR = M * (this.mini ? 0.09 : 0.115);
-    const sunX = w - sunR - M * (this.mini ? 0.055 : 0.035), sunY = cy;
+    const sunX = w - sunR - M * (this.mini ? 0.075 : 0.035), sunY = cy;
     this.layout = { cx: cx, cy: cy, R: R };
     const A = earthAngle(h);
 
@@ -146,12 +147,14 @@ export class SpaceView {
     ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(cx, cy, R + 1, -80 * DEG, 80 * DEG); ctx.stroke();
 
-    // ---- « jour » / « nuit », écrits en bas du disque (à l'écart des étiquettes
-    // des marqueurs, qui vivent à mi-rayon)
+    // ---- « jour » / « nuit », juste SOUS le disque : hors du chemin des
+    // marqueurs qui orbitent au bord (posés dans le disque, la maison de 6 h
+    // ou les enfants de 17 h leur passaient dessus)
     if (!this.mini) {
-      label(ctx, '☀️ jour', cx + R * 0.42, cy + R * 0.82,
+      const jnY = cy + R + M * 0.05;
+      label(ctx, '☀️ jour', cx + R * 0.45, jnY,
         { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(255, 236, 190, 0.95)', clampW: w, clampH: H });
-      label(ctx, '🌙 nuit', cx - R * 0.42, cy + R * 0.82,
+      label(ctx, '🌙 nuit', cx - R * 0.45, jnY,
         { align: 'center', size: Math.max(10, M * 0.032), color: 'rgba(200, 212, 240, 0.95)', clampW: w, clampH: H });
     }
 

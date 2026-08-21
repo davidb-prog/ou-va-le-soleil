@@ -17,15 +17,24 @@ function shade(hex, k) {
 }
 
 export class GardenView {
-  constructor(canvas) { this.canvas = canvas; }
+  // opts.mini : version miniature (le jeu) — mêmes dessins, mais SANS les
+  // points cardinaux : à cette taille ils encombrent plus qu'ils n'aident,
+  // et la grande vue au-dessus les a déjà appris (même choix que SpaceView).
+  constructor(canvas, opts) {
+    this.canvas = canvas;
+    this.mini = !!(opts && opts.mini);
+  }
 
   // Position du soleil (ou de la lune) à l'écran pour une heure donnée.
-  // Marge de 42 px : au lever et au coucher, le disque reste entier à l'écran.
+  // La marge garde le disque levant/couchant entier à l'écran ET à gauche de
+  // la maison (proportionnelle à la largeur : en pixels fixes, le soleil de
+  // 6 h se levait derrière la maison sur mobile).
   spot(hh, w, horizon) {
     const az = sunAzimuth01(hh);
     const alt = sunAltitude(hh);
+    const m = Math.max(20 * Math.max(0.8, w / 600) + 2, w * 0.055);
     return {
-      x: 42 + az * (w - 84),
+      x: m + az * (w - 2 * m),
       y: horizon - Math.max(-0.2, alt) * (horizon - 30),
     };
   }
@@ -70,16 +79,29 @@ export class GardenView {
     if (alt > -0.14) {
       const p = this.spot(h, w, horizon);
       const warm = clamp01(1 - alt * 1.5); // orangé quand il est bas
-      const core = rgbCss(mixRgb(hexToRgb(COLOR_SUN), hexToRgb('#ff8a3c'), warm * 0.8));
-      const R = 15 * Math.max(0.8, s);
+      const low = clamp01(1 - alt * 2.6);  // tout proche de l'horizon
+      // orangé en descendant… mais ré-éclairci au ras de l'horizon : sur le
+      // ciel du lever/coucher (orange lui aussi), un disque orange disparaît
+      const core = rgbCss(mixRgb(mixRgb(hexToRgb(COLOR_SUN), hexToRgb('#ff8a3c'), warm * 0.8),
+        hexToRgb('#ffe9b0'), low * 0.5));
+      // plus gros au ras de l'horizon — le « gros soleil couchant », et le
+      // moment du lever/coucher devient impossible à rater
+      const R = 15 * Math.max(0.8, s) * (1 + 0.35 * low);
       const glow = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, R * 3);
       glow.addColorStop(0, core);
-      glow.addColorStop(0.45, 'rgba(255, 175, 70, 0.45)');
+      glow.addColorStop(0.45, 'rgba(255, 175, 70, ' + (0.45 + 0.25 * low) + ')');
       glow.addColorStop(1, 'rgba(255, 159, 28, 0)');
       ctx.fillStyle = glow;
       ctx.beginPath(); ctx.arc(p.x, p.y, R * 3, 0, TAU); ctx.fill();
       ctx.fillStyle = core;
       ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, TAU); ctx.fill();
+      // au ras de l'horizon, un liseré crème détache le disque du ciel
+      // orangé du lever/coucher — sans lui, ton sur ton, il disparaissait
+      if (low > 0.4) {
+        ctx.strokeStyle = 'rgba(255, 246, 218, ' + 0.85 * clamp01((low - 0.4) / 0.6) + ')';
+        ctx.lineWidth = Math.max(1.6, R * 0.13);
+        ctx.beginPath(); ctx.arc(p.x, p.y, R, 0, TAU); ctx.stroke();
+      }
       // deux petits yeux et un sourire, parce qu'on a 5 ans
       const k = clamp01(alt * 4 + 0.4);
       if (k > 0.3) {
@@ -136,17 +158,32 @@ export class GardenView {
     ctx.fillStyle = gg;
     ctx.fillRect(0, horizon, w, H - horizon);
 
-    // ---- les ombres (sous les objets), puis le décor par-dessus
+    // ---- les ombres (sous les objets), puis le décor par-dessus.
+    // Assez épaisses et un peu décalées sous la ligne de base pour dépasser
+    // du décor — en ruban fin pile sous l'horizon, elles étaient invisibles.
+    // Chaque ombre est un dégradé : racine sombre au pied de l'objet, queue
+    // qui s'estompe — même quand elles se rejoignent (soleil bas), on lit
+    // encore TROIS ombres, une par objet, pas une bande uniforme. La longueur
+    // dessinée est plafonnée sous SHADOW_MAX : la queue reste dans le cadre.
     const shLen = shadowLength(h);
     const shDir = shadowDirX(h);
-    const shA = 0.34 * clamp01(alt * 3.5);
-    const shadow = (x, baseY, objH, minR) => {
+    const shA = 0.4 * clamp01(alt * 4 + 0.18);
+    const shadow = (x, baseY, objH, footR, thick) => {
       if (shLen <= 0 || shA <= 0.01) return;
-      const dx = shDir * shLen * objH;
-      const rx = Math.max(minR, Math.abs(dx) / 2);
-      ctx.fillStyle = 'rgba(7, 11, 23, ' + shA + ')';
+      const dx = shDir * Math.min(shLen, 3.5) * objH;
+      const cyS = baseY + thick * 0.8; // bien posée DANS l'herbe, pas sur la ligne d'horizon
+      const rx = Math.max(footR, Math.abs(dx) / 2 + footR * 0.4);
+      if (Math.abs(dx) < footR) {
+        ctx.fillStyle = 'rgba(7, 11, 23, ' + shA + ')';
+      } else {
+        const g = ctx.createLinearGradient(x - shDir * footR, 0, x + dx + shDir * footR * 0.4, 0);
+        g.addColorStop(0, 'rgba(7, 11, 23, ' + shA + ')');
+        g.addColorStop(0.35, 'rgba(7, 11, 23, ' + shA * 0.85 + ')');
+        g.addColorStop(1, 'rgba(7, 11, 23, ' + shA * 0.1 + ')');
+        ctx.fillStyle = g;
+      }
       ctx.beginPath();
-      ctx.ellipse(x + dx / 2, baseY, rx, 5.5 * s, 0, 0, TAU);
+      ctx.ellipse(x + dx / 2, cyS, rx, thick, 0, 0, TAU);
       ctx.fill();
     };
 
@@ -156,9 +193,9 @@ export class GardenView {
     const childX = w * 0.44, childH = 40 * s;
     const childHere = h >= 7 && h < 20.5; // au dodo la nuit !
 
-    shadow(houseX, horizon + 4 * s, houseH * 0.85, houseW * 0.44);
-    shadow(treeX, horizon + 4 * s, treeH * 0.8, 15 * s);
-    if (childHere) shadow(childX, horizon + 7 * s, childH, 7 * s);
+    shadow(houseX, horizon + 4 * s, houseH * 0.85, houseW * 0.34, 13 * s);
+    shadow(treeX, horizon + 4 * s, treeH * 0.8, 20 * s, 11 * s);
+    if (childHere) shadow(childX, horizon + 7 * s, childH, 6 * s, 6.5 * s);
 
     this.house(ctx, houseX, horizon + 4 * s, s, dayK, alt < -0.02);
     this.tree(ctx, treeX, horizon + 4 * s, s, dayK);
@@ -166,10 +203,12 @@ export class GardenView {
     this.flowers(ctx, w, horizon, H, s, dayK);
 
     // ---- les points cardinaux, posés sur l'herbe (le parent les montre du doigt)
-    const cardY = H - 11 * s;
-    label(ctx, 'est', 10 + 8 * s, cardY, { size: 10.5, color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
-    label(ctx, 'sud', w / 2, cardY, { size: 10.5, align: 'center', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
-    label(ctx, 'ouest', w - 10 - 8 * s, cardY, { size: 10.5, align: 'right', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+    if (!this.mini) {
+      const cardY = H - 11 * s;
+      label(ctx, 'est', 10 + 8 * s, cardY, { size: 10.5, color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+      label(ctx, 'sud', w / 2, cardY, { size: 10.5, align: 'center', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+      label(ctx, 'ouest', w - 10 - 8 * s, cardY, { size: 10.5, align: 'right', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+    }
   }
 
   // Trace un croissant de lune : le disque (rayon r) mordu par un cercle

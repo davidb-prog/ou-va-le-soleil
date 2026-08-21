@@ -658,7 +658,7 @@ function tellScenario() {
 const gameZone = $('game-zone');
 const gameGardenC = $('game-garden');
 const gameSpaceC = $('game-space');
-const gameGarden = new GardenView(gameGardenC);
+const gameGarden = new GardenView(gameGardenC, { mini: true });
 const gameSpace = new SpaceView(gameSpaceC, { mini: true });
 const jouerBtn = $('btn-jouer');
 
