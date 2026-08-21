@@ -621,7 +621,9 @@ let scnVoiceOn = false;
 try { scnVoiceOn = window.localStorage.getItem('ltt-scn-voice') === '1'; } catch (e) { /* mode privé */ }
 
 function setScnVoiceUi() {
-  scnVoiceBtn.textContent = scnVoiceOn ? '🔊 la voix raconte' : '🔇 sans la voix';
+  // les deux libellés (« avec / sans la voix ») vivent dans le HTML, empilés
+  // par le CSS : basculer aria-pressed montre l'un, cache l'autre, sans que
+  // le bouton change jamais de largeur (pas de décalage de la ligne de titre)
   scnVoiceBtn.setAttribute('aria-pressed', scnVoiceOn ? 'true' : 'false');
 }
 setScnVoiceUi();

@@ -65,8 +65,12 @@
     <div class="panel scenario-panel">
       <div class="scenario-title">
         <span>🎲 Joue avec le temps :</span>
-        <button id="btn-scn-voice" class="spin-btn" aria-pressed="false"
-          aria-label="Activer la voix qui raconte chaque moment choisi, depuis le jardin et depuis l’espace">🔇 sans la voix</button>
+        <!-- les deux libellés vivent empilés dans le bouton (grille 1×1) : sa largeur
+             est celle du plus long des deux, donc rien ne bouge quand on bascule -->
+        <button id="btn-scn-voice" class="spin-btn scn-voice-btn" aria-pressed="false"
+          aria-label="Activer la voix qui raconte chaque moment choisi, depuis le jardin et depuis l’espace"><span
+            class="scn-voice-on" aria-hidden="true">🔊 avec la voix</span><span
+            class="scn-voice-off" aria-hidden="true">🔇 sans la voix</span></button>
       </div>
       <div class="scenario-buttons" id="scenario-buttons" role="group" aria-label="Choisir un moment de la journée"></div>
       <div id="story" class="story" aria-live="polite"></div>
