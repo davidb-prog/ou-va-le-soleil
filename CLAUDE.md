@@ -120,7 +120,10 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 ## La voix enregistrée (ElevenLabs)
 
 Le conteur peut jouer des **mp3 commités** dans `assets/audio/` au lieu de la synthèse du
-navigateur (bien moins robotique). Règles dures :
+navigateur (bien moins robotique). Le guide complet — règles d'écriture pour l'oral,
+processus de production, portage sur les autres épisodes — est dans
+[`docs/voix-conteur.md`](docs/voix-conteur.md) ; c'est LA référence de la famille.
+Règles dures :
 
 - **Le site reste 100 % statique** : les fichiers sont générés HORS site par
   `tools/build-voix.mjs` (Node ≥ 18, zéro dépendance, clé `ELEVENLABS_API_KEY` +
