@@ -48,9 +48,11 @@ export class SpaceView {
     const M = Math.min(w, H * 1.35);
     const R = M * 0.3;
     const cx = w * 0.4, cy = H * 0.53;
-    // la mini du jeu rentre un peu le Soleil : ses rayons restent entiers
-    const sunR = M * (this.mini ? 0.105 : 0.115);
-    const sunX = w - sunR - M * (this.mini ? 0.075 : 0.035), sunY = cy;
+    // la mini du jeu : Soleil plus petit et un peu rentré — ses rayons
+    // restent entiers ET l'écart avec le disque reste franc (le halo ne
+    // mange pas la Terre ni le marqueur de la maison)
+    const sunR = M * (this.mini ? 0.09 : 0.115);
+    const sunX = w - sunR - M * (this.mini ? 0.055 : 0.035), sunY = cy;
     this.layout = { cx: cx, cy: cy, R: R };
     const A = earthAngle(h);
 

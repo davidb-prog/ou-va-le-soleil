@@ -101,8 +101,10 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 
 /* touch-action: none (le choix de « la Lune ») : le geste posé sur une vue
    appartient TOUJOURS au glisser du temps — un doigt un peu de travers ne part
-   jamais en défilement de page. Les vues sont plafonnées en hauteur : il reste
-   toujours de la page autour pour faire défiler. */
+   jamais en défilement de page. Étendu aux conteneurs : même les bords des
+   cadres et l'interstice entre les deux minis du jeu ne défilent pas. Les
+   vues sont plafonnées en hauteur : il reste de la page autour pour défiler. */
+.canvas-wrap, .game-views { touch-action: none; }
 #garden-view, #space-view { touch-action: none; cursor: grab; }
 #garden-view:active, #space-view:active { cursor: grabbing; }
 
