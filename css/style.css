@@ -359,14 +359,21 @@ button:focus-visible, input:focus-visible, a:focus-visible {
   /* le fond fixe force des repeints à chaque défilement sur Android */
   body { background-attachment: scroll; }
 
-  .views-grid { grid-template-columns: 1fr; }
+  .views-grid { grid-template-columns: 1fr; gap: 8px; }
   /* les deux vues, plafonnées en hauteur d'écran : après un appui-scénario,
      jardin ET espace tiennent ensemble dans le viewport d'un téléphone.
      Hauteurs EXPLICITES, jamais aspect-ratio + max-height : quand le plafond
      mord, WebKit réduit alors la LARGEUR de la boîte (vue espace rétrécie
-     sur iPhone/Safari). */
+     sur iPhone/Safari). À ces largeurs le disque de la vue espace est borné
+     par la LARGEUR du canvas : raboter sa hauteur n'enlève que du ciel vide. */
   .views-grid .ratio-garden { aspect-ratio: auto; height: min(55vw, 34vh); }
-  .views-grid .ratio-space { aspect-ratio: auto; height: min(88vw, 40vh); }
+  .views-grid .ratio-space { aspect-ratio: auto; height: min(84vw, 36vh); }
+  /* …et tout l'entre-deux se resserre, pour que les deux regards du même
+     moment se voient ENSEMBLE, sans défiler */
+  .stage-panel { padding: 10px; }
+  .view-head { font-size: .95rem; margin-bottom: 4px; }
+  .view-status { margin-top: 5px; font-size: .85rem; }
+  .drag-hint { margin-top: 6px; }
   /* les mini-vues du jeu, plus étroites, gardent leurs proportions */
   .game-views .ratio-garden { aspect-ratio: 16 / 10; }
   @supports not (aspect-ratio: 1 / 1) {
