@@ -570,6 +570,15 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
       a.src = src;
       const p = a.play();
       if (p && p.then) p.then(null, fallback);
+      // pendant que ce bloc joue, préchauffer le fichier du suivant : son
+      // chargement se fait d'avance (cache HTTP) et ne s'ajoute plus au
+      // blanc entre les blocs au premier passage en ligne
+      if (at < items.length && window.fetch) {
+        const nx = audioSrc(items[at].id, items[at].text);
+        if (nx && nx.indexOf('data:') !== 0) {
+          fetch(nx).catch(() => { /* le lecteur retentera au vrai chargement */ });
+        }
+      }
     };
     next();
   };
@@ -606,7 +615,13 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
       if (reading) startReading(); // on réécoute tout de suite avec la nouvelle voix
     });
   }
-  window.addEventListener('pagehide', () => { window.speechSynthesis.cancel(); });
+  // partir ailleurs (autre application, autre onglet, écran verrouillé)
+  // coupe le conteur net — synthèse ET mp3 : la voix ne parle jamais dans le
+  // vide. Pas de reprise au retour : rien ne parle tout seul, on re-tape.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') stopSpeaking();
+  });
+  window.addEventListener('pagehide', stopSpeaking); // vieux Safari sans visibilitychange fiable
 } else {
   $('btn-scn-voice').hidden = true; // pas de synthèse vocale : pas de version sonore
 }
