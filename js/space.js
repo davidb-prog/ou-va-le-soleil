@@ -99,11 +99,9 @@ export class SpaceView {
     }
     ctx.restore();
 
-    // le pôle Nord, pile au centre (on regarde la Terre de dessus !) — un
-    // petit point d'axe : en gros disque, il se lisait comme une Lune ou
-    // une tache, jamais comme le pôle
+    // le pôle Nord, pile au centre (on regarde la Terre de dessus !)
     ctx.fillStyle = 'rgba(223, 233, 245, 0.92)';
-    ctx.beginPath(); ctx.arc(cx, cy, Math.max(2.5, R * 0.05), 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, R * 0.14, 0, TAU); ctx.fill();
 
     // un voile de lumière côté Soleil…
     const lg = ctx.createLinearGradient(cx + R, 0, cx - R * 0.2, 0);
