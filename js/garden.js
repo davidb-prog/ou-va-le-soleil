@@ -17,7 +17,13 @@ function shade(hex, k) {
 }
 
 export class GardenView {
-  constructor(canvas) { this.canvas = canvas; }
+  // opts.mini : version miniature (le jeu) — mêmes dessins, mais SANS les
+  // points cardinaux : à cette taille ils encombrent plus qu'ils n'aident,
+  // et la grande vue au-dessus les a déjà appris (même choix que SpaceView).
+  constructor(canvas, opts) {
+    this.canvas = canvas;
+    this.mini = !!(opts && opts.mini);
+  }
 
   // Position du soleil (ou de la lune) à l'écran pour une heure donnée.
   // La marge garde le disque levant/couchant entier à l'écran ET à gauche de
@@ -197,10 +203,12 @@ export class GardenView {
     this.flowers(ctx, w, horizon, H, s, dayK);
 
     // ---- les points cardinaux, posés sur l'herbe (le parent les montre du doigt)
-    const cardY = H - 11 * s;
-    label(ctx, 'est', 10 + 8 * s, cardY, { size: 10.5, color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
-    label(ctx, 'sud', w / 2, cardY, { size: 10.5, align: 'center', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
-    label(ctx, 'ouest', w - 10 - 8 * s, cardY, { size: 10.5, align: 'right', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+    if (!this.mini) {
+      const cardY = H - 11 * s;
+      label(ctx, 'est', 10 + 8 * s, cardY, { size: 10.5, color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+      label(ctx, 'sud', w / 2, cardY, { size: 10.5, align: 'center', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+      label(ctx, 'ouest', w - 10 - 8 * s, cardY, { size: 10.5, align: 'right', color: 'rgba(233, 237, 248, 0.75)', clampW: w, clampH: H });
+    }
   }
 
   // Trace un croissant de lune : le disque (rayon r) mordu par un cercle
