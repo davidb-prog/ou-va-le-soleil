@@ -69,12 +69,14 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
   fenêtres jamais chevauchées).
 - **La boîte « Le Soleil ne va nulle part ! »** : la grande révélation en cinq petits
   paragraphes à lire à voix haute, qui se referment sur le refrain de la série — *… parce que
-  la Terre tourne !* — à lire… ou à **écouter** : la synthèse vocale du navigateur la raconte
-  phrase à phrase, sur un ton de conteur (pauses, exclamations, suspens) — le même conteur que
-  l'épisode 3, et que la version sonore des scénarios. Le site choisit d'office la voix
-  française la plus naturelle de l'appareil, un
-  menu permet d'en changer (choix retenu, partagé entre les épisodes), et un conseil s'affiche
-  quand l'appareil n'a que des voix robotiques.
+  la Terre tourne !* — à lire… ou à **écouter**.
+- **La voix du conteur est enregistrée** (fabriquée une fois pour toutes avec ElevenLabs,
+  mp3 commités dans `assets/audio/`) : elle raconte la grande histoire, les scénarios et les
+  défis du jeu, avec de vraies pauses entre les blocs. Le site ne joue un fichier que si son
+  texte correspond encore au texte affiché — sinon, **repli** sur la synthèse vocale du
+  navigateur (la plus naturelle des voix françaises de l'appareil, menu pour en changer,
+  choix partagé entre les épisodes). Rien ne part sur Internet pendant la lecture. Le guide
+  de production : [`docs/voix-conteur.md`](docs/voix-conteur.md).
 - **Le pont vers l'épisode 3** : « Et si le soleil se couche chez toi… il se lève chez qui ? »
   → [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
 - **Mise en page mobile dédiée** : sous 640 px les vues s'empilent, plafonnées en hauteur
@@ -109,6 +111,7 @@ sous Node, sans navigateur :
 
 ```bash
 node test/model.test.mjs
+node test/voix.test.mjs
 ```
 
 **67 vérifications**, dont les vérités du récit : le Soleil est **fixe** (sa direction à
@@ -192,8 +195,13 @@ js/garden.js          vue jardin (ciel continu, arc du soleil, lune, ombres, dé
 js/space.js           vue espace (Soleil FIXE à droite, Terre vue du pôle Nord, marqueurs ;
                       mode « mini » sans étiquettes pour le jeu)
 js/main.js            boucle d'animation + interactions (curseur, glissers, tap-pause,
-                      scénarios et leur version sonore, jeu, conteur)
+                      scénarios et leur version sonore, jeu, conteur — voix enregistrée
+                      si disponible, synthèse du navigateur en repli)
 test/model.test.mjs   tests Node du modèle (67 vérifications)
+test/voix.test.mjs    corpus vocal + cohérence des fichiers enregistrés avec les textes
+tools/voix-lib.mjs    corpus des blocs parlés (la seule partie propre à cet épisode)
+tools/build-voix.mjs  génération des mp3 du conteur avec ElevenLabs (hors site)
+assets/audio/         manifest.json + les mp3 du conteur
 ```
 
 ## La série

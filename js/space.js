@@ -41,11 +41,18 @@ export class SpaceView {
   draw(h) {
     const f = fitCanvas(this.canvas);
     const ctx = f.ctx, w = f.w, H = f.h;
-    const M = Math.min(w, H);
+    // Sur un canvas plus large que haut (mobile : hauteur plafonnée en vh),
+    // on garde les proportions du carré tant que la hauteur le permet —
+    // sinon le disque et le Soleil rapetissent et un grand vide s'ouvre
+    // entre les deux (les flèches de lumière deviennent très longues).
+    const M = Math.min(w, H * 1.35);
     const R = M * 0.3;
     const cx = w * 0.4, cy = H * 0.53;
-    const sunR = M * 0.115;
-    const sunX = w - sunR - M * 0.035, sunY = cy;
+    // la mini du jeu : Soleil plus petit et un peu rentré — ses rayons
+    // restent entiers ET l'écart avec le disque reste franc (le halo ne
+    // mange pas la Terre ni le marqueur de la maison)
+    const sunR = M * (this.mini ? 0.09 : 0.115);
+    const sunX = w - sunR - M * (this.mini ? 0.055 : 0.035), sunY = cy;
     this.layout = { cx: cx, cy: cy, R: R };
     const A = earthAngle(h);
 
@@ -54,9 +61,10 @@ export class SpaceView {
     ctx.fillRect(0, 0, w, H);
     drawStars(this, ctx, w, H, 90, 1);
 
-    // ---- la lumière du Soleil qui arrive sur la Terre (flèches fixes)
+    // ---- la lumière du Soleil qui arrive sur la Terre (flèches fixes) —
+    // pas sur les minis du jeu : à cette taille, elles encombrent
     const rayX0 = cx + R + M * 0.02, rayX1 = sunX - sunR - M * 0.015;
-    if (rayX1 > rayX0 + 12) {
+    if (!this.mini && rayX1 > rayX0 + 12) {
       ctx.strokeStyle = 'rgba(255, 207, 92, 0.42)';
       ctx.fillStyle = 'rgba(255, 207, 92, 0.55)';
       ctx.lineWidth = Math.max(1.6, M * 0.006);

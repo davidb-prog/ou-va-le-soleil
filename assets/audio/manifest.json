@@ -1,0 +1,127 @@
+{
+  "voix": "GFj5Qf6cNQ3Lgp8VKBwc",
+  "modele": "eleven_multilingual_v2",
+  "blocs": {
+    "transition-jardin": {
+      "texte": "Dans ton jardin…",
+      "hash": "21519b1858ff",
+      "fichier": "transition-jardin.mp3"
+    },
+    "transition-espace": {
+      "texte": "Et maintenant, vu de l’espace…",
+      "hash": "883a1d3f63f6",
+      "fichier": "transition-espace.mp3"
+    },
+    "scn-lever-jardin": {
+      "texte": "Regarde à gauche, vers l’est : le soleil pointe le bout de son nez, et le ciel devient tout rose. Bonjour !",
+      "hash": "d4219767b748",
+      "fichier": "scn-lever-jardin.mp3"
+    },
+    "scn-lever-espace": {
+      "texte": "Ta maison vient de tourner du côté de la lumière. Le Soleil n’est pas arrivé : il t’attendait, c’est toi qui reviens vers lui, parce que la Terre tourne !",
+      "hash": "d6fcec1633f4",
+      "fichier": "scn-lever-espace.mp3"
+    },
+    "scn-midi-jardin": {
+      "texte": "Le soleil est au plus haut, plein sud. Les ombres sont toutes petites : elles se cachent sous tes pieds !",
+      "hash": "0717801ea5e4",
+      "fichier": "scn-midi-jardin.mp3"
+    },
+    "scn-midi-espace": {
+      "texte": "Ta maison est en plein milieu du côté jour, bien en face du Soleil. C’est pour ça qu’il est si haut dans le ciel.",
+      "hash": "67ae0fa46f1a",
+      "fichier": "scn-midi-espace.mp3"
+    },
+    "scn-coucher-jardin": {
+      "texte": "Le ciel devient orange, les ombres s’étirent, et le soleil glisse derrière l’horizon, à droite, vers l’ouest. Au revoir !",
+      "hash": "d61bf520497a",
+      "fichier": "scn-coucher-jardin.mp3"
+    },
+    "scn-coucher-espace": {
+      "texte": "Regarde bien : le Soleil n’a pas bougé d’un poil ! C’est ta maison qui part de l’autre côté de la Terre. Il ne s’éteint pas, il brille toujours.",
+      "hash": "4b3310762263",
+      "fichier": "scn-coucher-espace.mp3"
+    },
+    "scn-minuit-jardin": {
+      "texte": "Nuit noire, ciel plein d’étoiles, la lune veille. Le soleil a disparu… mais où est-il passé ?",
+      "hash": "c1696c705e16",
+      "fichier": "scn-minuit-jardin.mp3"
+    },
+    "scn-minuit-espace": {
+      "texte": "Le voilà ! Ta maison lui tourne le dos, tout simplement. Et pendant que tu dors, de l’autre côté de la Terre, c’est grand jour : des enfants jouent en plein soleil !",
+      "hash": "dfcd1051c190",
+      "fichier": "scn-minuit-espace.mp3"
+    },
+    "defi-lever-consigne": {
+      "texte": "le matin ! Fais lever le soleil dans ton jardin.",
+      "hash": "37b43078ca17",
+      "fichier": "defi-lever-consigne.mp3"
+    },
+    "defi-lever-bravo": {
+      "texte": "Bravo ! Le soleil se lève à l’est… et vu de l’espace, c’est ta maison qui vient de tourner vers lui !",
+      "hash": "0e506069ecda",
+      "fichier": "defi-lever-bravo.mp3"
+    },
+    "defi-midi-consigne": {
+      "texte": "midi, le milieu du jour ! Mets le soleil au plus haut du ciel.",
+      "hash": "7eb5796503d4",
+      "fichier": "defi-midi-consigne.mp3"
+    },
+    "defi-midi-bravo": {
+      "texte": "Bravo ! Le soleil est au plus haut, plein sud, et les ombres sont si petites qu’elles se cachent sous les pieds !",
+      "hash": "68eecd746adc",
+      "fichier": "defi-midi-bravo.mp3"
+    },
+    "defi-coucher-consigne": {
+      "texte": "le soir ! Couche le soleil, fais le ciel tout orange.",
+      "hash": "518384849a73",
+      "fichier": "defi-coucher-consigne.mp3"
+    },
+    "defi-coucher-bravo": {
+      "texte": "Bravo ! Le ciel est tout orange… et regarde la vue de l’espace : le Soleil, lui, n’a pas bougé d’un poil !",
+      "hash": "699771f0de2a",
+      "fichier": "defi-coucher-bravo.mp3"
+    },
+    "defi-autre-cote-consigne": {
+      "texte": "le grand jour… chez les enfants de l’autre côté de la Terre !",
+      "hash": "e35783db4ac0",
+      "fichier": "defi-autre-cote-consigne.mp3"
+    },
+    "defi-autre-cote-bravo": {
+      "texte": "Bravo ! Chez toi, c’est la nuit noire, tout le monde dort. Et chez les enfants de l’autre côté, c’est midi en plein soleil !",
+      "hash": "1baf33ec7fd9",
+      "fichier": "defi-autre-cote-bravo.mp3"
+    },
+    "histoire-1": {
+      "texte": "Le soir, on dit que le soleil se couche. Mais chut… c’est un secret : le Soleil ne se couche pas du tout. Il ne bouge pas. Il ne s’éteint jamais.",
+      "hash": "c2fd0c7c5906",
+      "fichier": "histoire-1.mp3"
+    },
+    "histoire-2": {
+      "texte": "C’est la Terre qui tourne sur elle-même, comme un manège très lent. Elle met un jour entier, 24 heures, pour faire un tour complet. Et ta maison est posée dessus, comme sur un manège !",
+      "hash": "f3166dfde087",
+      "fichier": "histoire-2.mp3"
+    },
+    "histoire-3": {
+      "texte": "Quand ta maison est du côté du Soleil, il fait jour. Quand elle passe de l’autre côté, elle lui tourne le dos, et il fait nuit chez toi. Mais le Soleil continue de briller. Il éclaire les enfants qui habitent de l’autre côté de la Terre.",
+      "hash": "926752602800",
+      "fichier": "histoire-3.mp3"
+    },
+    "histoire-4": {
+      "texte": "Et au matin, ta maison revient face au Soleil. On dit qu’il se lève… en vrai, c’est toi qui reviens vers lui. Bonjour le Soleil !",
+      "hash": "5d74339a56fb",
+      "fichier": "histoire-4.mp3"
+    },
+    "histoire-5": {
+      "texte": "Alors, où va le soleil la nuit ? Nulle part : c’est nous qui tournons… parce que la Terre tourne !",
+      "hash": "3b66876e3748",
+      "fichier": "histoire-5.mp3"
+    }
+  },
+  "format": "mp3_44100_64",
+  "reglages": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.3
+  }
+}

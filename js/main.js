@@ -5,7 +5,7 @@
 
 import { TAU, wrap24, formatHM, periodWord, skyPhase, earthAngle,
          SPIN_HOURS_PER_SEC, SCENARIOS, DEFIS, defiReussi, hourDist,
-         DEFI_DWELL_MS, DEFI_EXIT_WINDOW_H } from './model.js';
+         DEFI_DWELL_MS, DEFI_EXIT_WINDOW_H, texteOral, VOIX_TRANSITIONS } from './model.js';
 import { GardenView } from './garden.js';
 import { SpaceView } from './space.js';
 
@@ -379,10 +379,41 @@ function sentenceChunks(text, endPara) {
   return out;
 }
 
+// ---- la voix enregistrée : un manifeste (assets/audio/manifest.json) liste
+// les blocs disponibles avec leur texte oral exact. On ne joue un fichier que
+// si son texte correspond ENCORE au texte du site — sinon, repli synthèse (la
+// voix enregistrée ne ment jamais). Manifeste vide ou absent : tout passe par
+// la synthèse, comme avant. Fichiers générés par tools/build-voix.mjs. ----
+
+let audioBlocs = {};
+if (window.__VOIX_MANIFESTE && window.__VOIX_MANIFESTE.blocs) {
+  // l'artifact de test familial embarque le manifeste dans la page
+  audioBlocs = window.__VOIX_MANIFESTE.blocs;
+} else if (window.fetch) {
+  fetch('assets/audio/manifest.json')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((m) => {
+      if (m && m.blocs) audioBlocs = m.blocs;
+      // le conseil « voix robotiques » ne concerne que le repli synthèse
+      if (Object.keys(audioBlocs).length > 0) {
+        const vh = $('voice-hint');
+        if (vh) vh.hidden = true;
+      }
+    })
+    .catch(() => { /* hors ligne ou manifeste absent : synthèse seule */ });
+}
+
+function audioSrc(id, text) {
+  const b = audioBlocs[id];
+  if (!b || b.texte !== text || !b.fichier) return null;
+  // l'artifact embarque les sons en data URI ; le site sert des fichiers
+  return b.fichier.indexOf('data:') === 0 ? b.fichier : 'assets/audio/' + b.fichier;
+}
+
 const listenBtn = $('btn-listen');
 const voiceSel = $('voice-pick');
 const voiceHint = $('voice-hint');
-let narrator = null; // { speak(chunks, onDone), stop() } — null sans synthèse vocale
+let narrator = null; // { narrate(items, onDone), stop() } — null sans synthèse vocale
 
 if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
   let frVoices = [];
@@ -440,9 +471,10 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
     }
     if (voiceHint) {
       // en dessous de ce score, l'appareil n'a que des voix métalliques :
-      // on souffle aux parents comment en obtenir une plus douce
+      // on souffle aux parents comment en obtenir une plus douce — sauf si
+      // la voix enregistrée est là (le conseil ne concerne que le repli)
       const best = frVoices.length ? voiceScore(frVoices[0]) : -1;
-      voiceHint.hidden = best >= 84;
+      voiceHint.hidden = best >= 84 || Object.keys(audioBlocs).length > 0;
     }
   };
   refreshVoices();
@@ -459,22 +491,36 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
   // le onDone de la lecture précédente est toujours prévenu qu'elle s'achève
   let gen = 0;
   let curDone = null;
+  // UN SEUL élément audio, réutilisé pour tous les blocs : une fois débloqué
+  // par un geste (iOS ne permet play() que dans la foulée d'un toucher), il
+  // peut rejouer SANS geste — indispensable pour le bravo du jeu, déclenché
+  // par la boucle d'animation quand l'enfant fabrique le bon moment.
+  let lecteur = null;
+  const getLecteur = () => {
+    if (!lecteur) lecteur = new Audio();
+    return lecteur;
+  };
   const settle = () => { const d = curDone; curDone = null; if (d) d(); };
-  const stopSpeaking = () => { gen++; window.speechSynthesis.cancel(); settle(); };
+  const stopSpeaking = () => {
+    gen++;
+    window.speechSynthesis.cancel();
+    if (lecteur) {
+      try { lecteur.pause(); } catch (e) { /* déjà arrêté */ }
+      lecteur.onended = null;
+      lecteur.onerror = null;
+    }
+    settle();
+  };
 
-  // ton de conteur : les phrases s'enchaînent avec de vraies pauses, sur un
-  // débit posé, et un peu de relief là où le texte s'exclame ou questionne
-  // (la synthèse du navigateur n'offre que rate et pitch — on s'en sert)
-  const speakChunks = (chunks, onDone) => {
-    stopSpeaking();
-    refreshVoices(); // certaines listes de voix n'arrivent qu'après le chargement
-    const myGen = gen;
-    curDone = onDone || null;
+  // ton de conteur (le repli synthèse) : les phrases s'enchaînent avec de
+  // vraies pauses, sur un débit posé, et un peu de relief là où le texte
+  // s'exclame ou questionne (le navigateur n'offre que rate et pitch)
+  const speakSeq = (chunks, myGen, done) => {
     const voice = pickVoice();
     let at = 0;
     const speakNext = () => {
       if (myGen !== gen) return;
-      if (at >= chunks.length) { settle(); return; }
+      if (at >= chunks.length) { done(); return; }
       const c = chunks[at++];
       const u = new SpeechSynthesisUtterance(c.text);
       u.lang = voice ? voice.lang : 'fr-FR';
@@ -487,12 +533,44 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
         if (myGen !== gen) return;
         window.setTimeout(speakNext, c.endPara ? 620 : 300);
       };
-      u.onerror = () => { if (myGen === gen) settle(); };
+      u.onerror = () => { if (myGen === gen) done(); };
       window.speechSynthesis.speak(u);
     };
     speakNext();
   };
-  narrator = { speak: speakChunks, stop: stopSpeaking };
+
+  // Le conteur : une suite de blocs { id, text }. Chaque bloc joue son
+  // fichier enregistré s'il existe ET dit encore le bon texte ; sinon, la
+  // synthèse lit le texte phrase à phrase. Même respiration entre blocs.
+  const narrate = (items, onDone) => {
+    stopSpeaking();
+    refreshVoices(); // certaines listes de voix n'arrivent qu'après le chargement
+    const myGen = gen;
+    curDone = onDone || null;
+    let at = 0;
+    const next = () => {
+      if (myGen !== gen) return;
+      if (at >= items.length) { settle(); return; }
+      const it = items[at++];
+      const after = () => { if (myGen === gen) window.setTimeout(next, 0); };
+      let fell = false; // onerror ET promesse rejetée peuvent tomber tous les deux
+      const fallback = () => {
+        if (fell || myGen !== gen) return;
+        fell = true;
+        speakSeq(sentenceChunks(it.text, true), myGen, after);
+      };
+      const src = audioSrc(it.id, it.text);
+      if (!src) { fallback(); return; }
+      const a = getLecteur();
+      a.onended = () => { if (myGen === gen) window.setTimeout(after, 620); };
+      a.onerror = fallback;
+      a.src = src;
+      const p = a.play();
+      if (p && p.then) p.then(null, fallback);
+    };
+    next();
+  };
+  narrator = { narrate: narrate, stop: stopSpeaking };
 
   // -- « Écouter l'histoire » : la boîte-révélation, phrase à phrase --
   listenBtn.hidden = false;
@@ -503,12 +581,13 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
     listenBtn.setAttribute('aria-pressed', 'false');
   };
   const startReading = () => {
-    const chunks = [];
+    // un bloc par paragraphe : les ids histoire-1…5 des fichiers enregistrés
+    const items = [];
     const paras = $('explain-text').querySelectorAll('p');
-    for (const para of paras) {
-      for (const c of sentenceChunks(para.textContent, true)) chunks.push(c);
+    for (let i = 0; i < paras.length; i++) {
+      items.push({ id: 'histoire-' + (i + 1), text: texteOral(paras[i].textContent) });
     }
-    speakChunks(chunks, resetListen);
+    narrate(items, resetListen);
     reading = true;
     listenBtn.textContent = '⏹ Arrêter';
     listenBtn.setAttribute('aria-pressed', 'true');
@@ -554,23 +633,18 @@ scnVoiceBtn.addEventListener('click', () => {
   if (scnVoiceOn) tellScenario(); else narrator.stop();
 });
 
-const EMOJI_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
-
 function spokenStory(scn) {
-  // retirer un émoji laisse un espace orphelin devant le point final — et un
-  // « . » isolé se fait lire « point » par certaines voix : on le recolle
-  const clean = (t) => t.replace(EMOJI_RE, '').replace(/\s+/g, ' ')
-    .replace(/\s+\./g, '.').trim();
-  const chunks = [{ text: 'Dans ton jardin…', endPara: false }];
-  for (const c of sentenceChunks(clean(scn.jardin), true)) chunks.push(c);
-  chunks.push({ text: 'Et maintenant, vu de l’espace…', endPara: false });
-  for (const c of sentenceChunks(clean(scn.espace), true)) chunks.push(c);
-  return chunks;
+  return [
+    { id: 'transition-jardin', text: texteOral(VOIX_TRANSITIONS.jardin) },
+    { id: 'scn-' + scn.id + '-jardin', text: texteOral(scn.jardin) },
+    { id: 'transition-espace', text: texteOral(VOIX_TRANSITIONS.espace) },
+    { id: 'scn-' + scn.id + '-espace', text: texteOral(scn.espace) },
+  ];
 }
 
 function tellScenario() {
   if (narrator && scnVoiceOn && activeScn) {
-    narrator.speak(spokenStory(activeScn));
+    narrator.narrate(spokenStory(activeScn));
   }
 }
 
@@ -599,8 +673,10 @@ let defiGagne = false;  // gagné au moins une fois — « Encore une ! » est a
 let bravoVisible = false;
 
 // le même conteur (et le même bouton 🔇/🔊) que les scénarios
-function tellDefi(text) {
-  if (narrator && scnVoiceOn) narrator.speak(sentenceChunks(text, true));
+function tellDefi(kind, text) {
+  if (narrator && scnVoiceOn) {
+    narrator.narrate([{ id: 'defi-' + defi.id + '-' + kind, text: texteOral(text) }]);
+  }
 }
 
 function nextDefi() {
@@ -616,7 +692,7 @@ function nextDefi() {
   $('game-defi').textContent = defi.emoji + ' ' + defi.consigne;
   $('game-bravo').hidden = true;
   $('btn-encore').hidden = true;
-  tellDefi(defi.consigne);
+  tellDefi('consigne', defi.consigne);
 }
 
 function winDefi(ms) {
@@ -628,7 +704,7 @@ function winDefi(ms) {
   bravo.hidden = false;
   $('btn-encore').hidden = false;
   if (premiere) {
-    tellDefi(defi.bravo);
+    tellDefi('bravo', defi.bravo);
     // Le recalage doux : le temps glisse jusqu'au moment PILE (par le chemin
     // court — on est à moins de 30 min), pour afficher le bravo sur l'image
     // parfaite. Rien n'est verrouillé : un glisser annule le tween aussitôt.

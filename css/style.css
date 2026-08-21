@@ -101,8 +101,10 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 
 /* touch-action: none (le choix de « la Lune ») : le geste posé sur une vue
    appartient TOUJOURS au glisser du temps — un doigt un peu de travers ne part
-   jamais en défilement de page. Les vues sont plafonnées en hauteur : il reste
-   toujours de la page autour pour faire défiler. */
+   jamais en défilement de page. Étendu aux conteneurs : même les bords des
+   cadres et l'interstice entre les deux minis du jeu ne défilent pas. Les
+   vues sont plafonnées en hauteur : il reste de la page autour pour défiler. */
+.canvas-wrap, .game-views { touch-action: none; }
 #garden-view, #space-view { touch-action: none; cursor: grab; }
 #garden-view:active, #space-view:active { cursor: grabbing; }
 
@@ -351,12 +353,17 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 
   .views-grid { grid-template-columns: 1fr; }
   /* les deux vues, plafonnées en hauteur d'écran : après un appui-scénario,
-     jardin ET espace tiennent ensemble dans le viewport d'un téléphone */
-  .ratio-garden { aspect-ratio: 16 / 10; max-height: 34vh; }
-  .ratio-space { max-height: 40vh; }
+     jardin ET espace tiennent ensemble dans le viewport d'un téléphone.
+     Hauteurs EXPLICITES, jamais aspect-ratio + max-height : quand le plafond
+     mord, WebKit réduit alors la LARGEUR de la boîte (vue espace rétrécie
+     sur iPhone/Safari). */
+  .views-grid .ratio-garden { aspect-ratio: auto; height: min(55vw, 34vh); }
+  .views-grid .ratio-space { aspect-ratio: auto; height: min(88vw, 40vh); }
+  /* les mini-vues du jeu, plus étroites, gardent leurs proportions */
+  .game-views .ratio-garden { aspect-ratio: 16 / 10; }
   @supports not (aspect-ratio: 1 / 1) {
-    .ratio-garden { height: min(55vw, 34vh); }
-    .ratio-space { height: min(88vw, 40vh); }
+    .game-views .ratio-garden { height: 30vw; }
+    .game-views .ratio-space { height: 38vw; }
   }
   .drag-hint { font-size: .8rem; }
 

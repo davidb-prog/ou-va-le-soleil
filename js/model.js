@@ -224,7 +224,7 @@ export const DEFIS = [
   },
   {
     id: 'midi', emoji: '☀️', h: 12,
-    consigne: 'midi pile ! Mets le soleil tout en haut du ciel.',
+    consigne: 'midi, le milieu du jour ! Mets le soleil au plus haut du ciel.',
     bravo: 'Bravo ! Le soleil est au plus haut, plein sud — et les ombres sont si petites qu’elles se cachent sous les pieds !',
   },
   {
@@ -235,7 +235,7 @@ export const DEFIS = [
   {
     id: 'autre-cote', emoji: '⭐', h: 0,
     consigne: 'le grand jour… chez les enfants de l’autre côté de la Terre !',
-    bravo: 'Bravo ! Chez toi c’est la nuit noire, tout le monde dort… et chez eux, c’est midi en plein soleil !',
+    bravo: 'Bravo ! Chez toi, c’est la nuit noire, tout le monde dort. Et chez les enfants de l’autre côté, c’est midi en plein soleil !',
   },
 ];
 
@@ -247,6 +247,36 @@ export function hourDist(a, b) {
 
 export function defiReussi(defi, h) {
   return hourDist(h, defi.h) <= DEFI_WINDOW_H;
+}
+
+// ------------------------------------------------------------------------ la voix
+// Ce que le conteur DIT : texte écrit → texte oral. Partagé par le site
+// (repli synthèse vocale), l'outil tools/build-voix.mjs (fichiers ElevenLabs)
+// et les tests — la voix enregistrée ne doit jamais dire autre chose que le
+// texte affiché.
+
+// les émojis sont imprononçables
+export const EMOJI_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
+
+// les transitions du conteur entre les deux regards d'un scénario
+export const VOIX_TRANSITIONS = {
+  jardin: 'Dans ton jardin…',
+  espace: 'Et maintenant, vu de l’espace…',
+};
+
+// Texte oral : émojis retirés, « 6 h 30 » → « 6 heures 30 » (l'heure écrite se
+// lit mal par certaines voix), guillemets français retirés et tirets cadratins
+// changés en virgules (la synthèse trébuche dessus), espaces recollés devant
+// la ponctuation — un « . » isolé se fait lire « point ».
+export function texteOral(t) {
+  return t.replace(EMOJI_RE, '')
+    .replace(/[«»]/g, ' ')
+    .replace(/\s+—\s+/g, ', ')
+    .replace(/(\d+)\s*h\s+(\d+)/g, '$1 heures $2')
+    .replace(/(\d+)\s*h\b/g, '$1 heures')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([.,…])/g, '$1')
+    .trim();
 }
 
 // ------------------------------------------------------------------ les scénarios
