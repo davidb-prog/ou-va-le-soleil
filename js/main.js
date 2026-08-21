@@ -539,9 +539,11 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
     speakNext();
   };
 
-  // Le conteur : une suite de blocs { id, text }. Chaque bloc joue son
-  // fichier enregistré s'il existe ET dit encore le bon texte ; sinon, la
-  // synthèse lit le texte phrase à phrase. Même respiration entre blocs.
+  // Le conteur : une suite de blocs { id, text, pause? }. Chaque bloc joue
+  // son fichier enregistré s'il existe ET dit encore le bon texte ; sinon, la
+  // synthèse lit le texte phrase à phrase. Entre blocs, la respiration par
+  // défaut (620 ms) ; `pause` la raccourcit pour les fichiers qui portent
+  // déjà leur suspension (les transitions en « … » des scénarios).
   const narrate = (items, onDone) => {
     stopSpeaking();
     refreshVoices(); // certaines listes de voix n'arrivent qu'après le chargement
@@ -562,7 +564,8 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
       const src = audioSrc(it.id, it.text);
       if (!src) { fallback(); return; }
       const a = getLecteur();
-      a.onended = () => { if (myGen === gen) window.setTimeout(after, 620); };
+      const pause = typeof it.pause === 'number' ? it.pause : 620;
+      a.onended = () => { if (myGen === gen) window.setTimeout(after, pause); };
       a.onerror = fallback;
       a.src = src;
       const p = a.play();
@@ -636,10 +639,13 @@ scnVoiceBtn.addEventListener('click', () => {
 });
 
 function spokenStory(scn) {
+  // pause courte après les annonces : leurs mp3 finissent déjà sur la
+  // suspension du « … » (~250–450 ms de silence gravé) — la respiration
+  // pleine ferait un long blanc avant la suite
   return [
-    { id: 'transition-jardin', text: texteOral(VOIX_TRANSITIONS.jardin) },
+    { id: 'transition-jardin', text: texteOral(VOIX_TRANSITIONS.jardin), pause: 120 },
     { id: 'scn-' + scn.id + '-jardin', text: texteOral(scn.jardin) },
-    { id: 'transition-espace', text: texteOral(VOIX_TRANSITIONS.espace) },
+    { id: 'transition-espace', text: texteOral(VOIX_TRANSITIONS.espace), pause: 120 },
     { id: 'scn-' + scn.id + '-espace', text: texteOral(scn.espace) },
   ];
 }
