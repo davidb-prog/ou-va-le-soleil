@@ -392,7 +392,14 @@ if (window.__VOIX_MANIFESTE && window.__VOIX_MANIFESTE.blocs) {
 } else if (window.fetch) {
   fetch('assets/audio/manifest.json')
     .then((r) => (r.ok ? r.json() : null))
-    .then((m) => { if (m && m.blocs) audioBlocs = m.blocs; })
+    .then((m) => {
+      if (m && m.blocs) audioBlocs = m.blocs;
+      // le conseil « voix robotiques » ne concerne que le repli synthèse
+      if (Object.keys(audioBlocs).length > 0) {
+        const vh = $('voice-hint');
+        if (vh) vh.hidden = true;
+      }
+    })
     .catch(() => { /* hors ligne ou manifeste absent : synthèse seule */ });
 }
 
@@ -464,9 +471,10 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
     }
     if (voiceHint) {
       // en dessous de ce score, l'appareil n'a que des voix métalliques :
-      // on souffle aux parents comment en obtenir une plus douce
+      // on souffle aux parents comment en obtenir une plus douce — sauf si
+      // la voix enregistrée est là (le conseil ne concerne que le repli)
       const best = frVoices.length ? voiceScore(frVoices[0]) : -1;
-      voiceHint.hidden = best >= 84;
+      voiceHint.hidden = best >= 84 || Object.keys(audioBlocs).length > 0;
     }
   };
   refreshVoices();
