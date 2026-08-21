@@ -74,6 +74,14 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 .stage-hint { margin: 0 4px 10px; }
 .spin-btn { padding: 5px 12px; font-size: .8rem; border-radius: 999px; }
 
+/* le bouton 🔇/🔊 des scénarios : ses deux libellés sont superposés dans une
+   grille 1×1, si bien que le bouton garde en permanence la largeur du plus
+   long — basculer la voix ne décale jamais la ligne de titre */
+.scn-voice-btn { display: inline-grid; align-items: center; justify-items: center; }
+.scn-voice-btn > span { grid-row: 1; grid-column: 1; white-space: nowrap; }
+.scn-voice-btn[aria-pressed="false"] .scn-voice-on,
+.scn-voice-btn[aria-pressed="true"] .scn-voice-off { visibility: hidden; }
+
 .views-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
