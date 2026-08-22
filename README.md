@@ -3,6 +3,9 @@
 Un épisode du **Petit labo d'astronomie** : un site d'une page, interactif, pour expliquer le
 lever et le coucher du soleil à une enfant de 5 ans, guidée par un parent qui lit à voix haute.
 
+En ligne : <https://petit-labo.fr/ou-va-le-soleil/> — et tous les épisodes sur
+[petit-labo.fr](https://petit-labo.fr).
+
 La grande révélation : **le Soleil ne va nulle part**. Il ne bouge pas, ne s'éteint pas, ne
 « se couche » pas vraiment. C'est la **Terre qui tourne** sur elle-même en 24 heures ; la nuit,
 c'est quand notre maison lui tourne le dos — et pendant qu'on dort, il éclaire les enfants de
@@ -78,7 +81,7 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
   choix partagé entre les épisodes). Rien ne part sur Internet pendant la lecture. Le guide
   de production : [`docs/voix-conteur.md`](docs/voix-conteur.md).
 - **Le pont vers l'épisode 3** : « Et si le soleil se couche chez toi… il se lève chez qui ? »
-  → [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/)
+  → [Quelle heure est-il là-bas ?](https://petit-labo.fr/la-terre-tourne/)
 - **Mise en page mobile dédiée** : sous 640 px les vues s'empilent, plafonnées en hauteur
   d'écran pour tenir ensemble dans le viewport, rien ne recouvre jamais les canvas, l'en-tête
   se fait tout petit (le jardin se voit dès le premier écran), les boutons font au moins 44 px.
@@ -209,12 +212,12 @@ assets/audio/         manifest.json + les mp3 du conteur
 
 ## La série
 
-- 🌒 [La mécanique des éclipses](https://davidb-prog.github.io/eclipse-explorer/) — les deux
+- 🌒 [La mécanique des éclipses](https://petit-labo.fr/eclipse-explorer/) — les deux
   coïncidences qui fabriquent une éclipse.
 - 🌅 **Où va le Soleil la nuit ?** (ce site) — le Soleil ne bouge pas : c'est la Terre qui
   tourne, et la nuit c'est quand ta maison lui tourne le dos.
-- 🌍 [Quelle heure est-il là-bas ?](https://davidb-prog.github.io/la-terre-tourne/) — la
+- 🌍 [Quelle heure est-il là-bas ?](https://petit-labo.fr/la-terre-tourne/) — la
   Terre tourne, et il n'est pas la même heure partout.
-- 🌙 [Pourquoi la Lune change de forme ?](https://davidb-prog.github.io/la-lune-change-de-forme/) —
+- 🌙 [Pourquoi la Lune change de forme ?](https://petit-labo.fr/la-lune-change-de-forme/) —
   la Lune est toujours à moitié éclairée ; c'est nous qui la voyons d'un côté différent
   chaque nuit.
