@@ -165,7 +165,10 @@ Tout est dans [`js/model.js`](js/model.js) (aucun accès DOM, toutes les constan
   soleil culmine au sud). Dans l'hémisphère sud, c'est le miroir.
 - **Les ombres à midi** pointent en vrai vers le nord (derrière les objets dans notre vue de
   face) : le site les montre toutes petites « cachées sous les pieds ». Longueur plafonnée à
-  6 hauteurs d'objet près du lever/coucher (sinon elle serait infinie).
+  6 hauteurs d'objet près du lever/coucher (sinon elle serait infinie) ; à 6 h et 18 h pile,
+  l'ombre géante est encore dessinée, pleine encre — elle ne s'évanouit que pendant que le
+  disque plonge sous l'horizon (l'image du scénario « coucher » garde ainsi ses ombres
+  étirées, comme le raconte la voix).
 - **La lune est un croissant-pictogramme**, pile à l'opposé du soleil (levée à 18 h, zénith à
   minuit) : la silhouette de croissant garantit qu'aucun enfant ne la prend pour le soleil.
   Double licence : à l'opposé du soleil, une vraie lune serait *pleine* — et un vrai croissant
