@@ -116,10 +116,15 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 #garden-view, #space-view { touch-action: none; cursor: grab; }
 #garden-view:active, #space-view:active { cursor: grabbing; }
 
-/* la petite phrase sous chaque vue : le même instant, raconté deux fois */
+/* la petite phrase sous chaque vue : le même instant, raconté deux fois.
+   La place de DEUX lignes est réservée : les phrases changent au fil du jour
+   (« Nuit noire… » est bien plus longue que « Le soleil brille ») et passent
+   de 1 à 2 lignes en s'étrécissant — sans réserve, tout ce qui est dessous
+   sautait d'une ligne en plein glisser, pile au passage jour/nuit. */
 .view-status {
   margin: 8px 2px 0; font-size: .92rem; color: var(--text);
-  min-height: 1.4em;
+  line-height: 1.45;
+  min-height: 2.9em;
 }
 
 /* petit rappel « glisse ici », SOUS le jardin (transitoire) : rien ne recouvre

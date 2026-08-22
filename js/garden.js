@@ -4,8 +4,8 @@
 // tout est piloté par le modèle pur (js/model.js), rien n'est recalculé ici.
 
 import { TAU, clamp01, sunAltitude, sunAzimuth01, antipodeHours, skyStops,
-         starAlpha, shadowLength, shadowDirX, COLOR_HOME, COLOR_SUN,
-         hexToRgb, mixRgb, rgbCss } from './model.js';
+         starAlpha, shadowLength, shadowDirX, SHADOW_FADE_ALT, COLOR_HOME,
+         COLOR_SUN, hexToRgb, mixRgb, rgbCss } from './model.js';
 import { fitCanvas, drawStars, label } from './canvas.js';
 
 const SIL = '#0a0f22'; // couleur des silhouettes en pleine nuit
@@ -167,7 +167,12 @@ export class GardenView {
     // dessinée est plafonnée sous SHADOW_MAX : la queue reste dans le cadre.
     const shLen = shadowLength(h);
     const shDir = shadowDirX(h);
-    const shA = 0.4 * clamp01(alt * 4 + 0.18);
+    // opacité : PLEINE tant que le soleil est levé — au lever/coucher, l'herbe
+    // du soir est déjà sombre, une ombre à moitié transparente s'y noyait (et
+    // l'image figée du scénario « coucher » démentait la voix : « les ombres
+    // s'étirent »). Le fondu se joue entièrement pendant que le disque plonge
+    // sous l'horizon (la fenêtre SHADOW_FADE_ALT du modèle).
+    const shA = 0.4 * clamp01((alt + SHADOW_FADE_ALT) * 20);
     const shadow = (x, baseY, objH, footR, thick) => {
       if (shLen <= 0 || shA <= 0.01) return;
       const dx = shDir * Math.min(shLen, 3.5) * objH;

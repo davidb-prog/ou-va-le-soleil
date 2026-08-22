@@ -6,7 +6,7 @@
 import {
   TAU, DEG, SUNRISE_H, SUNSET_H, NOON_H, MIDNIGHT_H, SPIN_HOURS_PER_SEC,
   COLOR_HOME, COLOR_FAR, wrap24, clamp01, sunAltitude, isDaylight, sunAzimuth01,
-  sunDirX, NOON_ELEVATION_DEG, SHADOW_MAX, sunElevationDeg, shadowLength,
+  sunDirX, NOON_ELEVATION_DEG, SHADOW_MAX, SHADOW_FADE_ALT, sunElevationDeg, shadowLength,
   shadowDirX, SUN_DIR, earthAngle, houseFacesSun, antipodeHours,
   SKY_NIGHT, SKY_DAWN, SKY_DAY, SKY_DUSK, SKY_KEYFRAMES, hexToRgb, mixRgb,
   skyStopsRgb, skyStops, skyPhase, starAlpha, formatHM, periodWord, SCENARIOS,
@@ -74,6 +74,11 @@ check('symétrie : l’ombre de 9 h a la longueur de celle de 15 h',
   approx(shadowLength(9), shadowLength(15)));
 check('juste après le lever, l’ombre est immense mais plafonnée (SHADOW_MAX)',
   approx(shadowLength(6.05), SHADOW_MAX) && SHADOW_MAX >= 5);
+check('au lever et au coucher PILE (l’image des scénarios), l’ombre est là, immense',
+  approx(shadowLength(6), SHADOW_MAX) && approx(shadowLength(18), SHADOW_MAX));
+check('elle survit au disque qui plonge, puis s’éteint (fenêtre SHADOW_FADE_ALT)',
+  SHADOW_FADE_ALT > 0 && SHADOW_FADE_ALT <= 0.1 &&
+  shadowLength(18.1) === SHADOW_MAX && shadowLength(18.25) === 0);
 check('la nuit, pas de soleil… donc pas d’ombre',
   shadowLength(0) === 0 && shadowLength(5) === 0 && shadowLength(19) === 0);
 check('le matin l’ombre pointe vers l’ouest (droite), le soir vers l’est (gauche)',

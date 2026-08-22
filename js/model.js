@@ -57,16 +57,23 @@ export const NOON_ELEVATION_DEG = 45;
 // Une ombre ne s'étire jamais au-delà de 6 fois la hauteur de l'objet (au-delà,
 // elle sortirait du dessin sans rien apprendre de plus).
 export const SHADOW_MAX = 6;
+// Le disque du soleil met un petit moment à plonger sous l'horizon : l'ombre
+// géante du coucher reste là jusqu'à cette hauteur (légèrement négative), puis
+// c'est la nuit — plus d'ombre du tout. Sans cette marge, l'ombre disparaissait
+// PILE à 18 h, sur l'image même où le scénario dit « les ombres s'étirent ».
+export const SHADOW_FADE_ALT = 0.05;
 
 export function sunElevationDeg(h) {
   return NOON_ELEVATION_DEG * Math.max(0, sunAltitude(h));
 }
 
 // Longueur de l'ombre en « hauteurs d'objet » : cot(élévation), plafonnée à
-// SHADOW_MAX ; 0 la nuit (pas de soleil, pas d'ombre).
+// SHADOW_MAX — au lever et au coucher PILE, la cotangente file à l'infini et
+// c'est le plafond qui répond : l'ombre est là, immense. 0 la nuit (pas de
+// soleil, pas d'ombre), une fois le disque englouti (sous −SHADOW_FADE_ALT).
 export function shadowLength(h) {
+  if (sunAltitude(h) <= -SHADOW_FADE_ALT) return 0;
   const e = sunElevationDeg(h) * DEG;
-  if (e <= 0) return 0;
   return Math.min(SHADOW_MAX, Math.cos(e) / Math.sin(e));
 }
 
