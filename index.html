@@ -2,7 +2,10 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- zoom navigateur verrouillé : un enfant qui pince partout ne doit jamais se
+     retrouver avec une page minuscule — les zooms d'accessibilité du système
+     (triple-tap iOS, loupe Android, « forcer le zoom ») restent utilisables -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Où va le Soleil la nuit ? — le lever et le coucher expliqués aux enfants</title>
 <meta name="description" content="Le Soleil ne va nulle part : c’est la Terre qui tourne ! Le même moment vu depuis ton jardin et depuis l’espace, pour comprendre le lever et le coucher du soleil. Un épisode du Petit labo d’astronomie, à explorer en famille dès 5 ans.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌅</text></svg>">
@@ -86,8 +89,6 @@
       <div class="explain-head">
         <h2>🌞 Le Soleil ne va nulle part !</h2>
         <button id="btn-listen" class="listen-btn" hidden>🔊 Écouter l’histoire</button>
-        <select id="voice-pick" class="voice-pick" hidden
-          aria-label="Choisir la voix qui lit l’histoire"></select>
       </div>
       <p id="voice-hint" class="voice-hint" hidden>💡 La voix de lecture vient de
         l’appareil, et celles d’ici sont un peu robotiques. Pour une voix douce :
