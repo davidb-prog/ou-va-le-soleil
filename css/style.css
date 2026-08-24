@@ -2,7 +2,19 @@
    Thème sombre « espace » de la série (palette de l'épisode 3), rond et joueur (public : 5 ans).
    Zéro dépendance. Compat mobiles anciens : pas d'inset, repli @supports pour aspect-ratio. */
 
+/* la rondeur des titres de la famille : Baloo 2 auto-hébergée (charte du
+   portail — assets/fonts/, licence OFL) ; le corps du texte reste en pile
+   système, choix assumé de la charte */
+@font-face {
+  font-family: "Baloo 2";
+  src: url("../assets/fonts/baloo2-latin.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  --titres: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
   --bg: #0b1020;
   --bg2: #0e1530;
   --surface: #121a33;
@@ -55,15 +67,14 @@ body {
 /* ---------- entête ---------- */
 
 .site-header { max-width: 900px; margin: 0 auto; padding: 38px 20px 22px; text-align: center; }
+/* le kicker porte la fiole de la série (l'étoile dedans) à côté de son texte,
+   comme le portail porte la fiole maître à côté de son nom — règle de la charte */
 .kicker {
   margin: 0; color: var(--sun); font-size: .8rem; font-weight: 700;
   letter-spacing: .14em; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
 }
-.episode {
-  display: inline-block; margin-left: 8px; padding: 1px 10px; letter-spacing: .08em;
-  border: 1px solid var(--sun-deep); border-radius: 999px; color: var(--sun);
-  font-size: .72rem; vertical-align: 1px;
-}
+.kicker-fiole { width: 24px; height: 24px; flex: none; }
 .site-header h1 { margin: .22em 0 .3em; font-size: clamp(2.1rem, 5.5vw, 3.1rem); line-height: 1.1; }
 .tagline { margin: 0 auto; max-width: 62ch; color: var(--muted); }
 .tagline strong { color: var(--sun); }
@@ -78,6 +89,13 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .hint { color: var(--muted); font-weight: 400; font-size: .78em; }
+
+/* la voix des titres : Baloo 2 sur tout ce qui titre la page — jamais sur le
+   corps du texte ni sur les boutons (leur font: inherit doit rester la pile
+   système, taille partagée par toute la famille) */
+.site-header h1, .kicker, .stage-title, .view-head, .scenario-title > span,
+.explain-head h2, .explain-summary h2, .game-head h2, .game-defi,
+.parents summary { font-family: var(--titres); }
 
 /* ---------- la scène : les deux vues synchronisées ---------- */
 
@@ -327,7 +345,15 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 }
 .bridge-panel:hover { filter: brightness(1.2); }
 .bridge-panel:active { transform: translateY(1px); }
-.bridge-emoji { font-size: 2rem; flex: none; }
+/* le médaillon SVG maison de l'épisode d'arrivée (repris de sa carte sur le
+   portail) : la charte bannit l'emoji en illustration — en grand, le rendu
+   système jure avec l'univers dessiné à la main */
+.bridge-medaillon {
+  flex: none; width: 52px; height: 52px; border-radius: 14px;
+  background: #070b17; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+}
+.bridge-medaillon svg { width: 46px; height: 46px; display: block; }
 .bridge-text { flex: 1; font-size: .98rem; color: var(--muted); }
 .bridge-text strong { color: var(--text); font-size: 1.05rem; }
 .bridge-arrow { flex: none; font-size: 1.6rem; color: var(--sun); }
