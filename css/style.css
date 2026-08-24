@@ -89,7 +89,6 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 .stage-title { flex: 1 1 auto; font-weight: 700; }
 /* les deux boutons restent groupés sur une même ligne, quelle que soit la largeur */
 .stage-actions { display: flex; gap: 8px; margin-left: auto; flex: none; }
-.stage-hint { margin: 0 4px 10px; }
 .spin-btn { padding: 5px 12px; font-size: .8rem; border-radius: 999px; }
 
 /* le bouton 🔇/🔊 des scénarios : ses deux libellés sont superposés dans une
