@@ -102,6 +102,11 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 .play-btn[aria-pressed="true"] .play-off,
 .play-btn[aria-pressed="false"] .play-on { visibility: hidden; }
 
+/* la surbrillance verte de la famille (venue de la Lune) : l'état actif se voit */
+.play-btn[aria-pressed="true"], .scn-voice-btn[aria-pressed="true"] {
+  border-color: var(--teal); box-shadow: 0 0 0 2px rgba(70, 194, 165, 0.35);
+}
+
 .views-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
