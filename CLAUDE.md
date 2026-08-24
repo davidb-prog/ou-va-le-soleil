@@ -83,8 +83,10 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   la barre espace — un tap sur une vue ne déclenche plus rien (décision d'harmonisation :
   un tap d'enfant ne doit rien faire en douce) ; le grand curseur 0–24 h reste le maître à
   bord. Pied de page harmonisé de la famille : les autres épisodes en liens cliquables
-  (sans « La mécanique des éclipses ») + bouton « 🧪 Tous les épisodes » vers
-  <https://petit-labo.fr/>.
+  (sans « La mécanique des éclipses »), chacun avec son médaillon SVG de carte
+  du portail, + bouton « Tous les épisodes » vers <https://petit-labo.fr/> qui
+  porte la fiole maître au « ? » (version petites tailles) à la place de
+  l'ancienne éprouvette 🧪.
 - Les boutons-scénarios (lever, midi, coucher, minuit) font tourner le temps **en douceur et
   toujours vers l'avant** (le vrai sens de la Terre), puis racontent la micro-histoire
   jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran.
