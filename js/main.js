@@ -293,7 +293,7 @@ function setText(key, el, value) {
 const GARDEN_STATUS = {
   night: '🌙 Nuit noire : le soleil est caché… il éclaire l’autre côté de la Terre',
   dawn: '🌅 Le soleil se lève, à l’est — le ciel devient tout rose',
-  day: '☀️ Le soleil brille dans ton ciel',
+  day: '☀️ Le soleil brille dans le ciel',
   dusk: '🌇 Le soleil se couche, à l’ouest — le ciel devient orange',
 };
 
