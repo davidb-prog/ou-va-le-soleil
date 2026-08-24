@@ -24,6 +24,13 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   sur une vue appartient toujours au glisser du temps, un doigt un peu de travers ne doit
   jamais partir en défilement — les vues plafonnées en hauteur laissent de la page autour
   pour défiler) ; tester à 390 px de large.
+- **La page se manipule, elle ne se sélectionne pas** (verrou anti-gestes d'enfant, porté
+  de l'épisode 3) : `user-select: none` sur `body` (préfixé, + `-webkit-touch-callout:
+  none` et `-webkit-tap-highlight-color: transparent`) ; `* { touch-action: pan-x pan-y }`
+  — le doigt défile mais ni pincement ni double-tap ne zooment la page, les
+  `touch-action: none` des canvas, plus spécifiques, gagnent ; viewport `maximum-scale=1,
+  user-scalable=no` AVEC le filet JS `gesturestart` → `preventDefault` (Safari iOS ignore
+  `user-scalable` depuis iOS 10). Les zooms d'accessibilité du système restent utilisables.
 - `js/model.js` est **pur** (aucun accès DOM) et doit le rester : il se teste avec
   `node test/model.test.mjs`. Toutes les constantes (heures de lever/coucher, couleurs de ciel,
   scénarios, géométrie ombre/soleil) vivent dedans — ne jamais les recopier ailleurs.
@@ -63,8 +70,13 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 - Glisser sur **l'une ou l'autre vue** fait tourner le temps (et donc la Terre) — jardin :
   glisser horizontal, on suit le soleil du doigt ; vues espace : glisser **rotatif** autour du
   centre du disque (repris de la vue du pôle de l'épisode 3 — un cercle du doigt fait vraiment
-  tourner la Terre, jamais osciller). Un petit tap sur une vue met en pause / relance ;
-  espace = pause ; le grand curseur 0–24 h reste le maître à bord.
+  tourner la Terre, jamais osciller). La pause ne se commande que par le **bouton ⏸/▶ à
+  largeur stable** (libellés « ⏸ Pause » / « ▶ Lecture » empilés — patron de la famille) et
+  la barre espace — un tap sur une vue ne déclenche plus rien (décision d'harmonisation :
+  un tap d'enfant ne doit rien faire en douce) ; le grand curseur 0–24 h reste le maître à
+  bord. Pied de page harmonisé de la famille : les autres épisodes en liens cliquables
+  (sans « La mécanique des éclipses ») + bouton « 🧪 Tous les épisodes » vers
+  <https://petit-labo.fr/>.
 - Les boutons-scénarios (lever, midi, coucher, minuit) font tourner le temps **en douceur et
   toujours vers l'avant** (le vrai sens de la Terre), puis racontent la micro-histoire
   jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran.
@@ -86,7 +98,8 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 ## Structure
 
 - `index.html` — page unique : en-tête (titre « Où va le Soleil la nuit ? », kicker
-  « Petit labo d'astronomie — épisode 2 », refrain « … parce que la Terre tourne ! »), les deux
+  « Petit labo d'astronomie » — sans numéro d'épisode, règle de la famille —, refrain
+  « … parce que la Terre tourne ! »), les deux
   vues synchronisées, grand curseur 0–24 h, boutons-scénarios + histoire, boîte « Le Soleil ne
   va nulle part ! » (repliée derrière son titre sur mobile, comme l'épisode 3), jeu « Fais
   tourner la Terre ! » (deux mini-vues répliquées), pont vers l'épisode 3, note aux parents
@@ -107,11 +120,14 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   option `{ mini: true }` (le jeu) : mêmes dessins sans les étiquettes de texte
 - `js/main.js` — boucle d'animation, curseur, lecture auto (un tour en 90 s), glissers et taps
   sur les deux canvas, scénarios en douceur, note aux parents,
-  jeu des défis (mini-vues, `nextDefi`/`winDefi`/`checkDefi`), conteur repris de l'épisode 3
-  (score des voix françaises, menu de voix, clé localStorage `ltt-voice` partagée entre
-  épisodes — même origine github.io) qui lit la boîte-révélation, la version sonore des
-  scénarios ET les consignes/bravos des défis (bouton 🔇/🔊 `btn-scn-voice` à côté du titre de
-  « Joue avec le temps », clé `ltt-scn-voice` partagée elle aussi avec l'épisode 3)
+  jeu des défis (mini-vues, `nextDefi`/`winDefi`/`checkDefi`), conteur partagé avec
+  l'épisode 3 (le score des voix françaises choisit seul la voix du repli synthèse — le
+  menu 🗣 d'avant la voix enregistrée a été retiré) qui lit la boîte-révélation, la version
+  sonore des scénarios ET les consignes/bravos des défis (bouton 🔇/🔊 `btn-scn-voice` à
+  côté du titre de « Joue avec le temps », avec un **jumeau posé sur le jeu**
+  `btn-scn-voice-jeu` — même état, même clé ; choix retenu sous la clé de famille
+  `petit-labo-son` — partagée entre épisodes, même origine petit-labo.fr ; l'ancienne clé
+  `ltt-scn-voice` se lit en secours)
 - `test/model.test.mjs` — tests Node du modèle (zéro dépendance)
 - `test/voix.test.mjs` — corpus vocal + cohérence manifeste ↔ textes du site
 - `tools/voix-lib.mjs` — corpus des blocs parlés (seule partie propre à l'épisode)
@@ -121,19 +137,22 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 ## La voix enregistrée (ElevenLabs)
 
 Le conteur peut jouer des **mp3 commités** dans `assets/audio/` au lieu de la synthèse du
-navigateur (bien moins robotique). Le guide complet — règles d'écriture pour l'oral,
-processus de production, portage sur les autres épisodes — est dans
-[`docs/voix-conteur.md`](docs/voix-conteur.md) ; c'est LA référence de la famille.
-Règles dures :
+navigateur (bien moins robotique). La référence de la famille est le skill `petit-labo`
+(references/voix-enregistree.md et narrateur.md) et son compagnon
+`generer-voix-petit-labo` ; [`docs/voix-conteur.md`](docs/voix-conteur.md) n'est plus
+qu'un pointeur. L'outillage canonique (mode `--calme`, `controle-voix.mjs`,
+écoute-marathon) vit désormais dans `la-terre-tourne`. Règles dures :
 
 - **Le site reste 100 % statique** : les fichiers sont générés HORS site par
   `tools/build-voix.mjs` (Node ≥ 18, zéro dépendance, clé `ELEVENLABS_API_KEY` +
   `ELEVENLABS_VOICE_ID` en variables d'environnement — jamais commitées, jamais côté site).
   Modèle `eleven_multilingual_v2`, sortie 64 kb/s (de la parole — sobre), plan Starter
   (licence commerciale, pas d'attribution).
-- **La clé API vit sur la machine de David** (`~/.zshrc`), JAMAIS dans un cloud environment
+- **La clé API vit sur la machine de David**, JAMAIS dans un cloud environment
   (pas de magasin de secrets, valeurs lisibles, et `api.elevenlabs.io` bloqué par le réseau
-  Trusted — vérifié). Clé utilisateur dédiée `petit-labo-tts`, scope restreint (Text-to-Speech
+  Trusted — vérifié). Un seul rangement : le fichier gitignoré `.cle-elevenlabs`
+  (chmod 600) à la racine du dépôt — jamais collée dans une conversation.
+  Clé utilisateur dédiée `petit-labo-tts`, scope restreint (Text-to-Speech
   + lecture des voix, PAS d'édition/suppression de voix ni d'accès User), plafond mensuel
   `character_limit` ≈ un épisode × 5 (~15 000), expiration ≤ 30 jours, régénérée au prochain
   épisode. La génération se fait en local (script direct ou session `claude` locale).

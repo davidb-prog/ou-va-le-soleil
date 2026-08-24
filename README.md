@@ -77,9 +77,8 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
   mp3 commités dans `assets/audio/`) : elle raconte la grande histoire, les scénarios et les
   défis du jeu, avec de vraies pauses entre les blocs. Le site ne joue un fichier que si son
   texte correspond encore au texte affiché — sinon, **repli** sur la synthèse vocale du
-  navigateur (la plus naturelle des voix françaises de l'appareil, menu pour en changer,
-  choix partagé entre les épisodes). Rien ne part sur Internet pendant la lecture. Le guide
-  de production : [`docs/voix-conteur.md`](docs/voix-conteur.md).
+  navigateur (la plus naturelle des voix françaises de l'appareil, choisie
+  automatiquement). Rien ne part sur Internet pendant la lecture.
 - **Le pont vers l'épisode 3** : « Et si le soleil se couche chez toi… il se lève chez qui ? »
   → [Quelle heure est-il là-bas ?](https://petit-labo.fr/la-terre-tourne/)
 - **Mise en page mobile dédiée** : sous 640 px les vues s'empilent, plafonnées en hauteur
@@ -182,10 +181,10 @@ Tout est dans [`js/model.js`](js/model.js) (aucun accès DOM, toutes les constan
   plus loin). La limite jour/nuit est franche, avec un petit dégradé de crépuscule.
 - **Pas d'atmosphère** : ni réfraction (qui allonge un peu les journées réelles), ni
   crépuscules qui traînent — le ciel du site suit simplement la hauteur du soleil.
-- **La voix de lecture** est celle de l'appareil (rien ne part sur Internet) : sa qualité varie
-  beaucoup. Le site note les voix françaises disponibles et prend la plus naturelle ; sur
-  Chrome ou Edge, ou avec une voix « améliorée » téléchargée, la lecture devient vraiment
-  douce. Le choix de voix est partagé avec l'épisode 3 (même origine GitHub Pages).
+- **La voix de repli** (quand un enregistrement manque) est celle de l'appareil (rien ne part
+  sur Internet) : sa qualité varie beaucoup. Le site note les voix françaises disponibles et
+  prend la plus naturelle ; sur Chrome ou Edge, ou avec une voix « améliorée » téléchargée,
+  la lecture devient vraiment douce.
 
 ## Structure
 
