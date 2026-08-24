@@ -1,5 +1,5 @@
 // Câblage de l'interface : boucle d'animation, curseur du temps, glissers et
-// petits taps sur les deux vues, scénarios racontés, jeu des défis. Les deux
+// bouton pause/lecture, scénarios racontés, jeu des défis. Les deux
 // vues sont TOUJOURS synchronisées sur la même heure sim.h — c'est le cœur
 // du site : le même moment, deux regards.
 
@@ -30,13 +30,12 @@ let sliderHeld = false;
 function setPlaying(p) {
   sim.playing = p;
   const btn = $('btn-spin');
-  // libellé court et de largeur stable : sinon toute la ligne se remet en page
-  // à chaque appui (et déborde sur mobile)
-  btn.textContent = p ? '⏸ Pause' : '▶ Lecture';
+  // les deux libellés vivent empilés dans le bouton (largeur stable) :
+  // basculer aria-pressed montre l'un, cache l'autre, rien ne se décale
+  btn.setAttribute('aria-pressed', p ? 'true' : 'false');
   btn.setAttribute('aria-label', p
     ? 'Mettre en pause (le temps passe tout seul)'
     : 'Relancer le temps qui passe tout seul');
-  btn.setAttribute('aria-pressed', p ? 'true' : 'false');
 }
 
 function setActiveScenario(id) {
@@ -91,16 +90,18 @@ setTimeout(hideHint, 8000);
 // vivent sur des éléments en touch-action: none.
 document.addEventListener('gesturestart', (e) => { e.preventDefault(); });
 
-// ---- glisser = faire tourner le temps, petit tap = pause/lecture ----
+// ---- glisser = faire tourner le temps ----
 // `hoursPerPixel` traduit le geste : sur le jardin, suivre le soleil du doigt ;
-// sur l'espace, faire tourner le disque de la Terre.
+// sur l'espace, faire tourner le disque de la Terre. La pause ne se commande
+// que par le bouton ⏸/▶ (et la barre espace) : un tap d'enfant sur une vue ne
+// doit rien déclencher en douce.
 
 function wireTimeDrag(canvas, hoursPerPixel) {
-  let dragging = false, lastX = 0, moved = 0, downT = 0, unlocked = false, downX = 0;
+  let dragging = false, lastX = 0, moved = 0, unlocked = false, downX = 0;
   canvas.addEventListener('pointerdown', (e) => {
     dragging = true;
     unlocked = false;
-    lastX = e.clientX; downX = e.clientX; moved = 0; downT = performance.now();
+    lastX = e.clientX; downX = e.clientX; moved = 0;
     if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
     hideHint();
     e.preventDefault();
@@ -119,12 +120,9 @@ function wireTimeDrag(canvas, hoursPerPixel) {
     }
     lastX = e.clientX;
   });
-  const release = (e) => {
-    if (dragging && moved <= 6 && performance.now() - downT < 600) toggleSpin();
-    dragging = false;
-  };
+  const release = () => { dragging = false; };
   canvas.addEventListener('pointerup', release);
-  canvas.addEventListener('pointercancel', () => { dragging = false; });
+  canvas.addEventListener('pointercancel', release);
 }
 
 wireTimeDrag($('garden-view'), () => {
@@ -137,12 +135,12 @@ wireTimeDrag($('garden-view'), () => {
 // l'épisode 3) : on attrape le disque et l'angle du doigt autour du centre
 // de la Terre devient le temps — un cercle du doigt fait vraiment tourner la
 // Terre, dans le sens du geste (un glisser en ligne droite marche aussi :
-// c'est un bout d'arc). Petit tap = pause, comme partout. ----
+// c'est un bout d'arc). ----
 
 const wrapPi = (a) => ((a + Math.PI) % TAU + TAU) % TAU - Math.PI;
 
 function wireRotaryDrag(canvas, view) {
-  let dragging = false, lastA = null, lastX = 0, lastY = 0, moved = 0, downT = 0, unlocked = false;
+  let dragging = false, lastA = null, lastX = 0, lastY = 0, moved = 0, unlocked = false;
   const angleAt = (e) => {
     const l = view.layout;
     if (!l) return null;
@@ -157,7 +155,7 @@ function wireRotaryDrag(canvas, view) {
     dragging = true;
     unlocked = false;
     lastA = angleAt(e);
-    lastX = e.clientX; lastY = e.clientY; moved = 0; downT = performance.now();
+    lastX = e.clientX; lastY = e.clientY; moved = 0;
     if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
     hideHint();
     e.preventDefault();
@@ -180,13 +178,9 @@ function wireRotaryDrag(canvas, view) {
     }
     lastA = a;
   });
-  const release = () => {
-    if (dragging && moved <= 6 && performance.now() - downT < 600) toggleSpin();
-    dragging = false;
-    lastA = null;
-  };
+  const release = () => { dragging = false; lastA = null; };
   canvas.addEventListener('pointerup', release);
-  canvas.addEventListener('pointercancel', () => { dragging = false; lastA = null; });
+  canvas.addEventListener('pointercancel', release);
 }
 
 wireRotaryDrag($('space-view'), space);

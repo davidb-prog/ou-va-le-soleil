@@ -70,8 +70,13 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 - Glisser sur **l'une ou l'autre vue** fait tourner le temps (et donc la Terre) — jardin :
   glisser horizontal, on suit le soleil du doigt ; vues espace : glisser **rotatif** autour du
   centre du disque (repris de la vue du pôle de l'épisode 3 — un cercle du doigt fait vraiment
-  tourner la Terre, jamais osciller). Un petit tap sur une vue met en pause / relance ;
-  espace = pause ; le grand curseur 0–24 h reste le maître à bord.
+  tourner la Terre, jamais osciller). La pause ne se commande que par le **bouton ⏸/▶ à
+  largeur stable** (libellés « ⏸ Pause » / « ▶ Lecture » empilés — patron de la famille) et
+  la barre espace — un tap sur une vue ne déclenche plus rien (décision d'harmonisation :
+  un tap d'enfant ne doit rien faire en douce) ; le grand curseur 0–24 h reste le maître à
+  bord. Pied de page harmonisé de la famille : les autres épisodes en liens cliquables
+  (sans « La mécanique des éclipses ») + bouton « 🧪 Tous les épisodes » vers
+  <https://petit-labo.fr/>.
 - Les boutons-scénarios (lever, midi, coucher, minuit) font tourner le temps **en douceur et
   toujours vers l'avant** (le vrai sens de la Terre), puis racontent la micro-histoire
   jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran.
