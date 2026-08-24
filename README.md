@@ -207,6 +207,8 @@ test/voix.test.mjs    corpus vocal + cohérence des fichiers enregistrés avec l
 tools/voix-lib.mjs    corpus des blocs parlés (la seule partie propre à cet épisode)
 tools/build-voix.mjs  génération des mp3 du conteur avec ElevenLabs (hors site)
 assets/audio/         manifest.json + les mp3 du conteur
+assets/fonts/         Baloo 2 auto-hébergée (woff2, licence OFL) — la voix des titres
+                      de la famille, copiée du portail
 ```
 
 ## La série

@@ -37,7 +37,15 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 - Boucle rAF résiliente (`try/finally`), `prefers-reduced-motion` respecté (rien ne bouge tout
   seul), aria-labels sur tous les canvas.
 - Thème sombre de la série (palette reprise de l'épisode 3 : `--bg #0b1020`, `--sun #ffcf5c`,
-  `--rose #ff6b9d`, `--teal #46c2a5`…), tons ronds et joueurs.
+  `--rose #ff6b9d`, `--teal #46c2a5`…), tons ronds et joueurs. La charte graphique de la
+  famille (`docs/charte.md` du dépôt du portail `davidb-prog.github.io`) fait foi et est
+  appliquée ici : titres en **Baloo 2 auto-hébergée** (`assets/fonts/baloo2-latin.woff2`,
+  copiée du portail, variable `--titres` — le corps du texte reste en pile système, les
+  boutons aussi : leur `font: inherit` partage la taille de toute la famille), **fiole de
+  la série** (l'étoile dedans) en SVG inline à côté du kicker, emoji de série **🔭** au
+  pied de page (le 🌌 historique rendait mal en petit), et **jamais d'emoji en
+  illustration** : le pont vers l'épisode 3 porte le médaillon SVG des horloges jumelles
+  repris de sa carte du portail (le favicon-emoji 🌅, lui, est voulu par la charte).
 - **Honnêteté pédagogique.** Convention d'équinoxe assumée (comme l'épisode 3) : lever 6 h,
   coucher 18 h, jour = nuit = 12 h ; heure « du jardin » = heure solaire (pas d'heure légale ni
   de fuseaux — c'est le sujet de l'épisode 3). Toute nouvelle simplification se documente dans
@@ -75,8 +83,10 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   la barre espace — un tap sur une vue ne déclenche plus rien (décision d'harmonisation :
   un tap d'enfant ne doit rien faire en douce) ; le grand curseur 0–24 h reste le maître à
   bord. Pied de page harmonisé de la famille : les autres épisodes en liens cliquables
-  (sans « La mécanique des éclipses ») + bouton « 🧪 Tous les épisodes » vers
-  <https://petit-labo.fr/>.
+  (sans « La mécanique des éclipses »), chacun avec son médaillon SVG de carte
+  du portail, + bouton « Tous les épisodes » vers <https://petit-labo.fr/> qui
+  porte la fiole maître au « ? » (version petites tailles) à la place de
+  l'ancienne éprouvette 🧪.
 - Les boutons-scénarios (lever, midi, coucher, minuit) font tourner le temps **en douceur et
   toujours vers l'avant** (le vrai sens de la Terre), puis racontent la micro-histoire
   jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran.
@@ -133,6 +143,7 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 - `tools/voix-lib.mjs` — corpus des blocs parlés (seule partie propre à l'épisode)
 - `tools/build-voix.mjs` — génération des mp3 ElevenLabs (hors site, idempotent)
 - `assets/audio/` — manifest.json + les mp3 du conteur (commités)
+- `assets/fonts/` — Baloo 2 auto-hébergée (woff2 + LISEZMOI, copiés du portail)
 
 ## La voix enregistrée (ElevenLabs)
 
