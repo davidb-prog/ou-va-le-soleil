@@ -589,6 +589,7 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
   window.addEventListener('pagehide', stopSpeaking); // vieux Safari sans visibilitychange fiable
 } else {
   $('btn-scn-voice').hidden = true; // pas de synthèse vocale : pas de version sonore
+  $('btn-scn-voice-jeu').hidden = true;
 }
 
 // ---- la version sonore des scénarios : quand l'enfant choisit un moment, le
@@ -598,6 +599,7 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
 // « Et maintenant, vu de l'espace… », et retire les émojis, imprononçables. ----
 
 const scnVoiceBtn = $('btn-scn-voice');
+const scnVoiceBtnJeu = $('btn-scn-voice-jeu'); // le jumeau posé sur le jeu
 let scnVoiceOn = false;
 // clé de famille (même origine petit-labo.fr : le réglage suit l'enfant d'un
 // épisode à l'autre), avec l'ancienne clé partagée lue en secours
@@ -609,17 +611,21 @@ try {
 function setScnVoiceUi() {
   // les deux libellés (« avec / sans la voix ») vivent dans le HTML, empilés
   // par le CSS : basculer aria-pressed montre l'un, cache l'autre, sans que
-  // le bouton change jamais de largeur (pas de décalage de la ligne de titre)
+  // le bouton change jamais de largeur (pas de décalage de la ligne de titre).
+  // Les deux boutons (scénarios + jeu) sont jumeaux : même état, même clé.
   scnVoiceBtn.setAttribute('aria-pressed', scnVoiceOn ? 'true' : 'false');
+  scnVoiceBtnJeu.setAttribute('aria-pressed', scnVoiceOn ? 'true' : 'false');
 }
 setScnVoiceUi();
-scnVoiceBtn.addEventListener('click', () => {
+function toggleScnVoice() {
   scnVoiceOn = !scnVoiceOn;
   try { window.localStorage.setItem('petit-labo-son', scnVoiceOn ? '1' : '0'); } catch (e) { /* tant pis */ }
   setScnVoiceUi();
   if (!narrator) return;
   if (scnVoiceOn) tellScenario(); else narrator.stop();
-});
+}
+scnVoiceBtn.addEventListener('click', toggleScnVoice);
+scnVoiceBtnJeu.addEventListener('click', toggleScnVoice);
 
 function spokenStory(scn) {
   // pause courte après les annonces : leurs mp3 finissent déjà sur la

@@ -124,7 +124,8 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   l'épisode 3 (le score des voix françaises choisit seul la voix du repli synthèse — le
   menu 🗣 d'avant la voix enregistrée a été retiré) qui lit la boîte-révélation, la version
   sonore des scénarios ET les consignes/bravos des défis (bouton 🔇/🔊 `btn-scn-voice` à
-  côté du titre de « Joue avec le temps », choix retenu sous la clé de famille
+  côté du titre de « Joue avec le temps », avec un **jumeau posé sur le jeu**
+  `btn-scn-voice-jeu` — même état, même clé ; choix retenu sous la clé de famille
   `petit-labo-son` — partagée entre épisodes, même origine petit-labo.fr ; l'ancienne clé
   `ltt-scn-voice` se lit en secours)
 - `test/model.test.mjs` — tests Node du modèle (zéro dépendance)
