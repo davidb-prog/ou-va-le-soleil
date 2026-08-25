@@ -13,10 +13,10 @@ import { SCENARIOS, DEFIS, VOIX_TRANSITIONS, texteOral } from '../js/model.js';
 // Tous les blocs que le conteur peut dire, avec les MÊMES ids que js/main.js.
 export function corpus() {
   const blocs = [
-    { id: 'transition-jardin', texte: texteOral(VOIX_TRANSITIONS.jardin) },
     { id: 'transition-espace', texte: texteOral(VOIX_TRANSITIONS.espace) },
   ];
   for (const s of SCENARIOS) {
+    blocs.push({ id: 'scn-' + s.id + '-intro', texte: texteOral(s.intro) });
     blocs.push({ id: 'scn-' + s.id + '-jardin', texte: texteOral(s.jardin) });
     blocs.push({ id: 'scn-' + s.id + '-espace', texte: texteOral(s.espace) });
   }

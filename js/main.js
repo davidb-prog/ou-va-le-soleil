@@ -595,8 +595,10 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
 // ---- la version sonore des scénarios : quand l'enfant choisit un moment, le
 // conteur raconte le même instant deux fois — depuis le jardin, puis depuis
 // l'espace. On ne lit pas les bulles écrites telles quelles : à l'oral, il
-// manque les enchaînements — le conteur ajoute « Dans ton jardin… » et
-// « Et maintenant, vu de l'espace… », et retire les émojis, imprononçables. ----
+// manque les enchaînements — le conteur ouvre par l'annonce du moment
+// (« À midi, dans ton jardin… » : l'enfant ne lit pas les libellés, c'est la
+// voix qui nomme le moment fabriqué), enchaîne par « Et maintenant, vu de
+// l'espace… », et retire les émojis, imprononçables. ----
 
 const scnVoiceBtn = $('btn-scn-voice');
 const scnVoiceBtnJeu = $('btn-scn-voice-jeu'); // le jumeau posé sur le jeu
@@ -632,7 +634,7 @@ function spokenStory(scn) {
   // suspension du « … » (~250–450 ms de silence gravé) — la respiration
   // pleine ferait un long blanc avant la suite
   return [
-    { id: 'transition-jardin', text: texteOral(VOIX_TRANSITIONS.jardin), pause: 120 },
+    { id: 'scn-' + scn.id + '-intro', text: texteOral(scn.intro), pause: 120 },
     { id: 'scn-' + scn.id + '-jardin', text: texteOral(scn.jardin) },
     { id: 'transition-espace', text: texteOral(VOIX_TRANSITIONS.espace), pause: 120 },
     { id: 'scn-' + scn.id + '-espace', text: texteOral(scn.espace) },

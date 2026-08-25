@@ -265,9 +265,12 @@ export function defiReussi(defi, h) {
 // les émojis sont imprononçables
 export const EMOJI_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu;
 
-// les transitions du conteur entre les deux regards d'un scénario
+// la transition du conteur entre les deux regards d'un scénario — côté jardin,
+// chaque scénario porte sa propre annonce (`intro`) qui nomme le moment de la
+// journée : l'enfant ne sait pas lire les libellés, c'est la voix qui ancre
+// « à midi », « le soir »… Côté espace, le moment vient d'être dit : une seule
+// transition partagée suffit.
 export const VOIX_TRANSITIONS = {
-  jardin: 'Dans ton jardin…',
   espace: 'Et maintenant, vu de l’espace…',
 };
 
@@ -289,25 +292,31 @@ export function texteOral(t) {
 // ------------------------------------------------------------------ les scénarios
 // Quatre moments de la journée : le temps glisse en douceur (toujours vers
 // l'avant, le vrai sens de la Terre), puis on raconte le même instant deux fois —
-// depuis le jardin, puis depuis l'espace.
+// depuis le jardin, puis depuis l'espace. `intro` : l'annonce parlée qui ouvre
+// le récit en nommant le moment (audio seul, le refrain « …, dans ton jardin… »
+// finit sur la suspension attendue par le conteur).
 export const SCENARIOS = [
   {
     id: 'lever', emoji: '🌅', label: 'Le soleil se lève', sub: '6 h — bonjour !', h: 6,
+    intro: 'Tôt le matin, dans ton jardin…',
     jardin: 'Regarde à gauche, vers l’est : le soleil pointe le bout de son nez, et le ciel devient tout rose. Bonjour !',
     espace: 'Ta maison vient de tourner du côté de la lumière. Le Soleil n’est pas « arrivé » : il t’attendait — c’est toi qui reviens vers lui, parce que la Terre tourne !',
   },
   {
     id: 'midi', emoji: '☀️', label: 'Midi pile', sub: '12 h — tout en haut', h: 12,
+    intro: 'À midi, dans ton jardin…',
     jardin: 'Le soleil est au plus haut, plein sud. Les ombres sont toutes petites : elles se cachent sous tes pieds !',
     espace: 'Ta maison est en plein milieu du côté jour, bien en face du Soleil. C’est pour ça qu’il est si haut dans le ciel.',
   },
   {
     id: 'coucher', emoji: '🌇', label: 'Le soleil se couche', sub: '18 h — bonne nuit ?', h: 18,
+    intro: 'Le soir, dans ton jardin…',
     jardin: 'Le ciel devient orange, les ombres s’étirent, et le soleil glisse derrière l’horizon, à droite, vers l’ouest. Au revoir !',
     espace: 'Regarde bien : le Soleil n’a pas bougé d’un poil ! C’est ta maison qui part de l’autre côté de la Terre. Il ne s’éteint pas, il brille toujours.',
   },
   {
     id: 'minuit', emoji: '🌙', label: 'Minuit, tu dors', sub: '0 h — chuuut…', h: 0,
+    intro: 'À minuit, dans ton jardin…',
     jardin: 'Nuit noire, ciel plein d’étoiles, la lune veille. Le soleil a disparu… mais où est-il passé ?',
     espace: 'Le voilà ! Ta maison lui tourne le dos, tout simplement. Et pendant que tu dors, de l’autre côté de la Terre, c’est grand jour : des enfants jouent en plein soleil !',
   },

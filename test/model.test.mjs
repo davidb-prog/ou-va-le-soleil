@@ -212,10 +212,12 @@ check('quatre moments, aux bonnes heures : 6 h, 12 h, 18 h, 0 h',
     if (ids[scn.id]) ok = false;
     ids[scn.id] = true;
     if (!(scn.h >= 0 && scn.h < 24)) ok = false;
-    if (!scn.jardin || !scn.espace || !scn.label || !scn.emoji || !scn.sub) ok = false;
+    if (!scn.jardin || !scn.espace || !scn.intro || !scn.label || !scn.emoji || !scn.sub) ok = false;
   }
-  check('identifiants uniques, heures valides, deux textes (jardin + espace) partout', ok);
+  check('identifiants uniques, heures valides, trois textes (annonce + jardin + espace) partout', ok);
 }
+check('chaque annonce nomme le moment et finit par « dans ton jardin… » (le refrain du conteur)',
+  SCENARIOS.every((s) => /^.+, dans ton jardin…$/.test(s.intro)));
 check('chaque histoire a sa version jardin ET sa version espace (le même moment, deux regards)',
   SCENARIOS.every((s) => s.jardin.length > 30 && s.espace.length > 30));
 check('à minuit, l’histoire espace montre le grand jour de l’autre côté',
@@ -225,7 +227,7 @@ check('au coucher, l’histoire espace insiste : le Soleil n’a pas bougé',
   SCENARIOS[2].espace.indexOf('pas bougé') !== -1);
 check('apostrophes typographiques « ’ » partout dans les textes UI (jamais le « \' » droit)',
   SCENARIOS.every((s) =>
-    (s.label + s.sub + s.jardin + s.espace).indexOf("'") === -1));
+    (s.label + s.sub + s.intro + s.jardin + s.espace).indexOf("'") === -1));
 
 console.log('Le jeu « Fais tourner la Terre ! »');
 check('l’écart d’heures fait le tour du cadran : 23 h 30 ↔ 0 h 30 = 1 h',

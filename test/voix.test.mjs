@@ -5,7 +5,7 @@
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { corpus, empreinteBloc } from '../tools/voix-lib.mjs';
-import { texteOral, EMOJI_RE, VOIX_TRANSITIONS } from '../js/model.js';
+import { texteOral, EMOJI_RE, VOIX_TRANSITIONS, SCENARIOS } from '../js/model.js';
 
 let failed = 0;
 let passed = 0;
@@ -29,8 +29,8 @@ check('le tiret cadratin devient une virgule',
 
 console.log('Le corpus vocal');
 const blocs = corpus();
-check('23 blocs : 2 transitions + 8 scénarios + 8 défis + 5 paragraphes d’histoire',
-  blocs.length === 23, blocs.length);
+check('26 blocs : 1 transition + 12 scénarios (annonce, jardin, espace) + 8 défis + 5 paragraphes d’histoire',
+  blocs.length === 26, blocs.length);
 {
   const ids = {};
   let ok = true;
@@ -42,9 +42,12 @@ check('23 blocs : 2 transitions + 8 scénarios + 8 défis + 5 paragraphes d’hi
   }
   check('identifiants uniques en kebab-case, textes non vides', ok);
 }
-check('les transitions du conteur sont dans le corpus',
-  blocs.some((b) => b.id === 'transition-jardin' && b.texte === VOIX_TRANSITIONS.jardin) &&
-  blocs.some((b) => b.id === 'transition-espace'));
+check('la transition espace du conteur est dans le corpus',
+  blocs.some((b) => b.id === 'transition-espace' && b.texte === texteOral(VOIX_TRANSITIONS.espace)));
+check('chaque scénario ouvre par son annonce du moment (« …, dans ton jardin… »)',
+  SCENARIOS.every((s) => blocs.some((b) =>
+    b.id === 'scn-' + s.id + '-intro' && b.texte === texteOral(s.intro) &&
+    /dans ton jardin…$/.test(b.texte))));
 check('le défi-vedette a sa consigne et son bravo',
   blocs.some((b) => b.id === 'defi-autre-cote-consigne') &&
   blocs.some((b) => b.id === 'defi-autre-cote-bravo'));
