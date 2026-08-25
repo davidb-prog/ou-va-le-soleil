@@ -2,11 +2,6 @@
   "voix": "GFj5Qf6cNQ3Lgp8VKBwc",
   "modele": "eleven_multilingual_v2",
   "blocs": {
-    "transition-jardin": {
-      "texte": "Dans ton jardin…",
-      "hash": "21519b1858ff",
-      "fichier": "transition-jardin.mp3"
-    },
     "transition-espace": {
       "texte": "Et maintenant, vu de l’espace…",
       "hash": "883a1d3f63f6",
@@ -116,6 +111,26 @@
       "texte": "Alors, où va le soleil la nuit ? Nulle part : c’est nous qui tournons… parce que la Terre tourne !",
       "hash": "3b66876e3748",
       "fichier": "histoire-5.mp3"
+    },
+    "scn-lever-intro": {
+      "texte": "Tôt le matin, dans ton jardin…",
+      "hash": "a9ad2e41d369",
+      "fichier": "scn-lever-intro.mp3"
+    },
+    "scn-midi-intro": {
+      "texte": "À midi, dans ton jardin…",
+      "hash": "230cf39627d2",
+      "fichier": "scn-midi-intro.mp3"
+    },
+    "scn-coucher-intro": {
+      "texte": "Le soir, dans ton jardin…",
+      "hash": "877d5a19ef89",
+      "fichier": "scn-coucher-intro.mp3"
+    },
+    "scn-minuit-intro": {
+      "texte": "À minuit, dans ton jardin…",
+      "hash": "72e2a7cf988f",
+      "fichier": "scn-minuit-intro.mp3"
     }
   },
   "format": "mp3_44100_64",
