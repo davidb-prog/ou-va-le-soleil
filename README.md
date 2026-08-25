@@ -51,9 +51,10 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
   vers l'avant, le vrai sens de la Terre** — puis une micro-histoire raconte le même instant
   **depuis le jardin puis depuis l'espace** (« Le voilà ! Ta maison lui tourne le dos, tout
   simplement… »). Comme dans l'épisode 3, le jeu existe **avec ou sans la voix** : le bouton
-  🔇/🔊 à côté du titre active la version sonore — le conteur dit « Dans ton jardin… », puis
-  « Et maintenant, vu de l'espace… » — et le choix est retenu d'une visite (et d'un épisode)
-  à l'autre.
+  🔇/🔊 à côté du titre active la version sonore — le conteur annonce d'abord le
+  moment (« À midi, dans ton jardin… » : l'enfant ne lit pas les libellés, c'est la voix qui
+  nomme l'heure du jour), puis enchaîne « Et maintenant, vu de l'espace… » — et le choix est
+  retenu d'une visite (et d'un épisode) à l'autre.
 
 ![Minuit : nuit étoilée et fenêtre allumée au jardin ; vu de l'espace, la maison dos au Soleil et les enfants de l'autre côté en plein jour](docs/screenshot-nuit.png)
 

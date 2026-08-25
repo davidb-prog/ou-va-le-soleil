@@ -89,7 +89,10 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   l'ancienne éprouvette 🧪.
 - Les boutons-scénarios (lever, midi, coucher, minuit) font tourner le temps **en douceur et
   toujours vers l'avant** (le vrai sens de la Terre), puis racontent la micro-histoire
-  jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran.
+  jardin + espace ; sur mobile, l'appui ramène doucement les vues à l'écran. À l'oral, chaque
+  scénario **ouvre par son annonce du moment** (champ `intro` : « À midi, dans ton jardin… »)
+  — l'enfant ne lit pas les libellés, c'est la voix qui nomme l'heure du jour ; le « … » final
+  porte la suspension, le conteur n'ajoute que 120 ms avant le bloc jardin.
 - Le jeu « Fais tourner la Terre ! » (fin de page, replié derrière « Jouer ») : le site
   demande un moment, l'enfant le **fabrique** en faisant tourner le temps sur deux mini-vues
   répliquées (mêmes classes de vues, toujours synchronisées sur `sim.h` ; les deux vues en
