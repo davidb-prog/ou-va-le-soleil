@@ -163,7 +163,8 @@ Tout est dans [`js/model.js`](js/model.js) (aucun accès DOM, toutes les constan
   légale des montres (la France vit en avance sur son soleil, jusqu'à 2 h en été) et les
   fuseaux horaires sont le sujet de l'épisode 3.
 - **Un éternel jour d'équinoxe** : lever 6 h, coucher 18 h, jour = nuit = 12 h, partout. En
-  vrai, ça dépend de la saison (l'axe penché de la Terre) et de la latitude.
+  vrai, ça dépend de la saison (l'axe penché de la Terre) et de la latitude — c'est toute
+  l'histoire de [Pourquoi il y a des saisons ?](https://petit-labo.fr/la-terre-est-penchee/).
 - **Hémisphère nord** : la vue jardin regarde vers le sud (est à gauche, ouest à droite, le
   soleil culmine au sud). Dans l'hémisphère sud, c'est le miroir.
 - **Les ombres à midi** pointent en vrai vers le nord (derrière les objets dans notre vue de
