@@ -104,6 +104,18 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   mode `mini` sans étiquettes ni repères). Défis dans `model.js` (`DEFIS`, `defiReussi`, fenêtre ±45 min
   `DEFI_WINDOW_H`, tempo `DEFI_DWELL_MS` anti « gagné en passant ») — le dernier défi est la
   révélation à l'envers : grand jour chez les enfants de l'autre côté = minuit chez soi.
+  **Toutes les commandes du jeu vivent en haut du panneau**, sur la ligne du titre et dans
+  cet ordre : [🔇] [🎲 Encore une !] [📦 Ranger le jeu] (patron de la famille, repris de
+  « la Terre est penchée ») — le pouce les retrouve toujours au même endroit, que le jeu
+  soit ouvert ou fermé ; sur mobile le titre passe sur sa propre ligne, la voix se réduit à
+  son icône (son libellé vit dans son jumeau des scénarios) et les deux boutons de jeu se
+  partagent la largeur à égalité, sur UNE ligne, texte jamais coupé. « Encore une ! »
+  n'apparaît qu'à la première victoire et **se range avec le jeu**.
+  **Le tirage ne ment jamais** : panier mélangé, sans remise (les quatre moments sortent
+  tous avant qu'on remélange — l'ordre change d'une partie à l'autre), jamais deux fois le
+  même d'affilée (`dernierDefiId` survit au rangement) et **jamais un défi que l'heure
+  affichée réussit déjà** — sinon le bravo tomberait à l'ouverture sans que l'enfant ait
+  rien fabriqué ; si le fond du panier n'offre plus que ceux-là, on remélange un panier neuf.
   Ouvrir le jeu met en pause (rien ne doit gagner tout seul) ; le conteur 🔇/🔊 des scénarios
   lit aussi consignes et bravos (à la première victoire seulement). **Le bravo ne ment
   jamais** : à la victoire, recalage doux de l'heure pile sur la cible (annulé par tout

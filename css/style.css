@@ -331,7 +331,10 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
   background: rgba(255, 207, 92, .12); border: 1px solid rgba(255, 207, 92, .55);
   color: var(--sun); font-weight: 700; font-size: 1.05rem;
 }
-#btn-encore { margin-top: 2px; }
+/* la rangée des commandes du jeu : [🔇] [🎲 Encore une !] [📦 Ranger le jeu],
+   toutes en haut du panneau. Sur grand écran elles gardent leur largeur
+   naturelle ; le bloc mobile les met à égalité sur une seule ligne. */
+.game-actions { flex-wrap: nowrap; }
 #game-garden, #game-space { touch-action: none; cursor: grab; }
 #game-garden:active, #game-space:active { cursor: grabbing; }
 
@@ -464,6 +467,20 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 
   /* des cibles tactiles d'au moins ~44 px pour les petits doigts */
   .spin-btn, .listen-btn, .game-btn { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+
+  /* la rangée des commandes du jeu tient sur UNE ligne, texte jamais coupé :
+     la voix en icône seule (son libellé vit dans son jumeau, au-dessus des
+     scénarios), les deux boutons de jeu se partagent le reste à égalité.
+     Le titre du jeu passe alors sur sa propre ligne. */
+  .game-head { flex-wrap: wrap; }
+  .game-head h2 { flex: 1 0 100%; }
+  .game-actions { flex: 1 1 100%; margin-left: 0; max-width: 100%; }
+  .game-actions .scn-voice-btn { flex: none; padding-left: 12px; padding-right: 12px; }
+  .game-actions .scn-voice-btn .libelle { display: none; }
+  .game-actions .game-btn {
+    flex: 1 1 0; padding-left: 8px; padding-right: 8px;
+    font-size: .9rem; white-space: nowrap;
+  }
 }
 
 @media (max-width: 480px) {
