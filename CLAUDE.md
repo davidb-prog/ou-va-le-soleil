@@ -78,10 +78,15 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 - Glisser sur **l'une ou l'autre vue** fait tourner le temps (et donc la Terre) — jardin :
   glisser horizontal, on suit le soleil du doigt ; vues espace : glisser **rotatif** autour du
   centre du disque (repris de la vue du pôle de l'épisode 3 — un cercle du doigt fait vraiment
-  tourner la Terre, jamais osciller). La pause ne se commande que par le **bouton ⏸/▶ à
-  largeur stable** (libellés « ⏸ Pause » / « ▶ Lecture » empilés — patron de la famille) et
-  la barre espace — un tap sur une vue ne déclenche plus rien (décision d'harmonisation :
-  un tap d'enfant ne doit rien faire en douce) ; le grand curseur 0–24 h reste le maître à
+  tourner la Terre, jamais osciller). **Un seul doigt tient le temps** (règle de famille,
+  portée de la PR 4 de « la Terre est penchée ») : sur chacune des quatre vues — jardin,
+  espace et les deux mini-vues du jeu — le `pointerId` qui a attrapé la vue est mémorisé et
+  les autres pointeurs sont ignorés jusqu'au relâcher ; un second doigt posé faisait sauter
+  l'image de tout l'écart entre les doigts (sa position devenait la référence du glissement).
+  La pause ne se commande que par le **bouton ⏸/▶ à largeur stable** (libellés
+  « ⏸ Pause » / « ▶ Lecture » empilés — patron de la famille) et la barre espace — un tap
+  sur une vue ne déclenche plus rien (décision d'harmonisation : un tap d'enfant ne doit
+  rien faire en douce) ; le grand curseur 0–24 h reste le maître à
   bord. Pied de page harmonisé de la famille : les autres épisodes en liens cliquables
   (sans « La mécanique des éclipses »), chacun avec son médaillon SVG de carte
   du portail, + bouton « Tous les épisodes » vers <https://petit-labo.fr/> qui

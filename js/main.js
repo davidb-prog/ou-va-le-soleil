@@ -97,8 +97,14 @@ document.addEventListener('gesturestart', (e) => { e.preventDefault(); });
 // doit rien déclencher en douce.
 
 function wireTimeDrag(canvas, hoursPerPixel) {
-  let dragging = false, lastX = 0, moved = 0, unlocked = false, downX = 0;
+  // UN SEUL doigt tient le temps : le pointeur qui a attrapé la vue est
+  // mémorisé, les autres sont ignorés jusqu'au relâcher (retour utilisateur :
+  // un second doigt posé faisait sauter l'image — son `clientX` devenait la
+  // référence du glissement, d'où un bond de tout l'écart entre les doigts).
+  let dragging = false, held = null, lastX = 0, moved = 0, unlocked = false, downX = 0;
   canvas.addEventListener('pointerdown', (e) => {
+    if (held !== null) { e.preventDefault(); return; }
+    held = e.pointerId;
     dragging = true;
     unlocked = false;
     lastX = e.clientX; downX = e.clientX; moved = 0;
@@ -107,7 +113,7 @@ function wireTimeDrag(canvas, hoursPerPixel) {
     e.preventDefault();
   });
   canvas.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
+    if (!dragging || e.pointerId !== held) return;
     const dx = e.clientX - lastX;
     moved += Math.abs(dx) + Math.abs(e.movementY || 0);
     if (!unlocked && Math.abs(e.clientX - downX) > 8) {
@@ -120,7 +126,11 @@ function wireTimeDrag(canvas, hoursPerPixel) {
     }
     lastX = e.clientX;
   });
-  const release = () => { dragging = false; };
+  const release = (e) => {
+    if (e && e.pointerId !== held) return; // le doigt qui n'a rien attrapé se retire en silence
+    held = null;
+    dragging = false;
+  };
   canvas.addEventListener('pointerup', release);
   canvas.addEventListener('pointercancel', release);
 }
@@ -140,7 +150,10 @@ wireTimeDrag($('garden-view'), () => {
 const wrapPi = (a) => ((a + Math.PI) % TAU + TAU) % TAU - Math.PI;
 
 function wireRotaryDrag(canvas, view) {
-  let dragging = false, lastA = null, lastX = 0, lastY = 0, moved = 0, unlocked = false;
+  // Même règle que le jardin : un seul doigt fait tourner la Terre, les autres
+  // pointeurs sont ignorés (un second doigt posé remettait l'angle de
+  // référence sous lui, et la Terre sautait d'un coup).
+  let dragging = false, held = null, lastA = null, lastX = 0, lastY = 0, moved = 0, unlocked = false;
   const angleAt = (e) => {
     const l = view.layout;
     if (!l) return null;
@@ -152,6 +165,8 @@ function wireRotaryDrag(canvas, view) {
     return Math.atan2(dy, dx);
   };
   canvas.addEventListener('pointerdown', (e) => {
+    if (held !== null) { e.preventDefault(); return; }
+    held = e.pointerId;
     dragging = true;
     unlocked = false;
     lastA = angleAt(e);
@@ -161,7 +176,7 @@ function wireRotaryDrag(canvas, view) {
     e.preventDefault();
   });
   canvas.addEventListener('pointermove', (e) => {
-    if (!dragging) return;
+    if (!dragging || e.pointerId !== held) return;
     moved += Math.abs(e.clientX - lastX) + Math.abs(e.clientY - lastY);
     lastX = e.clientX; lastY = e.clientY;
     const a = angleAt(e);
@@ -178,7 +193,12 @@ function wireRotaryDrag(canvas, view) {
     }
     lastA = a;
   });
-  const release = () => { dragging = false; lastA = null; };
+  const release = (e) => {
+    if (e && e.pointerId !== held) return;
+    held = null;
+    dragging = false;
+    lastA = null;
+  };
   canvas.addEventListener('pointerup', release);
   canvas.addEventListener('pointercancel', release);
 }
