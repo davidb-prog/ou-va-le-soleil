@@ -454,14 +454,19 @@ button:focus-visible, input:focus-visible, a:focus-visible {
      sur iPhone/Safari). */
   .views-grid .ratio-garden { aspect-ratio: auto; height: min(55vw, 34vh); }
   .views-grid .ratio-space { aspect-ratio: auto; height: min(88vw, 40vh); }
-  /* les mini-vues du jeu, plus étroites, gardent leurs proportions — écart
-     resserré et colonne espace élargie : chaque pixel compte pour le disque
-     que l'enfant fait tourner du doigt */
+  /* Les mini-vues du jeu : écart resserré et colonne espace élargie — chaque
+     pixel compte pour le disque que l'enfant fait tourner du doigt. Le ratio
+     du jardin se déduit alors des colonnes : 23/20 = 1,15, soit EXACTEMENT le
+     rapport 1,15fr/1fr, si bien que les deux cadres tombent pile à la même
+     hauteur (règle de la famille : la largeur des colonnes et les ratios des
+     cadres se répondent — un jardin qui s'arrête au-dessus de la Terre se lit
+     comme un bug de mise en page). */
   .game-views { gap: 8px; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); }
-  .game-views .ratio-garden { aspect-ratio: 16 / 10; }
+  .game-views .ratio-garden { aspect-ratio: 23 / 20; }
   @supports not (aspect-ratio: 1 / 1) {
-    .game-views .ratio-garden { height: 30vw; }
-    .game-views .ratio-space { height: 38vw; }
+    /* la même hauteur des deux côtés : celle de la colonne espace (~42vw) */
+    .game-views .ratio-garden { height: 42vw; }
+    .game-views .ratio-space { height: 42vw; }
   }
   .drag-hint { font-size: .8rem; }
 

@@ -101,7 +101,10 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 - Le jeu « Fais tourner la Terre ! » (fin de page, replié derrière « Jouer ») : le site
   demande un moment, l'enfant le **fabrique** en faisant tourner le temps sur deux mini-vues
   répliquées (mêmes classes de vues, toujours synchronisées sur `sim.h` ; les deux vues en
-  mode `mini` sans étiquettes ni repères). Défis dans `model.js` (`DEFIS`, `defiReussi`, fenêtre ±45 min
+  mode `mini` sans étiquettes ni repères ; **les deux cadres tombent pile à la même
+  hauteur** — la largeur des colonnes et les ratios des cadres se répondent : 1,25fr/1fr
+  pour 5/4 et 1/1 sur grand écran, 1,15fr/1fr pour 23/20 et 1/1 sur mobile, où la colonne
+  espace reste large, chaque pixel comptant pour le disque qu'on fait tourner du doigt). Défis dans `model.js` (`DEFIS`, `defiReussi`, fenêtre ±45 min
   `DEFI_WINDOW_H`, tempo `DEFI_DWELL_MS` anti « gagné en passant ») — le dernier défi est la
   révélation à l'envers : grand jour chez les enfants de l'autre côté = minuit chez soi.
   **Toutes les commandes du jeu vivent en haut du panneau**, sur la ligne du titre et dans
