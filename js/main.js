@@ -406,19 +406,24 @@ function sentenceChunks(text, endPara) {
 // la synthèse, comme avant. Fichiers générés par tools/build-voix.mjs. ----
 
 let audioBlocs = {};
+// le conseil « voix robotiques » ne concerne que le repli synthèse : dès qu'on
+// a des blocs enregistrés, il s'efface — que le manifeste vienne du réseau ou
+// qu'il soit embarqué dans la page (artifact)
+function rangerConseilVoix() {
+  if (Object.keys(audioBlocs).length === 0) return;
+  const vh = $('voice-hint');
+  if (vh) vh.hidden = true;
+}
 if (window.__VOIX_MANIFESTE && window.__VOIX_MANIFESTE.blocs) {
   // l'artifact de test familial embarque le manifeste dans la page
   audioBlocs = window.__VOIX_MANIFESTE.blocs;
+  rangerConseilVoix();
 } else if (window.fetch) {
   fetch('assets/audio/manifest.json')
     .then((r) => (r.ok ? r.json() : null))
     .then((m) => {
       if (m && m.blocs) audioBlocs = m.blocs;
-      // le conseil « voix robotiques » ne concerne que le repli synthèse
-      if (Object.keys(audioBlocs).length > 0) {
-        const vh = $('voice-hint');
-        if (vh) vh.hidden = true;
-      }
+      rangerConseilVoix();
     })
     .catch(() => { /* hors ligne ou manifeste absent : synthèse seule */ });
 }
