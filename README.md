@@ -41,7 +41,8 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 
 - **Grand curseur 0–24 h** dont la piste raconte la journée, heure affichée en gros
   (« Chez toi, il est 12 h 00 — midi ! »). Le temps passe tout seul (un tour de Terre en
-  90 s) ; **pause d'un petit tap** sur une vue, bouton lecture/pause, **espace = pause**.
+  90 s) ; **pause** par le bouton lecture/pause, ou **espace**. Un tap sur une vue ne
+  déclenche rien : un tap d'enfant ne doit rien faire en douce.
 - **Glisser sur l'une ou l'autre vue fait tourner le temps** : sur le jardin, on suit le
   soleil du doigt (toute la largeur = la journée) ; sur l'espace, glisser **rotatif** — on
   attrape le disque et l'angle du doigt autour du centre fait tourner la Terre (un cercle du
@@ -117,7 +118,7 @@ node test/model.test.mjs
 node test/voix.test.mjs
 ```
 
-**67 vérifications**, dont les vérités du récit : le Soleil est **fixe** (sa direction à
+**72 vérifications**, dont les vérités du récit : le Soleil est **fixe** (sa direction à
 l'écran ne change jamais) ; la Terre avance de 15° par heure, **vers l'est**, un tour en
 24 h ; lever à 6 h à l'**est**, zénith à midi plein **sud**, coucher à 18 h à l'**ouest**
 (hauteur = sin(π·(h−6)/12), la formule de l'épisode 3) ; les **ombres** longues matin et soir,
@@ -125,12 +126,12 @@ courtes à midi, toujours à l'opposé du soleil, absentes la nuit ; **les deux 
 même chose** (maison côté jour du globe ⟺ soleil levé au jardin) ; à **minuit chez nous, le
 soleil est au zénith de l'antipode** ; le **ciel est continu** sur 24 h (aucun saut de
 couleur), rose à l'aube, orangé au coucher ; les **défis du jeu** sont tous atteignables,
-à des heures toutes différentes, et leurs fenêtres (±30 min) ne se chevauchent jamais.
+à des heures toutes différentes, et leurs fenêtres (±45 min) ne se chevauchent jamais.
 
 Le site est aussi vérifié en navigateur (Playwright/Chromium, desktop + mobile 390 px) :
 zéro erreur console, sondes de pixels sur la géométrie jour/nuit du disque terrestre, la place
 du Soleil (identique à midi et à minuit !), les couleurs du ciel et la direction des ombres,
-glissers sur les deux vues, tap-pause, scénarios (toujours vers l'avant), le jeu complet
+glissers sur les deux vues, scénarios (toujours vers l'avant), le jeu complet
 (défi raté hors fenêtre, gagné dans la fenêtre après la tempo, « Encore une ! », glisser sur
 les mini-vues), `prefers-reduced-motion`, captures d'écran
 examinées aux heures clés.
@@ -201,10 +202,10 @@ js/canvas.js          helpers canvas partagés (fitCanvas, étoiles, étiquettes
 js/garden.js          vue jardin (ciel continu, arc du soleil, lune, ombres, décor)
 js/space.js           vue espace (Soleil FIXE à droite, Terre vue du pôle Nord, marqueurs ;
                       mode « mini » sans étiquettes pour le jeu)
-js/main.js            boucle d'animation + interactions (curseur, glissers, tap-pause,
+js/main.js            boucle d'animation + interactions (curseur, glissers,
                       scénarios et leur version sonore, jeu, conteur — voix enregistrée
                       si disponible, synthèse du navigateur en repli)
-test/model.test.mjs   tests Node du modèle (67 vérifications)
+test/model.test.mjs   tests Node du modèle (72 vérifications)
 test/voix.test.mjs    corpus vocal + cohérence des fichiers enregistrés avec les textes
 tools/voix-lib.mjs    corpus des blocs parlés (la seule partie propre à cet épisode)
 tools/build-voix.mjs  génération des mp3 du conteur avec ElevenLabs (hors site)
