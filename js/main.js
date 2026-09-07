@@ -406,19 +406,24 @@ function sentenceChunks(text, endPara) {
 // la synthèse, comme avant. Fichiers générés par tools/build-voix.mjs. ----
 
 let audioBlocs = {};
+// le conseil « voix robotiques » ne concerne que le repli synthèse : dès qu'on
+// a des blocs enregistrés, il s'efface — que le manifeste vienne du réseau ou
+// qu'il soit embarqué dans la page (artifact)
+function rangerConseilVoix() {
+  if (Object.keys(audioBlocs).length === 0) return;
+  const vh = $('voice-hint');
+  if (vh) vh.hidden = true;
+}
 if (window.__VOIX_MANIFESTE && window.__VOIX_MANIFESTE.blocs) {
   // l'artifact de test familial embarque le manifeste dans la page
   audioBlocs = window.__VOIX_MANIFESTE.blocs;
+  rangerConseilVoix();
 } else if (window.fetch) {
   fetch('assets/audio/manifest.json')
     .then((r) => (r.ok ? r.json() : null))
     .then((m) => {
       if (m && m.blocs) audioBlocs = m.blocs;
-      // le conseil « voix robotiques » ne concerne que le repli synthèse
-      if (Object.keys(audioBlocs).length > 0) {
-        const vh = $('voice-hint');
-        if (vh) vh.hidden = true;
-      }
+      rangerConseilVoix();
     })
     .catch(() => { /* hors ligne ou manifeste absent : synthèse seule */ });
 }
@@ -686,7 +691,8 @@ wireTimeDrag(gameGardenC, () => {
 wireRotaryDrag(gameSpaceC, gameSpace);
 
 let defi = null;        // le défi en cours (null : jeu fermé)
-let defiIndex = -1;
+let panierDefis = [];   // tirage SANS remise : chaque défi sort avant qu'on remélange
+let dernierDefiId = null; // survit au rangement du jeu (anti-répétition)
 let defiEnterMs = null; // entrée dans la fenêtre (tempo anti « gagné en passant »)
 let defiGagne = false;  // gagné au moins une fois — « Encore une ! » est acquis
 let bravoVisible = false;
@@ -698,13 +704,41 @@ function tellDefi(kind, text) {
   }
 }
 
-function nextDefi() {
-  // le défi suivant — en sautant celui que l'heure actuelle réussit déjà
-  for (let i = 1; i <= DEFIS.length; i++) {
-    const cand = (defiIndex + i) % DEFIS.length;
-    if (!defiReussi(DEFIS[cand], sim.h)) { defiIndex = cand; break; }
+function remplirPanierDefis() {
+  panierDefis = DEFIS.slice();
+  for (let i = panierDefis.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const echange = panierDefis[i];
+    panierDefis[i] = panierDefis[j];
+    panierDefis[j] = echange;
   }
-  defi = DEFIS[defiIndex];
+}
+
+function indiceDefiValide() {
+  // Un défi valide : pas le dernier tiré (anti-répétition), et pas un défi que
+  // l'heure affichée réussit DÉJÀ — sinon le bravo tomberait sans que l'enfant
+  // ait rien fabriqué.
+  for (let i = 0; i < panierDefis.length; i++) {
+    if (panierDefis[i].id === dernierDefiId) continue;
+    if (!defiReussi(panierDefis[i], sim.h)) return i;
+  }
+  return -1;
+}
+
+function nextDefi() {
+  // Tirage au panier, sans remise : les quatre moments sortent tous avant
+  // qu'on remélange (l'ordre change d'une partie à l'autre, au lieu de la
+  // ronde lever → midi → coucher → minuit toujours identique). Si le fond du
+  // panier ne contient plus que le dernier tiré ou un défi gagné d'avance, on
+  // remélange un panier neuf plutôt que de mentir : la fenêtre valant ± 45 min
+  // et les quatre moments étant à 6 h d'écart, un panier neuf offre toujours
+  // au moins deux candidats.
+  if (!panierDefis.length) remplirPanierDefis();
+  let indice = indiceDefiValide();
+  if (indice < 0) { remplirPanierDefis(); indice = indiceDefiValide(); }
+  if (indice < 0) indice = 0; // filet théorique, inatteignable avec quatre défis
+  defi = panierDefis.splice(indice, 1)[0];
+  dernierDefiId = defi.id;
   defiGagne = false;
   bravoVisible = false;
   defiEnterMs = null;
@@ -765,6 +799,7 @@ jouerBtn.addEventListener('click', () => {
   if (!gameZone.hidden) {
     gameZone.hidden = true;
     defi = null;
+    $('btn-encore').hidden = true; // « Encore une ! » se range avec le jeu
     jouerBtn.textContent = '🎮 Jouer';
     jouerBtn.setAttribute('aria-expanded', 'false');
     return;
