@@ -15,6 +15,7 @@
 
 :root {
   --titres: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --corps: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --bg: #0b1020;
   --bg2: #0e1530;
   --surface: #121a33;
@@ -60,7 +61,7 @@ body {
     radial-gradient(900px 600px at 8% 108%, rgba(169, 139, 255, 0.10) 0%, rgba(11, 16, 32, 0) 55%);
   background-attachment: fixed;
   color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--corps);
   line-height: 1.55;
 }
 
@@ -105,9 +106,20 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
   font-size: .92rem; color: var(--muted); margin: 2px 4px 2px;
 }
 .stage-title { flex: 1 1 auto; font-weight: 700; }
-/* les deux boutons restent groupés sur une même ligne, quelle que soit la largeur */
-.stage-actions { display: flex; gap: 8px; margin-left: auto; flex: none; }
 .spin-btn { padding: 5px 12px; font-size: .8rem; border-radius: 999px; }
+/* le ⏸/▶ est écrit dans la ligne « Depuis l'espace » (entre les deux vues
+   quand elles s'empilent — c'est sa place sur téléphone) ; sur grand écran il
+   remonte en haut à droite du panneau, dans la rangée du titre : un seul
+   bouton, deux places. Il vit dans un titre en Baloo : il reprend la pile
+   système du corps, comme tous les boutons de la famille. */
+.stage-panel { position: relative; }
+.play-btn { font-family: var(--corps); font-weight: 400; }
+@media (min-width: 641px) {
+  .play-btn { position: absolute; top: 14px; right: 12px; }
+  /* la rangée du titre garde la hauteur du bouton qu'elle portait : rien ne
+     bouge sur grand écran, et le bouton ne mord pas sur la ligne des vues */
+  .stage-head { min-height: 32px; }
+}
 
 /* le bouton 🔇/🔊 des scénarios : ses deux libellés sont superposés dans une
    grille 1×1, si bien que le bouton garde en permanence la largeur du plus
@@ -472,6 +484,12 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 
   /* des cibles tactiles d'au moins ~44 px pour les petits doigts */
   .spin-btn, .listen-btn, .game-btn { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+  /* le ⏸/▶ à droite du titre « Depuis l'espace », au format des autres
+     boutons (corps .9rem, marges 12 px) mais 36 px de haut, pas 44 : la
+     rangée du titre grandirait de 16 px — c'est un bouton de parent, la
+     cible reste large (~90 px) ; compromis validé sur « la Terre est
+     penchée » */
+  .view-head-space .play-btn { margin-left: auto; min-height: 36px; padding: 4px 12px; font-size: .9rem; }
 
   /* la rangée des commandes du jeu tient sur UNE ligne, texte jamais coupé :
      la voix en icône seule (son libellé vit dans son jumeau, au-dessus des

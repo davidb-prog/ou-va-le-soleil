@@ -85,6 +85,10 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 - **Mise en page mobile dédiée** : sous 640 px les vues s'empilent, plafonnées en hauteur
   d'écran pour tenir ensemble dans le viewport, rien ne recouvre jamais les canvas, l'en-tête
   se fait tout petit (le jardin se voit dès le premier écran), les boutons font au moins 44 px.
+  Le bouton ⏸/▶ vit sur la ligne « 🚀 Depuis l'espace », donc **entre les deux vues**
+  empilées : jardin, bouton et Terre tiennent sur un même écran, le pouce n'a plus à
+  remonter la page (patron repris de « Pourquoi il y a des saisons ? » ; sur grand écran il
+  reste en haut à droite du panneau).
   Le geste posé sur une vue appartient toujours au glisser du temps (`touch-action: none`,
   comme « Pourquoi la Lune change de forme ? ») — un doigt un peu de travers ne part jamais
   en défilement, et les vues plafonnées laissent de la page autour pour défiler. La grande
