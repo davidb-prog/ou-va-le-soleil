@@ -41,7 +41,8 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 
 - **Grand curseur 0–24 h** dont la piste raconte la journée, heure affichée en gros
   (« Chez toi, il est 12 h 00 — midi ! »). Le temps passe tout seul (un tour de Terre en
-  90 s) ; **pause d'un petit tap** sur une vue, bouton lecture/pause, **espace = pause**.
+  90 s) ; **pause par le bouton ⏸/▶** (ou la barre d'espace) — un tap sur une vue ne fait
+  rien, un enfant ne doit rien déclencher en douce.
 - **Glisser sur l'une ou l'autre vue fait tourner le temps** : sur le jardin, on suit le
   soleil du doigt (toute la largeur = la journée) ; sur l'espace, glisser **rotatif** — on
   attrape le disque et l'angle du doigt autour du centre fait tourner la Terre (un cercle du

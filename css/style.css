@@ -110,10 +110,11 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 20px 60px; }
 /* le ⏸/▶ est écrit dans la ligne « Depuis l'espace » (entre les deux vues
    quand elles s'empilent — c'est sa place sur téléphone) ; sur grand écran il
    remonte en haut à droite du panneau, dans la rangée du titre : un seul
-   bouton, deux places. Il vit dans un titre en Baloo : il reprend la pile
-   système du corps, comme tous les boutons de la famille. */
+   bouton, deux places. Il vit dans un titre en Baloo, et le 🔇/🔊 des
+   scénarios dans un titre en gras : les deux reprennent la pile système du
+   corps et la graisse normale, comme tous les boutons de la famille. */
 .stage-panel { position: relative; }
-.play-btn { font-family: var(--corps); font-weight: 400; }
+.play-btn, .scn-voice-btn { font-family: var(--corps); font-weight: 400; }
 @media (min-width: 641px) {
   .play-btn { position: absolute; top: 14px; right: 12px; }
   /* la rangée du titre garde la hauteur du bouton qu'elle portait : rien ne
