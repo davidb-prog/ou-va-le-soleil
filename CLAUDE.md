@@ -53,6 +53,11 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 
 ## Vérités à préserver (couvertes par `test/model.test.mjs`)
 
+- **L'heure affichée se lit à la demi-heure près** (« Chez toi, il est 7 h 30 » :
+  `arrondiDemiHeure` du modèle, arrondi au plus proche avec retenue, mot-repère
+  calculé sur la même heure arrondie) — en lecture auto, une horloge qui défile à
+  la minute fatigue l'œil (décision utilisateur). Le modèle, les vues, le curseur
+  (pas de 15 min) et le jeu gardent l'heure exacte : seul le texte arrondit.
 - Le **Soleil est fixe** ; la Terre fait un tour complet en 24 h, **vers l'est** (sens
   trigonométrique vue du pôle Nord, même convention que l'épisode 3 : angle de la maison
   `(h − 12) / 24 · τ`, 0 = face au Soleil à midi).

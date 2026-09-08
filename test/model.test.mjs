@@ -9,7 +9,7 @@ import {
   sunDirX, NOON_ELEVATION_DEG, SHADOW_MAX, SHADOW_FADE_ALT, sunElevationDeg, shadowLength,
   shadowDirX, SUN_DIR, earthAngle, houseFacesSun, antipodeHours,
   SKY_NIGHT, SKY_DAWN, SKY_DAY, SKY_DUSK, SKY_KEYFRAMES, hexToRgb, mixRgb,
-  skyStopsRgb, skyStops, skyPhase, starAlpha, formatHM, periodWord, SCENARIOS,
+  skyStopsRgb, skyStops, skyPhase, starAlpha, formatHM, arrondiDemiHeure, periodWord, SCENARIOS,
   DEFIS, DEFI_WINDOW_H, DEFI_EXIT_WINDOW_H, DEFI_DWELL_MS, hourDist, defiReussi,
 } from '../js/model.js';
 
@@ -194,6 +194,13 @@ console.log('Heures affichées');
 check('formatHM(12) → « 12 h 00 »', formatHM(12).text === '12 h 00');
 check('formatHM(6,5) → « 6 h 30 »', formatHM(6.5).text === '6 h 30');
 check('arrondi avec retenue : 23,9999 → « 0 h 00 »', formatHM(23.9999).text === '0 h 00');
+check('affichage à la demi-heure : 7 h 14 → 7 h 00, 7 h 15 → 7 h 30, 7 h 45 → 8 h 00',
+  formatHM(arrondiDemiHeure(7 + 14 / 60)).text === '7 h 00' &&
+  formatHM(arrondiDemiHeure(7.25)).text === '7 h 30' &&
+  formatHM(arrondiDemiHeure(7.75)).text === '8 h 00');
+check('demi-heure avec retenue : 23 h 50 → « 0 h 00 », et « minuit ! » avec',
+  formatHM(arrondiDemiHeure(23 + 50 / 60)).text === '0 h 00' &&
+  periodWord(arrondiDemiHeure(23 + 50 / 60)) === 'minuit !');
 check('mots-repères : midi, minuit, matin, après-midi, soir, nuit',
   periodWord(12) === 'midi !' && periodWord(0) === 'minuit !' && periodWord(7) === 'le matin' &&
   periodWord(15) === 'l’après-midi' && periodWord(20.5) === 'le soir' && periodWord(23) === 'la nuit');

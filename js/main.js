@@ -3,7 +3,7 @@
 // vues sont TOUJOURS synchronisées sur la même heure sim.h — c'est le cœur
 // du site : le même moment, deux regards.
 
-import { TAU, wrap24, formatHM, periodWord, skyPhase, earthAngle,
+import { TAU, wrap24, formatHM, arrondiDemiHeure, periodWord, skyPhase, earthAngle,
          SPIN_HOURS_PER_SEC, SCENARIOS, DEFIS, defiReussi, hourDist,
          DEFI_DWELL_MS, DEFI_EXIT_WINDOW_H, texteOral, VOIX_TRANSITIONS } from './model.js';
 import { GardenView } from './garden.js';
@@ -329,8 +329,11 @@ function spaceStatus(h) {
 }
 
 function updateTexts() {
-  setText('time', $('home-time'), formatHM(sim.h).text);
-  setText('period', $('home-period'), periodWord(sim.h));
+  // l'heure lue à la demi-heure près (et son mot-repère sur la même heure
+  // arrondie, pour que « 12 h 00 » s'accompagne bien de « midi ! »)
+  const hAffichee = arrondiDemiHeure(sim.h);
+  setText('time', $('home-time'), formatHM(hAffichee).text);
+  setText('period', $('home-period'), periodWord(hAffichee));
   setText('garden', $('garden-status'), GARDEN_STATUS[skyPhase(sim.h)]);
   setText('space', $('space-status'), spaceStatus(sim.h));
   if (!sliderHeld) slider.value = sim.h;
