@@ -139,8 +139,13 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   MESURÉES sur cet épisode (960 et 1140 px utiles, +4 px de garde) : 297 px
   de fixe dans la scène, 0,444 × largeur utile pour les vues, `--entete-px`
   = bas de l'en-tête (239). Plancher 840 px utiles (la vue qu'on manipule ne
-  se sacrifie pas).
-  Toute retouche des marges de la scène ou de
+  se sacrifie pas). **L'en-tête se serre sous 850 px de hauteur visible**
+  (grand écran seulement) : titre 2,4 rem, accroche 0,95 rem sur deux lignes,
+  respirations réduites — 239 → 151 px, rien de retiré, `--entete-px` suit
+  (son bloc CSS vient APRÈS celui du plafond : même `:root`, le dernier
+  gagne). Mesuré : 13" 1440×900 → plancher, tout tient ; 13" 1280×800 →
+  ~100 px à faire défiler, accepté ; 24" 1080p → 932 px de large, tout
+  tient ; 27" → 1140 inchangé. Toute retouche des marges de la scène ou de
   l'en-tête se re-mesure et se reporte dans ces constantes.
 - Rien ne recouvre jamais les canvas (la bulle « glisse ici » vit SOUS le jardin) ; en pause,
   aucun redessin (garde « même heure + mêmes tailles » dans la boucle rAF — batterie).
