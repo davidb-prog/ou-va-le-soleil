@@ -130,6 +130,18 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   glisser — rien n'est jamais verrouillé) ; si l'enfant remporte la Terre hors de la fenêtre
   de sortie (`DEFI_EXIT_WINDOW_H`, ±1 h 15 — hystérésis anti-clignotement), le bravo se range
   et revient s'il re-fabrique le moment ; « Encore une ! » reste acquis.
+- **Sur grand écran, la largeur utile se plafonne par la hauteur visible**
+  (règle de la famille née sur la-lune-change-de-forme, retour utilisateur :
+  sur un portable 13", la page dimensionnée par la largeur seule montrait
+  les vues et rien d'autre — la même vue qu'un téléphone) : `main` (et le
+  pied) en `max-width: clamp(880px, (100vh − 297px − --entete-px) / 0.444 +
+  40px, 1180px)` pour qu'en-tête + scène tiennent en 100vh. Constantes
+  MESURÉES sur cet épisode (960 et 1140 px utiles, +4 px de garde) : 297 px
+  de fixe dans la scène, 0,444 × largeur utile pour les vues, `--entete-px`
+  = bas de l'en-tête (239). Plancher 840 px utiles (la vue qu'on manipule ne
+  se sacrifie pas).
+  Toute retouche des marges de la scène ou de
+  l'en-tête se re-mesure et se reporte dans ces constantes.
 - Rien ne recouvre jamais les canvas (la bulle « glisse ici » vit SOUS le jardin) ; en pause,
   aucun redessin (garde « même heure + mêmes tailles » dans la boucle rAF — batterie).
 
@@ -220,7 +232,9 @@ mobile 390 px, zéro erreur console, captures d'écran **regardées vraiment** a
 (6 h, 12 h, 18 h, minuit), sondes de pixels (`getImageData`) pour la géométrie jour/nuit de la
 vue espace et les couleurs du ciel, glissers, tap-pause, scénarios, le jeu complet (défi raté
 hors fenêtre, gagné après la tempo, « Encore une ! », glisser sur les mini-vues),
-`prefers-reduced-motion`. Lancer le serveur avant chaque run :
+`prefers-reduced-motion`. Deux passes de plus depuis la règle de largeur de la famille : portable 1440×820 et écran
+1920×1040 — la largeur utile attendue par le `clamp()` (lue depuis `--entete-px`), et
+en-tête + scène qui tiennent dans l'écran (ou le plancher atteint). Lancer le serveur avant chaque run :
 `python3 -m http.server 8123`. Playwright est installé en global :
 `NODE_PATH=/opt/node22/lib/node_modules node test-site.cjs` ; `chromium.launch()` avec repli
 `executablePath: '/opt/pw-browsers/chromium'` ; faire défiler l'élément dans le viewport avant
