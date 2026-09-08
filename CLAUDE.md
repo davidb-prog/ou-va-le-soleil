@@ -84,7 +84,12 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
   les autres pointeurs sont ignorés jusqu'au relâcher ; un second doigt posé faisait sauter
   l'image de tout l'écart entre les doigts (sa position devenait la référence du glissement).
   La pause ne se commande que par le **bouton ⏸/▶ à largeur stable** (libellés
-  « ⏸ Pause » / « ▶ Lecture » empilés — patron de la famille) et la barre espace — un tap
+  « ⏸ Pause » / « ▶ Lecture » empilés — patron de la famille) et la barre espace ; le
+  bouton est écrit **dans la ligne « 🚀 Depuis l'espace »** (un seul bouton, un seul
+  câblage, repris de « la Terre est penchée ») : sur téléphone il tombe **entre les deux
+  vues empilées**, jardin + bouton + Terre sur un même écran, 36 px de haut pour ne pas
+  faire grandir la ligne du titre ; sur grand écran le CSS le pose en absolu en haut à
+  droite du panneau, dans la rangée « Le même moment, deux regards » — un tap
   sur une vue ne déclenche plus rien (décision d'harmonisation : un tap d'enfant ne doit
   rien faire en douce) ; le grand curseur 0–24 h reste le maître à
   bord. Pied de page harmonisé de la famille : les autres épisodes en liens cliquables
