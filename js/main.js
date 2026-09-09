@@ -67,8 +67,14 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// step="any" sur le curseur : le navigateur ALIGNE sur le pas toute valeur
+// posée en JS, et avec un pas de 15 min le pouce avançait par sauts (96 par
+// tour, un toutes les ~0,9 s en lecture auto — invisible tant que l'horloge
+// défilait à la minute, criant depuis qu'elle se lit à la demi-heure). Le
+// pouce glisse donc en continu ; c'est ICI, à la main, que le geste de
+// l'enfant (doigt ou flèches) se cale au quart d'heure, comme avant.
 slider.addEventListener('input', () => {
-  sim.h = wrap24(+slider.value);
+  sim.h = wrap24(Math.round(+slider.value * 4) / 4);
   stopAuto();
 });
 slider.addEventListener('pointerdown', () => { sliderHeld = true; });
