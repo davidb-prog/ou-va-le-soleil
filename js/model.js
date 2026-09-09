@@ -191,6 +191,15 @@ export function formatHM(hours) {
   return { h: h, m: m, text: h + ' h ' + (m < 10 ? '0' + m : String(m)) };
 }
 
+// L'heure AFFICHÉE au-dessus du curseur (« Chez toi, il est… ») se lit à la
+// demi-heure près : arrondie à la demi-heure la plus proche (7 h 14 → 7 h 00,
+// 7 h 15 → 7 h 30), avec retenue (23 h 50 → 0 h 00). En lecture auto, une
+// horloge qui défile à la minute fatigue l'œil (décision utilisateur) ; le
+// modèle, les vues et le jeu gardent l'heure exacte — seul l'affichage arrondit.
+export function arrondiDemiHeure(hours) {
+  return wrap24(Math.round(wrap24(hours) * 2) / 2);
+}
+
 // Mot d'accompagnement de l'heure, à hauteur d'enfant.
 export function periodWord(hours) {
   const c = formatHM(hours);

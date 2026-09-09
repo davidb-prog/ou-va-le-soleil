@@ -40,7 +40,8 @@ Tout le site tient dans une idée : **le même moment, vu de deux endroits.**
 ![Le coucher du soleil : ciel orangé dans le jardin, maison sur la limite jour/nuit vue de l'espace](docs/screenshot-coucher.png)
 
 - **Grand curseur 0–24 h** dont la piste raconte la journée, heure affichée en gros
-  (« Chez toi, il est 12 h 00 — midi ! »). Le temps passe tout seul (un tour de Terre en
+  (« Chez toi, il est 12 h 00 — midi ! »), lue à la demi-heure près pour ne pas
+  fatiguer l'œil quand le temps défile. Le temps passe tout seul (un tour de Terre en
   90 s) ; **pause par le bouton ⏸/▶** (ou la barre d'espace) — un tap sur une vue ne fait
   rien, un enfant ne doit rien déclencher en douce.
 - **Glisser sur l'une ou l'autre vue fait tourner le temps** : sur le jardin, on suit le

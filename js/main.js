@@ -3,7 +3,7 @@
 // vues sont TOUJOURS synchronisées sur la même heure sim.h — c'est le cœur
 // du site : le même moment, deux regards.
 
-import { TAU, wrap24, formatHM, periodWord, skyPhase, earthAngle,
+import { TAU, wrap24, formatHM, arrondiDemiHeure, periodWord, skyPhase, earthAngle,
          SPIN_HOURS_PER_SEC, SCENARIOS, DEFIS, defiReussi, hourDist,
          DEFI_DWELL_MS, DEFI_EXIT_WINDOW_H, texteOral, VOIX_TRANSITIONS } from './model.js';
 import { GardenView } from './garden.js';
@@ -67,8 +67,14 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// step="any" sur le curseur : le navigateur ALIGNE sur le pas toute valeur
+// posée en JS, et avec un pas de 15 min le pouce avançait par sauts (96 par
+// tour, un toutes les ~0,9 s en lecture auto — invisible tant que l'horloge
+// défilait à la minute, criant depuis qu'elle se lit à la demi-heure). Le
+// pouce glisse donc en continu ; c'est ICI, à la main, que le geste de
+// l'enfant (doigt ou flèches) se cale au quart d'heure, comme avant.
 slider.addEventListener('input', () => {
-  sim.h = wrap24(+slider.value);
+  sim.h = wrap24(Math.round(+slider.value * 4) / 4);
   stopAuto();
 });
 slider.addEventListener('pointerdown', () => { sliderHeld = true; });
@@ -329,8 +335,11 @@ function spaceStatus(h) {
 }
 
 function updateTexts() {
-  setText('time', $('home-time'), formatHM(sim.h).text);
-  setText('period', $('home-period'), periodWord(sim.h));
+  // l'heure lue à la demi-heure près (et son mot-repère sur la même heure
+  // arrondie, pour que « 12 h 00 » s'accompagne bien de « midi ! »)
+  const hAffichee = arrondiDemiHeure(sim.h);
+  setText('time', $('home-time'), formatHM(hAffichee).text);
+  setText('period', $('home-period'), periodWord(hAffichee));
   setText('garden', $('garden-status'), GARDEN_STATUS[skyPhase(sim.h)]);
   setText('space', $('space-status'), spaceStatus(sim.h));
   if (!sliderHeld) slider.value = sim.h;

@@ -53,6 +53,15 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 
 ## Vérités à préserver (couvertes par `test/model.test.mjs`)
 
+- **L'heure affichée se lit à la demi-heure près** (« Chez toi, il est 7 h 30 » :
+  `arrondiDemiHeure` du modèle, arrondi au plus proche avec retenue, mot-repère
+  calculé sur la même heure arrondie) — en lecture auto, une horloge qui défile à
+  la minute fatigue l'œil (décision utilisateur). Le modèle, les vues et le jeu
+  gardent l'heure exacte : seul le texte arrondit. Et **le pouce du curseur
+  glisse en continu** : `step="any"` (un navigateur aligne sur le pas toute
+  valeur posée en JS — avec `step="0.25"` le pouce sautait 96 fois par tour,
+  ce que l'horloge à la minute masquait), le cal au quart d'heure du geste de
+  l'enfant se fait dans le gestionnaire `input` de main.js.
 - Le **Soleil est fixe** ; la Terre fait un tour complet en 24 h, **vers l'est** (sens
   trigonométrique vue du pôle Nord, même convention que l'épisode 3 : angle de la maison
   `(h − 12) / 24 · τ`, 0 = face au Soleil à midi).
