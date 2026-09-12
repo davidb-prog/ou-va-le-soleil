@@ -216,6 +216,23 @@ Le bravo, déclenché hors geste par la boucle d'animation, **se précharge au
 tirage du défi** (`prechargerBravoDefi`, aussi à la remise du son jeu
 ouvert). Vérifié au navigateur (CDP, iPhone émulé) : chaque bravo et chaque
 consigne rejouée partent en `blob:`, aucun clip téléchargé deux fois.
+**Et le premier clip a la route pour lui** (retour utilisateur, réseau
+faible : « retard à l'allumage » sur les boutons et la consigne du jeu — tout
+partait au tap, en parallèle, l'intro attendait derrière les blocs
+suivants) : UNE file de fond (`fileDeFond`, un téléchargement à la fois),
+GELÉE tant qu'un premier clip part à froid en src direct
+(`premierClipEnRoute`, libérée à `playing`, à l'erreur, au stop, ou après
+8 s) ; les blocs suivants d'une narration y entrent en tête, dans l'ordre
+du récit, le premier bloc en dernier ; les réchauffements en queue. Et le
+**réchauffement des premiers clips** (`rechaufferPremiersClips`) : quand la
+rangée des scénarios ou le bouton « Jouer » entre à l'écran (repli :
+premier toucher), les quatre intros et les quatre consignes entrent dans
+la file — voix active seulement, manifeste arrivé (sinon on repasse à son
+arrivée), jamais à l'ouverture de la page. Mesuré au navigateur sous 3G
+bridée (300 ms, 40 Ko/s) : intro à froid seule sur le réseau, joue en
+0,8 s ; jardin, transition, espace l'un après l'autre, le bloc 2 part de
+la mémoire à la fin de l'intro ; intro réchauffée et consigne du jeu :
+quelques millisecondes.
 
 ## La voix enregistrée (ElevenLabs)
 
