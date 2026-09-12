@@ -550,12 +550,51 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
   // synthèse lit le texte phrase à phrase. Entre blocs, la respiration par
   // défaut (620 ms) ; `pause` la raccourcit pour les fichiers qui portent
   // déjà leur suspension (les transitions en « … » des scénarios).
+  // Les clips EN MÉMOIRE (acquis de la-terre-est-penchee). Safari iOS ne
+  // réutilise pas le cache d'un `fetch` pour un <audio> (les médias passent
+  // par des requêtes de plage, cache à part) : le « préchauffage » du bloc
+  // suivant ne servait à rien, chaque clip se retéléchargeait à son tour —
+  // silences de une à trois secondes entre deux phrases selon le réseau.
+  // Désormais, au départ d'une narration, tous ses clips se téléchargent EN
+  // PARALLÈLE en blobs et se jouent depuis ces blobs (gardés pour la
+  // session, rejouer est instantané). Le PREMIER clip part en src direct,
+  // dans le geste de l'utilisateur (iOS n'autorise le premier play() que
+  // là) — SAUF si son blob est DÉJÀ là (`clipsPrets`, lu de façon
+  // synchrone, donc toujours dans le geste) : le jeu ne parle qu'en
+  // narrations d'un seul bloc — consigne, bravo —, toujours « le premier »,
+  // qui partaient donc TOUJOURS à froid, même rejouées (retour utilisateur,
+  // iPhone : le bravo s'affichait une bonne seconde avant la voix). Le
+  // bravo, lui, part de la boucle d'animation, hors geste : il est
+  // préchargé au tirage du défi (`precharger`). Échec de téléchargement →
+  // src direct (comme avant).
+  const clipsEnMemoire = {};
+  const clipsPrets = {};
+  const chargerClip = (src) => {
+    if (src.indexOf('data:') === 0 || !window.fetch || !window.URL || !URL.createObjectURL) {
+      return Promise.resolve(src);
+    }
+    if (!clipsEnMemoire[src]) {
+      clipsEnMemoire[src] = fetch(src)
+        .then((r) => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); })
+        .then((b) => { clipsPrets[src] = URL.createObjectURL(b); return clipsPrets[src]; })
+        .catch(() => { delete clipsEnMemoire[src]; return src; });
+    }
+    return clipsEnMemoire[src];
+  };
+  const precharger = (items) => {
+    items.forEach((it) => {
+      const src = audioSrc(it.id, it.text);
+      if (src) chargerClip(src);
+    });
+  };
+
   const narrate = (items, onDone) => {
     stopSpeaking();
     refreshVoices(); // certaines listes de voix n'arrivent qu'après le chargement
     const myGen = gen;
     curDone = onDone || null;
     let at = 0;
+    precharger(items); // tous les clips de la narration partent ensemble
     const next = () => {
       if (myGen !== gen) return;
       if (at >= items.length) { settle(); return; }
@@ -571,24 +610,23 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
       if (!src) { fallback(); return; }
       const a = getLecteur();
       const pause = typeof it.pause === 'number' ? it.pause : 620;
-      a.onended = () => { if (myGen === gen) window.setTimeout(after, pause); };
-      a.onerror = fallback;
-      a.src = src;
-      const p = a.play();
-      if (p && p.then) p.then(null, fallback);
-      // pendant que ce bloc joue, préchauffer le fichier du suivant : son
-      // chargement se fait d'avance (cache HTTP) et ne s'ajoute plus au
-      // blanc entre les blocs au premier passage en ligne
-      if (at < items.length && window.fetch) {
-        const nx = audioSrc(items[at].id, items[at].text);
-        if (nx && nx.indexOf('data:') !== 0) {
-          fetch(nx).catch(() => { /* le lecteur retentera au vrai chargement */ });
-        }
-      }
+      const premier = at === 1;
+      const jouer = (url) => {
+        if (myGen !== gen) return;
+        a.onended = () => { if (myGen === gen) window.setTimeout(after, pause); };
+        a.onerror = fallback;
+        a.src = url;
+        const p = a.play();
+        if (p && p.then) p.then(null, fallback);
+      };
+      // le premier bloc part dans le geste : depuis la mémoire si son blob
+      // est déjà là, sinon en src direct ; les suivants attendent leur blob
+      if (premier) jouer(clipsPrets[src] || src);
+      else chargerClip(src).then(jouer, () => jouer(src));
     };
     next();
   };
-  narrator = { narrate: narrate, stop: stopSpeaking };
+  narrator = { narrate: narrate, stop: stopSpeaking, precharger: precharger };
 
   // -- « Écouter l'histoire » : la boîte-révélation, phrase à phrase --
   listenBtn.hidden = false;
@@ -658,7 +696,7 @@ function toggleScnVoice() {
   try { window.localStorage.setItem('petit-labo-son', scnVoiceOn ? '1' : '0'); } catch (e) { /* tant pis */ }
   setScnVoiceUi();
   if (!narrator) return;
-  if (scnVoiceOn) tellScenario(); else narrator.stop();
+  if (scnVoiceOn) { tellScenario(); prechargerBravoDefi(); } else narrator.stop();
 }
 scnVoiceBtn.addEventListener('click', toggleScnVoice);
 scnVoiceBtnJeu.addEventListener('click', toggleScnVoice);
@@ -707,10 +745,21 @@ let defiGagne = false;  // gagné au moins une fois — « Encore une ! » est a
 let bravoVisible = false;
 
 // le même conteur (et le même bouton 🔇/🔊) que les scénarios
+function blocDefi(kind, text) {
+  return { id: 'defi-' + defi.id + '-' + kind, text: texteOral(text) };
+}
+
 function tellDefi(kind, text) {
-  if (narrator && scnVoiceOn) {
-    narrator.narrate([{ id: 'defi-' + defi.id + '-' + kind, text: texteOral(text) }]);
-  }
+  if (narrator && scnVoiceOn) narrator.narrate([blocDefi(kind, text)]);
+}
+
+// Le bravo part de la boucle d'animation, hors de tout geste et au moment où
+// l'enfant réussit : son clip se télécharge dès le tirage du défi (et à la
+// remise du son, jeu ouvert) pour jouer depuis la mémoire, sans le silence
+// d'un src direct. La consigne, elle, est déjà mise en mémoire par sa propre
+// narration : rejouer le défi la trouve prête.
+function prechargerBravoDefi() {
+  if (defi && narrator && scnVoiceOn) narrator.precharger([blocDefi('bravo', defi.bravo)]);
 }
 
 function remplirPanierDefis() {
@@ -755,6 +804,7 @@ function nextDefi() {
   $('game-bravo').hidden = true;
   $('btn-encore').hidden = true;
   tellDefi('consigne', defi.consigne);
+  prechargerBravoDefi();
 }
 
 function winDefi(ms) {
