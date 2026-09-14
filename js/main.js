@@ -702,6 +702,7 @@ if (window.speechSynthesis && window.SpeechSynthesisUtterance) {
   };
   listenBtn.addEventListener('click', () => {
     if (reading) { stopSpeaking(); return; } // le onDone remet le bouton
+    if (window.jalon) window.jalon('audio'); // jalon d'engagement (mesure.js)
     startReading();
   });
   // partir ailleurs (autre application, autre onglet, écran verrouillé)
@@ -748,7 +749,10 @@ function toggleScnVoice() {
   try { window.localStorage.setItem('petit-labo-son', scnVoiceOn ? '1' : '0'); } catch (e) { /* tant pis */ }
   setScnVoiceUi();
   if (!narrator) return;
-  if (scnVoiceOn) { tellScenario(); prechargerBravoDefi(); demanderRechauffement(); } else narrator.stop();
+  if (scnVoiceOn) {
+    if (window.jalon) window.jalon('audio'); // le conteur des scénarios compte aussi
+    tellScenario(); prechargerBravoDefi(); demanderRechauffement();
+  } else narrator.stop();
 }
 
 // Le RÉCHAUFFEMENT des premiers clips (retour utilisateur, réseau faible :
@@ -906,6 +910,7 @@ function winDefi(ms) {
   bravo.hidden = false;
   $('btn-encore').hidden = false;
   if (premiere) {
+    if (window.jalon) window.jalon('fin'); // premier défi gagné : l'épisode est allé au bout
     tellDefi('bravo', defi.bravo);
     // Le recalage doux : le temps glisse jusqu'au moment PILE (par le chemin
     // court — on est à moins de 30 min), pour afficher le bravo sur l'image
