@@ -2,7 +2,7 @@
 
 Épisode 2 du « Petit labo d'astronomie » : site statique d'une page qui explique le lever et
 le coucher du soleil à une enfant de 5 ans (le parent lit à voix haute). Français uniquement.
-L'idée centrale : **le Soleil ne va nulle part** — il ne bouge pas, ne s'éteint pas ; c'est la
+L'idée centrale : **le Soleil ne va nulle part** — il ne s'en va pas, ne s'éteint pas ; c'est la
 Terre qui tourne sur elle-même en 24 h, et la nuit, c'est quand notre maison lui tourne le dos.
 Le cœur du site : **le même moment vu de deux endroits** — depuis le jardin (le soleil *semble*
 traverser le ciel) et depuis l'espace (le Soleil est fixe, c'est nous qui tournons), les deux
@@ -162,8 +162,9 @@ Les épisodes voisins font référence (identité visuelle, niveau d'exigence, c
 ## Structure
 
 - `index.html` — page unique : en-tête (titre « Où va le Soleil la nuit ? », kicker
-  « Petit labo d'astronomie » — sans numéro d'épisode, règle de la famille —, refrain
-  « … parce que la Terre tourne ! »), les deux
+  « Petit labo d'astronomie » — sans numéro d'épisode, règle de la famille —, accroche au
+  patron de la famille : observation d'enfant, révélation en gras, geste-signature « Fais
+  tourner la Terre » ; le refrain « … parce que la Terre tourne ! » ferme l'histoire), les deux
   vues synchronisées, grand curseur 0–24 h, boutons-scénarios + histoire, boîte « Le Soleil ne
   va nulle part ! » (repliée derrière son titre sur mobile, comme l'épisode 3), jeu « Fais
   tourner la Terre ! » (deux mini-vues répliquées), pont vers l'épisode 3, note aux parents

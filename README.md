@@ -6,8 +6,9 @@ lever et le coucher du soleil à une enfant de 5 ans, guidée par un parent qui 
 En ligne : <https://petit-labo.fr/ou-va-le-soleil/> — et tous les épisodes sur
 [petit-labo.fr](https://petit-labo.fr).
 
-La grande révélation : **le Soleil ne va nulle part**. Il ne bouge pas, ne s'éteint pas, ne
-« se couche » pas vraiment. C'est la **Terre qui tourne** sur elle-même en 24 heures ; la nuit,
+La grande révélation : **le Soleil ne va nulle part**. Il ne s'en va pas, ne s'éteint pas, ne
+« se couche » pas vraiment. (On ne dit pas « il ne bouge pas » : le Soleil tourne sur lui-même
+et se déplace dans la Galaxie ; ce qui est faux, c'est qu'il s'en aille le soir.) C'est la **Terre qui tourne** sur elle-même en 24 heures ; la nuit,
 c'est quand notre maison lui tourne le dos — et pendant qu'on dort, il éclaire les enfants de
 l'autre côté de la Terre.
 
@@ -223,7 +224,7 @@ assets/fonts/         Baloo 2 auto-hébergée (woff2, licence OFL) — la voix d
 
 - 🌒 [La mécanique des éclipses](https://petit-labo.fr/eclipse-explorer/) — les deux
   coïncidences qui fabriquent une éclipse.
-- 🌅 **Où va le Soleil la nuit ?** (ce site) — le Soleil ne bouge pas : c'est la Terre qui
+- 🌅 **Où va le Soleil la nuit ?** (ce site) — le Soleil ne s'en va pas : c'est la Terre qui
   tourne, et la nuit c'est quand ta maison lui tourne le dos.
 - 🌍 [Quelle heure est-il là-bas ?](https://petit-labo.fr/la-terre-tourne/) — la
   Terre tourne, et il n'est pas la même heure partout.

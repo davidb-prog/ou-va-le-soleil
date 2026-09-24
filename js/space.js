@@ -229,7 +229,7 @@ export class SpaceView {
     if (!this.mini) {
       label(ctx, 'le Soleil', sunX, sunY + sunR * 1.75 + 8,
         { align: 'center', size: Math.max(11, M * 0.034), color: COLOR_SUN, clampW: w, clampH: H });
-      label(ctx, 'il ne bouge pas !', sunX, sunY + sunR * 1.75 + 8 + Math.max(11, M * 0.034),
+      label(ctx, 'il reste là !', sunX, sunY + sunR * 1.75 + 8 + Math.max(11, M * 0.034),
         { align: 'center', size: Math.max(9, M * 0.026), weight: 400, color: 'rgba(255, 223, 140, 0.85)', clampW: w, clampH: H });
     }
   }
