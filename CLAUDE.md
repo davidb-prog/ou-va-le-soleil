@@ -2,7 +2,7 @@
 
 Épisode 2 du « Petit labo d'astronomie » : site statique d'une page qui explique le lever et
 le coucher du soleil à une enfant de 5 ans (le parent lit à voix haute). Français uniquement.
-L'idée centrale : **le Soleil ne va nulle part** — il ne bouge pas, ne s'éteint pas ; c'est la
+L'idée centrale : **le Soleil ne va nulle part** — il ne s'en va pas, ne s'éteint pas ; c'est la
 Terre qui tourne sur elle-même en 24 h, et la nuit, c'est quand notre maison lui tourne le dos.
 Le cœur du site : **le même moment vu de deux endroits** — depuis le jardin (le soleil *semble*
 traverser le ciel) et depuis l'espace (le Soleil est fixe, c'est nous qui tournons), les deux
