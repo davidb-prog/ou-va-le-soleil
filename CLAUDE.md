@@ -273,7 +273,8 @@ qu'un pointeur. L'outillage canonique (mode `--calme`, `controle-voix.mjs`,
   réécouter. Seule `corpus()` dans `tools/voix-lib.mjs` est propre à cet épisode — le reste se
   porte tel quel sur les autres (la Terre tourne, la Lune, les saisons…).
 - L'artifact de test embarque manifeste et sons en data URI (`window.__VOIX_MANIFESTE`,
-  injecté par `build-artifact.mjs`).
+  injecté par `tools/build-artifact.mjs`). JAMAIS de fichiers à côté de la page : sur
+  claude.ai, `fetch` du manifeste échoue en silence et tout retombe en synthèse.
 
 ## Vérification navigateur
 
@@ -304,7 +305,7 @@ Pages à chaque push sur `main`. Le tout premier run échouera tant que Pages n'
 - Public : 5 ans, qui ne sait pas lire. Très peu de texte côté enfant, phrases courtes que le
   parent lit à voix haute, gros visuels. Le vocabulaire technique (rotation, axe, hémisphère,
   équinoxe…) va dans la note aux parents ou le README.
-- Un artifact Claude (page unique auto-contenue, générée par le script scratchpad
-  `build-artifact.mjs`) sert aux tests en famille — republier **au même URL** à chaque
+- Un artifact Claude (page unique auto-contenue : `node tools/build-artifact.mjs` écrit
+  `tools/artifact.html`, gitignoré) sert aux tests en famille — republier **au même URL** à chaque
   itération : <https://claude.ai/code/artifact/deace3b5-dee4-4f0f-b91a-e8ab885af7ae>
   (depuis une autre session : passer cette URL au paramètre `url` de l'outil Artifact).
